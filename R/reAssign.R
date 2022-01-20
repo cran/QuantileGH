@@ -6,7 +6,8 @@
 #' (via \code{\link[tclust]{tkmeans}}) to the closest cluster (at the smallest 
 #' Mahalanobis distance). 
 #' 
-#' @param x a trimmed clustering object
+#' @param x a trimmed clustering object, currently only 
+#' \code{'tkmeans'} object (return of \code{\link[tclust]{tkmeans}}) is supported
 #' 
 #' @param ... potential parameters
 #' 
@@ -22,9 +23,12 @@
 #' plot(clus, main = 'Before Re-Assigning')
 #' plot(reAssign(clus), main = 'After Re-Assigning')
 #' 
+#' 
+#' @name reAssign
 #' @export
 reAssign <- function(x, ...) UseMethod('reAssign')
 
+#' @rdname reAssign
 #' @export
 reAssign.tkmeans <- function(x, ...) {
   obs <- x$par$x
@@ -45,16 +49,16 @@ reAssign.tkmeans <- function(x, ...) {
   if ((d <- x$int$dim[2L]) == 1L) {
     obss <- split.default(obs, f = fclus) # identical to .Internal(split(obs, fclus)), not compute intensive
     centers <- c(x$centers)
-    x_mad <- vapply(k_seq, FUN = \(i) mad(obss[[i]], center = centers[i]), FUN.VALUE = 0)
+    x_mad <- vapply(k_seq, FUN = function(i) mad(obss[[i]], center = centers[i]), FUN.VALUE = 0)
     tobs <- obs[tid, , drop = TRUE]
     tdist <- t.default(abs(tcrossprod(1/x_mad, tobs) - centers/x_mad)) # not compute intensive
   } else {
     clus_id <- split.default(seq_len(n), f = fclus) # identical to .Internal(split(seq_len(n), fclus)); not compute intensive
     tobs_t <- t.default(obs[tid, , drop = FALSE]) # trimmed obs
     t_seq <- seq_len(dim(tobs_t)[2L])
-    tdist <- do.call(cbind, args = lapply(k_seq, FUN = \(i) {
+    tdist <- do.call(cbind, args = lapply(k_seq, FUN = function(i) {
       ivv <- cov(obs[clus_id[[i]], , drop = FALSE])
-      invcov <- chol2inv(chol(ivv))
+      invcov <- chol2inv(chol.default(ivv))
       tobs_i <- tobs_t - x$centers[,i]
       (t.default(tobs_i) %*% invcov %*% tobs_i)[cbind(t_seq, t_seq)]
     }))

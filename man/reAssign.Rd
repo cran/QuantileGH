@@ -2,12 +2,16 @@
 % Please edit documentation in R/reAssign.R
 \name{reAssign}
 \alias{reAssign}
+\alias{reAssign.tkmeans}
 \title{Re-Assign Observations Trimmed Prior to Clustering}
 \usage{
 reAssign(x, ...)
+
+\method{reAssign}{tkmeans}(x, ...)
 }
 \arguments{
-\item{x}{a trimmed clustering object}
+\item{x}{a trimmed clustering object, currently only 
+\code{'tkmeans'} object (return of \code{\link[tclust]{tkmeans}}) is supported}
 
 \item{...}{potential parameters}
 }
@@ -26,5 +30,6 @@ data(geyser2)
 clus = tkmeans(geyser2, k = 3L, alpha = .03)
 plot(clus, main = 'Before Re-Assigning')
 plot(reAssign(clus), main = 'After Re-Assigning')
+
 
 }

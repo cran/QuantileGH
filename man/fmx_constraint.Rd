@@ -3,6 +3,7 @@
 \name{fmx_constraint}
 \alias{fmx_constraint}
 \alias{fmx_constraint_user}
+\alias{fmx_constraint_brief}
 \title{Parameter Constraint(s) of Mixture Distribution}
 \usage{
 fmx_constraint(
@@ -13,13 +14,15 @@ fmx_constraint(
 )
 
 fmx_constraint_user(distname, K, user)
+
+fmx_constraint_brief(dist)
 }
 \arguments{
-\item{dist}{an \code{'fmx'} object, can be missing}
+\item{dist}{an \code{\linkS4class{fmx}} object, can be missing}
 
 \item{distname, K, parM}{the name of distribution, the number of components and the matrix of distribution parameters of a finite mixture distribution}
 
-\item{user}{an user-specified \code{'character'} vector to denote the constraint(s) to be 
+\item{user}{an user-specified \code{\link[base]{character}} vector to denote the constraint(s) to be 
 imposed for a finite mixture distribution.  For example, for a two-component Tukey's \eqn{g}-&-\eqn{h}
 mixture, \code{user = c('g2', 'h1')} indicates the \eqn{g}-parameter for the first component (with smaller mean value)
 and the \eqn{h}-parameter for the second component (with larger mean value) are to be constrained, i.e., \eqn{g_2=h_1=0}.}
@@ -27,26 +30,36 @@ and the \eqn{h}-parameter for the second component (with larger mean value) are 
 \value{
 \code{\link{fmx_constraint}} returns the indexes of internal parameters 
 (only applicable to Tukey's \eqn{g}-&-\eqn{h} mixture distribution, yet) to be constrained, 
-based on the input \code{'fmx'} object \code{dist}.
+based on the input \code{\linkS4class{fmx}} object \code{dist}.
 
 \code{\link{fmx_constraint_user}} returns the indexes of internal parameters 
 (only applicable to Tukey's \eqn{g}-&-\eqn{h} mixture distribution, yet) to be constrained, 
 based on the type of distribution (\code{distname}), number of components (\code{K}) 
 and a user-specified string (e.g., \code{c('g2', 'h1')}).
+
+\code{\link{fmx_constraint_brief}} returns a \code{\link[base]{character}} scalar (of LaTeX expression) of the constraint, 
+primarily intended for end-users in plots.
 }
 \description{
-Determine the parameter constraint(s) of a finite mixture distribution, either by the 
-the given parameters of such mixture distribution, or by a user-specified string.
+Determine the parameter constraint(s) of a finite mixture distribution, either 
+by the value of parameters of such mixture distribution, or by a user-specified string.
 }
 \examples{
-(d = fmx('GH', A = c(1,4), g = c(.2,0), h = c(0,.1), w = c(1,1)))
-(c1 = fmx_constraint(d))
-(c2 = fmx_constraint_user(distname = 'GH', K = 2L, user = c('g2', 'h1')))
-
 (d0 = fmx('GH', A = c(1,4), g = c(.2,.1), h = c(.05,.1), w = c(1,1)))
-(c3 = fmx_constraint(d0))
-(c4 = fmx_constraint_user(distname = 'GH', K = 2L, user = character()))
+(c0 = fmx_constraint(d0))
+stopifnot(identical(c0, fmx_constraint_user(distname = 'GH', K = 2L, user = character())))
+fmx_constraint_brief(d0)
 
-stopifnot(identical(c1, c2), identical(c3, c4))
+(d1 = fmx('GH', A = c(1,4), g = c(.2,0), h = c(0,.1), w = c(1,1)))
+(c1 = fmx_constraint(d1))
+stopifnot(identical(c1, fmx_constraint_user(distname = 'GH', K = 2L, user = c('g2', 'h1'))))
+fmx_constraint_brief(d1)
+
+(d2 = fmx('GH', A = c(1,4), g = c(.2,0), h = c(.15,.1), w = c(1,1)))
+(c2 = fmx_constraint(d2))
+stopifnot(identical(c2, fmx_constraint_user(distname = 'GH', K = 2L, user = 'g2')))
+fmx_constraint_brief(d2)
+
+fmx_constraint_brief(fmx('norm', mean = c(0, 1)))
 
 }

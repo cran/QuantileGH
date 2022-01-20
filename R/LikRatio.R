@@ -1,12 +1,14 @@
 
 
+# '\u0394' is lower case delta # unicode creates a NOTE in R CMD check
+
 #' @title Likelihood Ratio Test for General Models
 #' 
 #' @description ...
 #' 
-#' @param models a \code{'list'} of regression models, or a \code{'list'} of \code{'logLik'} objects.
+#' @param models a \code{\link[base]{list}} of regression models, or a \code{\link[base]{list}} of \code{\link[stats]{logLik}} objects.
 #' 
-#' @param type \code{'character'} value, \code{'plain'} (default) for ordinary likelihood ratio test;
+#' @param type \code{\link[base]{character}} scalar, \code{'plain'} (default) for ordinary likelihood ratio test;
 #' \code{'vuong'} for Vuong's closeness test for non-nested models
 #' 
 #' @param compare type of comparison between the models, sequentially (\code{'seq'}) or 
@@ -14,8 +16,8 @@
 #' 
 #' @param ... potential arguments (currently not in use)
 #' 
-#' @details
-#' Inspired by \code{\link[lmtest]{lrtest.default}}.
+#' @seealso
+#' \code{\link[lmtest]{lrtest.default}}
 #' 
 #' @return 
 #' 
@@ -23,6 +25,9 @@
 #' 
 #' @examples 
 #' # no examples for now
+#' 
+#' @references 
+#' Vuong's closeness test, \doi{10.2307/1912557}.
 #' 
 #' @export
 LikRatio <- function(models, type = c('plain', 'vuong'), compare = c('seq', 'first'), ...) {
@@ -32,29 +37,30 @@ LikRatio <- function(models, type = c('plain', 'vuong'), compare = c('seq', 'fir
   nm <- names(models)
   if (!length(nm) || anyNA(nm) || !all(nzchar(nm))) stop('`models` must be fully named')
   
-  logL <- lapply(models, FUN = logLik) # has ?stats:::logLik.logLik
+  .logL <- lapply(models, FUN = logLik) # ?stats:::logLik.logLik
+  .AIC <- lapply(.logL, FUN = AIC) # ?stats:::AIC.logLik
+  .BIC <- lapply(.logL, FUN = BIC) # ?stats:::BIC.logLik
   
-  Ns <- vapply(logL, FUN = attr, which = 'nobs', exact = TRUE, FUN.VALUE = 0L)
+  Ns <- vapply(.logL, FUN = attr, which = 'nobs', exact = TRUE, FUN.VALUE = 0L)
   if (!all(duplicated.default(Ns)[-1L])) stop('sample size must be same')
   N <- Ns[1L] # needed in 'vuong'
   
   id0 <- switch(match.arg(compare), seq = 1:(n - 1L), first = 1L)
   id1 <- 2:n
   
-  df <- vapply(logL, FUN = attr, which = 'df', exact = TRUE, FUN.VALUE = 0)
-  logL0 <- unlist(logL, use.names = FALSE)
+  df <- vapply(.logL, FUN = attr, which = 'df', exact = TRUE, FUN.VALUE = 0)
+  logL0 <- unlist(.logL, use.names = FALSE)
   
   d_df <- df[id1] - df[id0] # delta-df
   d_logL <- logL0[id1] - logL0[id0] # delta-log-likelihood
   
   out0 <- data.frame( # colnames from ?lmtest::lrtest.default
     Df = df, 
-    # '\u0394Df' = c(NA_real_, d_df), # unicode creates a NOTE in R CMD check
     'delta-Df' = c(NA_real_, d_df),
-    LogLik = logL0, 
-    AIC = vapply(logL, FUN = AIC, FUN.VALUE = 0), # ?stats:::AIC.logLik
-    BIC = vapply(logL, FUN = BIC, FUN.VALUE = 0), # ?stats:::BIC.logLik
-    row.names = c(nm[1L], paste0(nm[id1], ' (vs. ', nm[id0], ')')), # my new design
+    logLik = logL0, 
+    AIC = unlist(.AIC, use.names = FALSE), 
+    BIC = unlist(.BIC, use.names = FALSE), 
+    row.names = c(nm[1L], paste0(nm[id1], ' (vs. ', nm[id0], ')')),
     check.names = FALSE)
   
   switch(match.arg(type), plain = {
@@ -63,7 +69,6 @@ LikRatio <- function(models, type = c('plain', 'vuong'), compare = c('seq', 'fir
     pval <- ifelse((.d_df <- round(abs(d_df))) == 0, yes = NA_real_, no = pchisq(chisq, df = .d_df, lower.tail = FALSE))
     out <- data.frame(
       out0,
-      # '2*|\u0394logLik|' = c(NA_real_, chisq),  # unicode creates a NOTE in R CMD check
       '2*|delta-logLik|' = c(NA_real_, chisq),
       'Pr(>Chisq)' = c(NA_real_, pval),
       check.names = FALSE)
@@ -75,12 +80,13 @@ LikRatio <- function(models, type = c('plain', 'vuong'), compare = c('seq', 'fir
     # \url{https://en.wikipedia.org/wiki/Vuong%27s_closeness_test}
     # Vuong (1989) https://authors.library.caltech.edu/81424/1/sswp605.pdf
     # Note that the numerator is the difference between \strong{log}-likelihoods.
-    logl <- lapply(logL, FUN = attr, which = 'logl', exact = TRUE)
+    logl <- lapply(.logL, FUN = attr, which = 'logl', exact = TRUE)
     if (!all(lengths(logl, use.names = FALSE) == N)) stop('`logLik.*` must return pointwise log-likelihood')
     
-    # V_denom <- sqrt(N) * mapply(FUN = \(e1, e2) var(e1 - e2), e1 = logl[id1], e2 = logl[id0], SIMPLIFY = TRUE)
-    V_denom <- sqrt(N) * mapply(FUN = \(e1, e2) mad(e1 - e2)^2, e1 = logl[id1], e2 = logl[id0], SIMPLIFY = TRUE)
-    # use stats::mad()^2 to replace stats::var for robustness; important!!
+    V_denom <- sqrt(N) * mapply(FUN = function(e1, e2) {
+      # var(e1 - e2)
+      mad(e1 - e2)^2 # use stats::mad()^2 to replace stats::var for robustness; important!!
+    } , e1 = logl[id1], e2 = logl[id0], SIMPLIFY = TRUE)
     
     # both AIC- and BIC- correction are mentioned in Vuong (1989) Page 27, bottom
     z_AIC <- (d_logL - d_df) / V_denom # AIC-corrected
@@ -88,6 +94,7 @@ LikRatio <- function(models, type = c('plain', 'vuong'), compare = c('seq', 'fir
     # presume that `model0` is more complicated than `model1` (i.e., in ?StepK_fmx), then d_df < 0
     # since log(N)/2 almost always > 1 (i.e., N > 7.389), thus z_AIC < z_BIC
     # In other words, AIC-correction is more prone to `model0` (complicated model); BIC-correction to `model1` (simpler model)
+    
     Vuong_decision <- function(z, conf.level = .95, ddf = d_df, nm1 = nm[id1], nm0 = nm[id0]) {
       n <- length(z)
       if ((n > 1L) && (length(nm0) == 1L)) nm0 <- rep(nm0, times = n)
@@ -115,6 +122,9 @@ LikRatio <- function(models, type = c('plain', 'vuong'), compare = c('seq', 'fir
     class(out) <- c('vuong', 'data.frame') # write ?print.vuong later
   })
   
+  attr(out, 'logLik') <- .logL
+  attr(out, 'AIC') <- .AIC
+  attr(out, 'BIC') <- .BIC
   return(out) 
   
 }

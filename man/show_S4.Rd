@@ -14,7 +14,7 @@
 An invisible \code{NULL} is returned, following the behavior of \code{\link[methods]{show}}.
 }
 \description{
-..
+Automatically display objects from an S4 class (a class defined by a call to \code{\link[methods]{setClass}}).
 }
 \seealso{
 \code{\link[methods]{show}}

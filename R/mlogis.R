@@ -8,17 +8,17 @@
 #' This transformation is a generalization of \code{\link[stats]{plogis}} which converts scalar logit into probability
 #' and \code{\link[stats]{qlogis}} which converts probability into scalar logit.
 #' 
-#' @param p 'numeric' vector of multinomial probabilities, adding up to 1
+#' @param p \code{\link[base]{numeric}} vector of multinomial probabilities, adding up to 1
 #' 
-#' @param q 'numeric' vector of multinomial logits
+#' @param q \code{\link[base]{numeric}} vector of multinomial logits
 #' 
 #' @details 
 #' 
-#' \code{\link{pmlogis_first}} and \code{\link{pmlogis_last}} take a length \eqn{k-1} 'numeric' vector of 
+#' \code{\link{pmlogis_first}} and \code{\link{pmlogis_last}} take a length \eqn{k-1} \code{\link[base]{numeric}} vector of 
 #' multinomial logits and convert them into length \eqn{k} multinomial probabilities, regarding the first or last category 
 #' as reference, respectively.
 #' 
-#' \code{\link{qmlogis_first}} and \code{\link{qmlogis_last}} take a length \eqn{k} 'numeric' vector of 
+#' \code{\link{qmlogis_first}} and \code{\link{qmlogis_last}} take a length \eqn{k} \code{\link[base]{numeric}} vector of 
 #' multinomial probabilities and convert them into length \eqn{k-1} multinomial logits, regarding the first or last category 
 #' as reference, respectively.
 #' 
@@ -71,29 +71,47 @@ qmlogis_last <- function(p) {
 #' @rdname mlogis
 #' @export
 pmlogis_first <- function(q) {
+  #if (anyNA(q)) stop('we *do* allow NA_real_ in logits')
   eq <- exp(q)
   id <- is.infinite(eq)
-  if (any(id)) {
-    if (all(id) && all(q < 0)) return(c(1, q*0))
-    if (sum(id) > 1L || q[id] < 0) stop('must be single positive Inf')
-    return(c(0, id))
+  ret <- if (any(id)) {
+    if (all(id) && all(q < 0)) {
+      c(1, q*0)
+    } else if (sum(id) > 1L || q[id] < 0) {
+      stop('must be single positive Inf')
+    } else c(0, id)
+  } else {
+    y0 <- c(1, eq)
+    y0/sum(y0)
   }
-  y0 <- c(1, eq)
-  return(y0/sum(y0))
+  if (!all(is.finite(ret))) {
+    print(q)
+    stop('these multinomial logits creates NA or Inf proportions?')
+  }
+  return(ret)
 }
 
 #' @rdname mlogis
 #' @export
 pmlogis_last <- function(q) {
+  #if (anyNA(q)) stop('we *do* allow NA_real_ in logits')
   eq <- exp(q)
   id <- is.infinite(eq)
-  if (any(id)) {
-    if (all(id) && all(q < 0)) return(c(q*0, 1))
-    if (sum(id) > 1L || q[id] < 0) stop('must be single positive Inf')
-    return(c(id, 0))
+  ret <- if (any(id)) {
+    if (all(id) && all(q < 0)) {
+      c(q*0, 1)
+    } else if (sum(id) > 1L || q[id] < 0) {
+      stop('must be single positive Inf')
+    } else c(id, 0)
+  } else {
+    y0 <- c(eq, 1)
+    y0/sum(y0)
   }
-  y0 <- c(eq, 1)
-  return(y0/sum(y0))
+  if (!all(is.finite(ret))) {
+    print(q)
+    stop('these multinomial logits creates NA or Inf proportions?')
+  }
+  return(ret)
 }
 
 

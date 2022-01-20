@@ -1,58 +1,128 @@
 
 
-
+#' @title A Slight Modification of \code{\link[rstpm2]{vuniroot}}
+#' 
+#' @description 
+#' 
+#' A slight modification of \code{\link[rstpm2]{vuniroot}} to solve \eqn{y = f(x)}, 
+#' for a given vector of \eqn{y} values.
+#' 
+#' @param y \code{\link[base]{numeric}} vector of \eqn{y} values
+#' 
+#' @param f the \code{\link[base]{function}} \eqn{f(x)}
+#' 
+#' @param interval length-2 \code{\link[base]{numeric}} vector
+#' 
+#' @param tol desired accuracy (convergence tolerance), see \code{\link[rstpm2]{vuniroot}}
+#' 
+#' @param maxiter maximum number of iterations, see \code{\link[rstpm2]{vuniroot}}
+#' 
+#' @details
+#' 
+#' \code{\link{vuniroot2}}, different from \code{\link[rstpm2]{vuniroot}}, does
+#' \itemize{
+#' \item{accept \code{NA_real_} as element(s) of \eqn{y}}
+#' \item{handle the case when the analytical root is at \code{lower} and/or \code{upper}}
+#' \item{return a root of \code{Inf} (if \code{abs(f(lower)) >= abs(f(upper))}) or 
+#' \code{-Inf} (if \code{abs(f(lower)) < abs(f(upper))}), 
+#' when the function value \code{f(lower)} and \code{f(upper)} are not-of-opposite-sign.}
+#' }
+#' 
+#' Note that we do not have parameter \code{...} in \code{\link{vuniroot2}}, otherwise it will cause warning message 
+#' `The \code{\link{dGH}}/\code{\link{pGH}} function should raise an error when names are incorrectly named' in \code{fitdistrplus:::test1fun}.
+#' 
+#' @return 
+#' 
+#' A \code{\link[base]{numeric}} vector \eqn{x} as the solution of \eqn{y = f(x)} with given \eqn{y}.
+#' 
+#' @seealso \code{\link[rstpm2]{vuniroot}}
+#' 
+#' @examples 
+#' library(rstpm2)
+#' lwr = rep(1, times = 9L); upr = rep(3, times = 9L)
+#' 
+#' # ?rstpm2::vuniroot does not accept NA \eqn{y}
+#' tryCatch(vuniroot(function(x) x^2 - c(NA, 1:8), lower = lwr, upper = upr), error = identity)
+#' 
+#' # ?rstpm2::vuniroot not good when root is at `lower` or `upper`
+#' f <- function(x) x^2 - 1:9
+#' tryCatch(vuniroot(f, lower = lwr, upper = upr, extendInt = 'no'), warning = identity)
+#' tryCatch(vuniroot(f, lower = lwr, upper = upr, extendInt = 'yes'), warning = identity)
+#' tryCatch(vuniroot(f, lower = lwr, upper = upr, extendInt = 'downX'), error = identity)
+#' tryCatch(vuniroot(f, lower = lwr, upper = upr, extendInt = 'upX'), warning = identity)
+#' 
+#' # all good
+#' vuniroot2(c(NA, 1:9), f = function(x) x^2, interval = c(1, 3))
+#' 
+#' @export
 vuniroot2 <- function(
-  y, yok = !is.na(y), f, interval = stop('must provide interval'), 
-  else_return = stop(err_message),
-  ...
+  y, f, interval = stop('must provide a length-2 `interval`'), 
+  tol = .Machine$double.eps^.25, maxiter = 1000
 ) {
   
-  if (any(is.infinite(y))) stop('infinite return from function `f` wont happen') # may mask later
+  if (any(is.infinite(y))) stop('infinite return from function `f` cannot be handled')
   out <- rep(NA_real_, times = length(y)) # y * NA_real_; # since NA * Inf -> NaN
+  if (!any(yok <- !is.na(y))) return(out)
   out[yok] <- Inf
   yok_ <- y[yok]
   
-  lower <- interval[1L]
-  upper <- interval[2L]
-  f.interval <- f(interval) # len-2
-  if (f.interval[1L] == f.interval[2L]) {
-    err_message <- 'function in `vuniroot2` not monotone'
-    return(else_return)
-  }
-  if (anyNA(f.interval)) {
+  f.intv <- f(interval) # len-2
+  if (anyNA(f.intv)) {
     #f <<- f; interval <<- interval
-    cat('Interval', paste(interval, collaspe = ', '), '\n')
-    cat(f(interval), '\n')
-    stop('parametrization has been optimized! Let `vuniroot2` err.')
+    stop('function evaluated at either end of the `interval` must not be NA')
   }
-  
-  #if (any(is.infinite(f.interval))) {
-  #  # \code{fitdistrplus:::test1fun} requires NaN output
-  #  out[yok] <- NaN 
+  #if (any(is.infinite(f.intv))) { ### Inf ends are fine!!
+  #  #f <<- f; interval <<- interval
+  #  #stop('function evaluated at either end of the `interval` must not be Inf or -Inf')
   #  return(out)
   #}
   
-  f.lower <- f.interval[1L] - yok_
-  f.upper <- f.interval[2L] - yok_
-  lower_neg <- (f.lower < 0)
-  upper_pos <- (f.upper > 0)
+  # Remove this.  Just let algorithm declare the solution being Inf
+  #if (f.intv[1L] == f.intv[2L]) stop('function in `vuniroot2` not monotone')
   
-  id_same_sign <- xor(lower_neg, upper_pos) # '==' case considered :))
+  f.lower <- f.intv[1L] - yok_
+  f.upper <- f.intv[2L] - yok_
   
-  if (any(id_same_sign)) {
-    out[yok][id_same_sign & (abs(f.lower) < abs(f.upper))] <- -Inf
-    id_oppo_sign <- which(!id_same_sign) # remove .Internal for CRAN
-  } else {
-    id_oppo_sign <- seq_along(yok_)
+  # check values at either end of `interval`
+  if (any(fl0 <- (abs(f.lower) < tol))) {
+    out[yok][fl0] <- interval[1L]
+    f.lower <- f.lower[!fl0]
+    f.upper <- f.upper[!fl0]
+    yok[yok][fl0] <- FALSE # update `yok` the last
+    if (!any(yok)) return(out)
   }
+  if (any(fu0 <- (abs(f.upper) < tol))) {
+    out[yok][fu0] <- interval[2L]
+    f.lower <- f.lower[!fu0]
+    f.upper <- f.upper[!fu0]
+    yok[yok][fu0] <- FALSE # update `yok` the last
+    if (!any(yok)) return(out)
+  }
+  yok_ <- y[yok]
+  # end of checking at either end of `interval`
+
+  if (any(sign_same <- (f.lower * f.upper > 0))) {
+    # smart!  used in ?base::uniroot and ?rstpm2::vuniroot
+    # `sign_same` are teh indexes of `y` where {f(interval[1L]) - y} and {f(interval[2L]) - y} are of the same signs
+    # they will cause error in ?rstpm2::vuniroot and/or ?base::uniroot
+    # therefore I will let the solution at these indexes to be either -Inf or Inf
+    out[yok][sign_same & (abs(f.lower) < abs(f.upper))] <- -Inf # otherwise Inf (as defined as default)
+    sign_change <- which(!sign_same)
+    # `sign_change` are the indexes of `y` where {f(interval[1L]) - y} and {f(interval[2L]) - y} are of opposite signs
+  } else sign_change <- seq_along(yok_)
   
-  nn <- length(id_oppo_sign)
-  suppressWarnings(
-    out[yok][id_oppo_sign] <- vuniroot(
-      f = \(x) f(x) - yok_[id_oppo_sign],
-      lower = rep(lower, times = nn), upper = rep(upper, times = nn), 
-      f.lower = f.lower[id_oppo_sign], f.upper = f.upper[id_oppo_sign], ...)[[1L]]
-  )
+  if (nn <- length(sign_change)) { 
+    # very important!! 
+    # `sign_change` could be len-0
+    # in such case R will crash (instead of throw an ?rstpm2::vuniroot error)
+    # ?base::tryCatch will not be able to stop R from crashing!
+    out[yok][sign_change] <- vuniroot(
+      f = function(x) f(x) - yok_[sign_change],
+      lower = rep(interval[1L], times = nn), upper = rep(interval[2L], times = nn), 
+      f.lower = f.lower[sign_change], f.upper = f.upper[sign_change], 
+      extendInt = 'no', check.conv = TRUE,
+      tol = tol, maxiter = maxiter, trace = 0L)[[1L]] # do \strong{not} ?base::suppressWarnings
+  }
   
   return(out)
   

@@ -15,25 +15,25 @@
 #' 
 #' @param p_h \code{FALSE} if the \eqn{h}-parameter is constrained at 0, otherwise probabilities used for estimating parameter `h`
 #' 
-#' @param halfSpread 'character' value, which half-spread should be used
+#' @param halfSpread \code{\link[base]{character}} scalar, which half-spread should be used
 #' 
 #' @param ... additional parameters, currently not in use
 #' 
 #' @details 
 #' 
 #' \code{Hoaglin_GH} can replace the functionality of \code{fitdistrplus:::start.arg.default},
-#' thus extend \code{\link[fitdistrplus]{fitdist}} for estimating Tukey's G-&-H distributions.
+#' thus extend \code{\link[fitdistrplus]{fitdist}} for estimating Tukey's \eqn{g}-&-\eqn{h} distributions.
 #' 
 #' All page/formula numbers refer to Hoaglin (2006).
 #' 
 #' @return 
 #' 
-#' \code{\link{Hoaglin_GH}} returns a \code{'double'} vector with element names \code{A}, \code{B}, \code{g} and \code{h}, 
+#' \code{\link{Hoaglin_GH}} returns a \code{\link[base]{double}} vector with element names \code{A}, \code{B}, \code{g} and \code{h}, 
 #' indicating the parameters of a Tukey's \eqn{g}-&-\eqn{h} distribution.
 #' 
 #' 
 #' @references 
-#' Hoaglin, D.C. (1006). Summarizing Shape Numerically: The \eqn{g}‐and‐\eqn{h} Distributions. 
+#' Hoaglin, D.C. (1006). Summarizing Shape Numerically: The \eqn{g}-and-\eqn{h} Distributions. 
 #' In \emph{Exploring Data Tables, Trends, and Shapes} (eds D.C. Hoaglin, F. Mosteller and J.W. Tukey).
 #' \doi{10.1002/9781118150702.ch11}
 #' 
@@ -41,11 +41,8 @@
 #' set.seed(451); x = rGH(n = 1e2L, g = -.3, h = .1)
 #' (y0 = Hoaglin_GH(x))
 #' 
-#' \donttest{
 #' library(fitdistrplus)
 #' fitdist(x, distr = 'GH', start = as.list.default(y0))
-#' # fix the warning here
-#' }
 #' 
 #' @export
 Hoaglin_GH <- function(

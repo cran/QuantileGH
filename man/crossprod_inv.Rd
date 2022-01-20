@@ -7,18 +7,17 @@
 crossprod_inv(X)
 }
 \arguments{
-\item{X}{\eqn{m*n} matrix}
+\item{X}{\eqn{m*n} \code{\link[base]{matrix}}}
 }
 \value{
-The inverse \code{'matrix'} of the cross product \eqn{(X'X)}, where \eqn{X} is the input \code{'matrix'}.
+The inverse \code{\link[base]{matrix}} of the cross product \eqn{(X'X)}, where \eqn{X} is the input \code{\link[base]{matrix}}.
 }
 \description{
 Compute \eqn{(X'X)^{-1}} from the R part of the QR decomposition of \eqn{X}.
 }
 \examples{
 set.seed(123); (X = array(rnorm(40L), dim = c(8L, 5L)))
-(Xcp = crossprod(X))
-all.equal.numeric(solve(Xcp), crossprod_inv(X))
+stopifnot(all.equal.numeric(solve(crossprod(X)), crossprod_inv(X)))
 
 
 }
@@ -26,5 +25,5 @@ all.equal.numeric(solve(Xcp), crossprod_inv(X))
 \url{https://en.wikipedia.org/wiki/QR_decomposition}, section \strong{Rectangular matrix}
 }
 \seealso{
-\code{\link[base]{chol2inv}}
+\code{\link[base]{chol2inv}}, \code{\link[base]{chol.default}}
 }

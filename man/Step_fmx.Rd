@@ -4,29 +4,27 @@
 \alias{Step_fmx}
 \title{Backward Selection \eqn{gh}-parsimonious Model with Fixed Number of Components}
 \usage{
-Step_fmx(object, by = c("logLik", "AIC", "BIC"), silent = FALSE, ...)
+Step_fmx(object, test = c("logLik", "AIC", "BIC"), ...)
 }
 \arguments{
-\item{object}{\code{'fmx_QLMDe'} object returned from \code{\link{QLMDe}}}
+\item{object}{\code{\linkS4class{fmx_QLMDe}} object returned from \code{\link{QLMDe}}}
 
-\item{by}{criterion, currently supporting 
-\code{'logLik'} (via my \code{\link{LikRatio}}, likelihood ratio test, default and recommended), 
-\code{'AIC'} (via \code{\link[stats]{AIC}}) and 
-\code{'BIC'} (via \code{\link[stats]{BIC}}).}
-
-\item{silent}{'logical' value, whether messages should be suppressed (default \code{FALSE})}
+\item{test}{\code{\link[base]{character}} value indicating the criterion to be used, with options
+\code{'logLik'} (via likelihood ratio test \code{\link{LikRatio}}, default and recommended), 
+\code{'AIC'} (via Akaike's information criterion \code{\link[stats]{AIC}}) and 
+\code{'BIC'} (via Bayesian information criterion \code{\link[stats]{BIC}}).}
 
 \item{...}{additional parameters}
 }
 \value{
-\code{\link{Step_fmx}} returns an \code{'fmx_QLMDe'} object, with attributes
+\code{\link{Step_fmx}} returns an \code{\linkS4class{fmx_QLMDe}} object, with attributes
 \itemize{
 \item{\code{anova}} {ANOVA table}
 \item{\code{objF}} {value of the objective function (either the log-likelihood, AIC or BIC)}
 }
 }
 \description{
-The function \code{\link{Step_fmx}} selects a \eqn{gh}-parsimonious model with \eqn{g} and/or \eqn{h} parameters equal to zero 
+\code{\link{Step_fmx}} selects a \eqn{gh}-parsimonious model with \eqn{g} and/or \eqn{h} parameters equal to zero 
 for all or some of the mixture components conditionally on fixed number of components \eqn{K}.
 }
 \details{

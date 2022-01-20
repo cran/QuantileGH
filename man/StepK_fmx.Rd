@@ -6,35 +6,30 @@
 \usage{
 StepK_fmx(
   object,
-  by = c("logLik", "AIC", "BIC"),
-  Kmax = 3L,
-  silent = FALSE,
+  test = c("logLik", "AIC", "BIC"),
+  Kmax = stop("must specify maximum `Kmax`"),
+  trace = TRUE,
   ...
 )
 }
 \arguments{
-\item{object}{\code{'fmx_QLMDe'} object returned from \code{\link{QLMDe}}}
+\item{object}{\code{\linkS4class{fmx_QLMDe}} object returned from \code{\link{QLMDe}}}
 
-\item{by}{criterion, currently supporting 
-\code{'logLik'} (via my \code{\link{LikRatio}}, likelihood ratio test, default and recommended), 
-\code{'AIC'} (via \code{\link[stats]{AIC}}) and 
-\code{'BIC'} (via \code{\link[stats]{BIC}}).}
+\item{test, trace}{see parameter \code{test} and \code{trace} of \code{\link{Step_fmx}}}
 
-\item{Kmax}{'integer' value, the maximum number of component to be considered}
-
-\item{silent}{'logical' value, whether messages should be suppressed (default \code{FALSE})}
+\item{Kmax}{\code{\link[base]{integer}} value, the maximum number of component to be considered}
 
 \item{...}{additional parameters}
 }
 \value{
-\code{\link{StepK_fmx}} returns an \code{'fmx_QLMDe'} object, with attributes
+\code{\link{StepK_fmx}} returns an \code{\linkS4class{fmx_QLMDe}} object, with attributes
 \itemize{
 \item{\code{anova}} {ANOVA table}
 \item{\code{objF}} {value of the objective function (either the log-likelihood, AIC or BIC)}
 }
 }
 \description{
-The function \code{\link{StepK_fmx}} compares \eqn{gh}-parsimonious models with different number of components \eqn{K}
+\code{\link{StepK_fmx}} compares \eqn{gh}-parsimonious models with different number of components \eqn{K}
 and selects the optimal model using the Vuong's closeness test.
 }
 \details{

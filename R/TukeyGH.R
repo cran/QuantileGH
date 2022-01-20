@@ -19,26 +19,27 @@
 #' 
 #' @param z standard normal quantiles.
 #' 
-#' @param log,log.p logical; if \code{TRUE}, probabilities \eqn{p} are given as \eqn{log(p)}.
+#' @param log,log.p logical; if \code{TRUE}, probabilities \eqn{p} are given as \eqn{\log(p)}.
 #' 
 #' @param lower.tail logical; if \code{TRUE} (default), probabilities are \eqn{Pr(X\le x)} otherwise, \eqn{Pr(X>x)}.
 #' 
-#' @param A location parameter, with default value of 0, as parameter \code{mean} of \code{\link[stats]{dnorm}}
+#' @param A location parameter, default \eqn{0} (as parameter \code{mean} of \code{\link[stats]{dnorm}})
 #' 
-#' @param B (>0) scale parameter, with default value of 1, as parameter \code{sd} of \code{\link[stats]{dnorm}}
+#' @param B scale parameter (\eqn{>0}), default \eqn{1} (as parameter \code{sd} of \code{\link[stats]{dnorm}})
 #' 
-#' @param g skewness parameter
+#' @param g skewness parameter, default \eqn{0} indicating no skewness
 #' 
-#' @param h (>=0) kurtosis parameter
+#' @param h kurtosis parameter (\eqn{\geq 0}), default \eqn{0} indicating no kurtosis
 #' 
-#' @param q0,qok parameters for internal use
+#' @param q0 \eqn{(q-A)/B}, for internal use to increase compute speed
 #' 
-# @param interval interval of standard normal quantiles, when solving from Tukey G-&-H quantiles using the zeroin2 algorithm 
+# @param interval interval of standard normal quantiles, when solving from Tukey \eqn{g}-&-\eqn{h} quantiles using the vuniroot algorithm 
 #' 
-#' @param ... potential parameters
+#' @param ... other parameters of \code{\link{vuniroot2}}
 #' 
-#' @details ..
+#' @details
 #' 
+#' Argument \code{A}, \code{B}, \code{g} and \code{h} will be recycled to the maximum length of the four.
 #' 
 #' @return 
 #' 
@@ -57,11 +58,10 @@
 #' \code{\link{z2qGH}} is the Tukey's \eqn{g}-&-\eqn{h} transformation.
 #' Note that \code{gk:::z2gh} is only an \strong{approximation} to Tukey's \eqn{g}-&-\eqn{h} transformation.
 #' 
-#' Unfortunately, the inverse of Tukey's \eqn{g}-&-\eqn{h} transformation, \code{\link{qGH2z}}, does not have a closed form.
-#' We make use of the numerical solution provided in \code{\link[rstpm2]{vuniroot}}.
-#' This function takes scalar arguments and vector quantiles \code{q}.
-#' The computation cost of \code{\link{qGH2z}} is considerable, 
-#' as we need to solve the Tukey's \eqn{g}-&-\eqn{h} transformation for each quantile provided.
+#' Unfortunately, the inverse of Tukey's \eqn{g}-&-\eqn{h} transformation, \code{\link{qGH2z}}, 
+#' does not have a closed form and needs to be evaluated numerically (via \code{\link[rstpm2]{vuniroot}}).
+#' 
+#' @seealso \code{\link[OpVaR]{dgh}}, \code{\link[gk]{dgh}}
 #' 
 #' 
 #' @examples
@@ -88,8 +88,8 @@ dGH <- function(x, A = 0, B = 1, g = 0, h = 0, log = FALSE, ...) {
   return(.dGH(x = x, A = parM[,1L], B = parM[,2L], g = parM[,3L], h = parM[,4L], log = log, ...))
 }
 
-# inspired by ?OpVaR::dgh and ?gk::dgh, not compute intensive
-.dGH <- function(x, A, B, g, h, log, interval = c(-50, 50), ...) {
+# not compute intensive
+.dGH <- function(x, A, B, g, h, log, interval = c(-50, 50), tol = .Machine$double.eps^.25, maxiter = 1000) {
   # use wider `interval` since not compute intensive
   if (!(nx <- length(x))) return(double(length = 0L)) # ?fitdistrplus::fitdist will test len-0 `x`
   nA <- length(A)
@@ -105,7 +105,7 @@ dGH <- function(x, A = 0, B = 1, g = 0, h = 0, log = FALSE, ...) {
       z[] <- NaN
       return(z)
     }
-    z[xok] <- .qGH2z(q = c(x[xok]), A = A, B = B, g = g, h = h, interval = interval, ...)
+    z[xok] <- .qGH2z(q = c(x[xok]), A = A, B = B, g = g, h = h, interval = interval, tol = tol, maxiter = maxiter)
     
   } else if ((nA == nB) && (nA == ng) && (nA == nh)) {
     #if (!all(xok)) stop('my fmx algorithm do not allow NA or Inf quantile')
@@ -113,12 +113,12 @@ dGH <- function(x, A = 0, B = 1, g = 0, h = 0, log = FALSE, ...) {
       if (dim(x)[1L] != nA) stop('nrow of `x` do not match length of `A`')
       z <- q0 <- (x - A)/B
     } else if (is.numeric(x)) {
-      z <- q0 <- tcrossprod(1/B, x) - A/B # remove .Internal for publishing on CRAN; not computate-intensive
+      z <- q0 <- tcrossprod(1/B, x) - A/B
     } else stop('illegal x: ', sQuote(class(x)[1L]))
     qok <- is.finite(q0) # not `xok` when `x` ?base::is.vector
     for (i in seq_len(nA)) {
       iok <- qok[i,]
-      z[i,iok] <- .qGH2z(q0 = q0[i,iok], g = g[i], h = h[i], interval = interval, ...)
+      z[i,iok] <- .qGH2z(q0 = q0[i,iok], g = g[i], h = h[i], interval = interval, tol = tol, maxiter = maxiter)
     }
     
   } else stop('length of parameters must match')
@@ -237,14 +237,15 @@ z2qGH <- function(z, A = 0, B = 1, g = 0, h = 0) {
 
 
 
-# inverse of Tukey GH transformation; compute intensive!!!
+# not compute intensive (for compute intensive jobs, use \code{\link{.qGH2z}})
 # inspired by ?OpVaR:::gh_inv
 #' @rdname TukeyGH
 #' @export
-qGH2z <- function(q, q0 = (q - A)/B, qok = is.finite(q0), A = 0, B = 1, ...) {
+qGH2z <- function(q, q0 = (q - A)/B, A = 0, B = 1, ...) {
   # ?base::is.finite finds finite AND non-missing; as fast as \code{rep(TRUE, times = nq)} (where nq = length(q))
   if (!length(q0)) return(numeric()) # required by ?fitdistrplus::fitdist
   out <- q0
+  qok <- is.finite(q0)
   out[qok] <- .qGH2z(q0 = q0[qok], ...)
   return(out)
 }
@@ -261,11 +262,12 @@ if (FALSE) {
 
 
 # internal workhorse of \code{\link{qGH2z}}
+# inverse of Tukey GH transformation; compute intensive!!!
 .qGH2z <- function(
   q, q0 = (q - A)/B, # `q` and `q0` both finite AND non-missing
   A = 0, B = 1, g = 0, h = 0, # all len-1 (`A` and `B` not needed if `q0` is provided)
   interval = c(-15, 15), # smaller `interval` for \code{QLMDe} algorithm (support of standard normal distribution)
-  ...
+  tol = .Machine$double.eps^.25, maxiter = 1000
 ) {
   
   #if (!length(q0)) return(numeric()) # required by \code{fitdistrplus::fitdist}
@@ -277,8 +279,7 @@ if (FALSE) {
   # bound issue only in \code{dGH}, not \code{qfmx}
   
   if (!g0 && !h0) { # most likely to happen in ?stats::optim; put in as the first option to save time
-    #out[] <- vuniroot(f = \(z) expm1(g*z) * exp(h * z^2/2) - q0 * g, interval = interval)$root
-    out[] <- vuniroot2(y = q0 * g, f = \(z) expm1(g*z) * exp(h * z^2/2), interval = interval)
+    out[] <- vuniroot2(y = q0 * g, f = function(z) expm1(g*z) * exp(h * z^2/2), interval = interval, tol = tol, maxiter = maxiter)
     # very small `h` would cause bound-issue
     return(out)
   }
@@ -295,8 +296,7 @@ if (FALSE) {
   }
   
   if (g0 && !h0) { # wont have the bound issue if g0
-    #out[] <- vuniroot(f = \(z) z * exp(h * z^2/2) - q0, interval = interval)$root
-    out[] <- vuniroot2(y = q0, f = \(z) z * exp(h * z^2/2), interval = interval)
+    out[] <- vuniroot2(y = q0, f = function(z) z * exp(h * z^2/2), interval = interval, tol = tol, maxiter = maxiter)
     return(out)
   }
   

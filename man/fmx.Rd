@@ -17,6 +17,7 @@ dfmx(
   K = dim(parM)[1L],
   parM = dist@parM,
   w = dist@w,
+  silent = TRUE,
   ...,
   log = FALSE
 )
@@ -56,19 +57,23 @@ rfmx(
 )
 }
 \arguments{
-\item{distname, K, parM, w}{auxiliary parameters, whose default values are determined by argument \code{dist}, 
-see \code{\link{fmx-class}} for details.
+\item{distname, K, parM, w}{auxiliary parameters, whose default values are determined by
+the \code{\linkS4class{fmx}} object provided in argument \code{dist}.
 The user-specified vector of \code{w} does not need to sum up to 1; \code{w/sum(w)} will be used internally.}
 
-\item{...}{in \code{\link{fmx}}, these are the vectors of distribution parameters}
+\item{...}{mixture distribution parameters in \code{\link{fmx}}.
+See \code{\link{dGH}} for the names and default values of Tukey's \eqn{g}-&-\eqn{h} distribution parameters, 
+or \code{\link[stats]{dnorm}} for the names and default values of normal distribution parameters.}
 
-\item{x, q}{vector of quantiles.}
+\item{x, q}{vector of quantiles, \code{NA_real_} value(s) allowed.}
 
-\item{dist}{\code{'fmx'} object, representing a finite mixture distribution}
+\item{dist}{\code{\linkS4class{fmx}} object, representing a finite mixture distribution}
 
-\item{log, log.p}{logical; if \code{TRUE}, probabilities \eqn{p} are given as \eqn{log(p)}.}
+\item{silent}{\code{\link[base]{logical}} scalar, whether to print out necessary messages, default \code{TRUE}}
 
-\item{lower.tail}{logical; if \code{TRUE} (default), probabilities are \eqn{Pr(X\le x)} otherwise, \eqn{Pr(X>x)}.}
+\item{log, log.p}{\code{\link[base]{logical}} scalar; if \code{TRUE}, probabilities \eqn{p} are given as \eqn{\log(p)}.}
+
+\item{lower.tail}{\code{\link[base]{logical}} scalar; if \code{TRUE} (default), probabilities are \eqn{Pr(X\le x)} otherwise, \eqn{Pr(X>x)}.}
 
 \item{p}{vector of probabilities.}
 
@@ -77,46 +82,45 @@ The user-specified vector of \code{w} does not need to sum up to 1; \code{w/sum(
 \item{n}{number of observations.}
 }
 \value{
-\code{\link{fmx}} returns an S4 \code{'fmx'} object which specifies the parameters of a finite mixture distribution.
-See \code{\link{fmx-class}} for details.
+\code{\link{fmx}} returns an \code{\linkS4class{fmx}} object which specifies the parameters of a finite mixture distribution.
 
-\code{\link{dfmx}} returns a vector of probability density values of an S4 \code{'fmx'} object at specified quantiles \code{x}.
+\code{\link{dfmx}} returns a vector of probability density values of an \code{\linkS4class{fmx}} object at specified quantiles \code{x}.
 
-\code{\link{pfmx}} returns a vector of cumulative probability values of an S4 \code{'fmx'} object at specified quantiles \code{q}.
+\code{\link{pfmx}} returns a vector of cumulative probability values of an \code{\linkS4class{fmx}} object at specified quantiles \code{q}.
 
-\code{\link{qfmx}} returns a vector of quantiles of an S4 \code{'fmx'} object, based on specified cumulative probabilities \code{p}.
+\code{\link{qfmx}} returns an unnamed vector of quantiles of an \code{\linkS4class{fmx}} object, based on specified cumulative probabilities \code{p}.
+Note that \code{\link[stats]{qnorm}} returns an unnamed vector of quantiles, 
+although \code{\link[stats]{quantile}} returns a named vector of quantiles.
 
-\code{\link{rfmx}} generates random deviates of an S4 \code{'fmx'} object.
+\code{\link{rfmx}} generates random deviates of an \code{\linkS4class{fmx}} object.
 }
 \description{
 Density function, distribution function, quantile function and random generation for a finite mixture distribution 
 with normal or Tukey's \eqn{g}-&-\eqn{h} components.
 }
 \details{
-\code{\link{fmx}} creates an S4 \code{'fmx'} object which specifies the parameters of a finite mixture distribution.
-See \code{\link{fmx-class}} for details.
-
-\code{\link{dfmx}} gives the density, which is required in plotting and calculating
-the log-likelihood. 
-
-\code{\link{pfmx}} gives the distribution function.
+A computational challenge in \code{\link{dfmx}} is when mixture density is very close to 0,
+which happens when the per-component log densities are negative with big absolute values.  
+In such case, we cannot compute the log mixture densities (i.e., \code{-Inf}), for the log-likelihood \code{\link{logLik.fmx_QLMDe}}.
+Our solution is to replace these \code{-Inf} log mixture densities by 
+the weighted average (using the mixing proportions of \code{dist}) 
+of the per-component log densities.
 
 \code{\link{qfmx}} gives the quantile function, by solving \code{\link{pfmx}} by \code{\link[rstpm2]{vuniroot}}.
 One major challenge when dealing with the finite mixture of Tukey's \eqn{g}-&-\eqn{h} family distribution
 is that Brent–Dekker's method needs to be performed in both \code{\link{pGH}} and \code{\link{qfmx}}, 
-i.e. 'two layers' of root-finding algorithm.
-
-\code{\link{rfmx}} generates random deviates.
+i.e. `two layers' of root-finding algorithm.
 }
 \examples{
+
+# paramter is recycled
+fmx('norm', mean = c(4, 1, 14, 11), w = c(1, 2))
 
 x = (-3):7
 
 (e1 = fmx('norm', mean = c(0,3), sd = c(1,1.3), w = c(1, 1)))
-# 'fmx' object `e1`, a two-component 50\%-50\% mixture of normal
-isS4(e1) # 'fmx' is S4 object
-slotNames(e1) # 'slot' is similar to S3 object component 
-e1@parM # component parameters
+isS4(e1) # TRUE
+slotNames(e1)
 plot(e1) # using vanilla R
 autoplot(e1) # using ggplot2 package
 hist(rfmx(n = 1e3L, dist = e1), main = '1000 obs from e1')
@@ -126,7 +130,6 @@ round(p1 <- pfmx(x, dist = e1), digits = 3L)
 stopifnot(all.equal.numeric(qfmx(p1, dist = e1), x, tol = 1e-4))
 
 (e2 = fmx('GH', A = c(0,3), g = c(.2, .3), h = c(.2, .1), w = c(2, 3)))
-# 'fmx' object `e2`, a two-component 40\%-60\% mixture of Tukey
 hist(rfmx(n = 1e3L, dist = e2), main = '1000 obs from e2') 
 round(dfmx(x, dist = e2), digits = 3L)
 round(p2 <- pfmx(x, dist = e2), digits = 3L)
@@ -139,5 +142,11 @@ hist(rGH(n = 1e3L, A = 0, g = .2, h = .2))
 round(dfmx(x, dist = e3), digits = 3L)
 round(p3 <- pfmx(x, dist = e3), digits = 3L)
 stopifnot(all.equal.numeric(qfmx(p3, dist = e3), x, tol = 1e-4))
+
+if (FALSE) {
+  # log-mixture-density smoothing, for developers
+  (e4 = fmx('norm', mean = c(0,3), w = c(2, 3)))
+  plot(e4, type = 'log_pdf', xlim = c(-50, 50))
+}
 
 }

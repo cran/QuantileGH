@@ -1,26 +1,80 @@
 
 
-# S3 method for ?stats::add1
+
+#' @title Add or Drop All Possible Parameters of \code{\linkS4class{fmx_QLMDe}} Object
+#' 
+#' @description 
+#' 
+#' Compute all the single terms in the \code{scope} argument that can be added to or dropped from the model, 
+#' fit those models and compute a table of the changes in fit.
+#' 
+#' These are additional S3 methods of \code{\link[stats]{add1}} and \code{\link[stats]{drop1}}.
+#' 
+#' @param object \code{\linkS4class{fmx_QLMDe}} object
+#' 
+#' @param scope a \code{\link[base]{list}} of \code{\link[base]{character}} vectors to denote one or more constraints
+#' 
+#' @param test \code{\link[base]{character}}, either \code{'logLik'} (default), \code{'AIC'} or \code{'BIC'}
+#' 
+#' @param trace \code{\link[base]{logical}} scalar, whether to print out progress reports (default \code{FALSE})
+#' 
+#' @param ... place holder to match the S3 generic \code{\link[stats]{drop1}}, currently not in use
+#' 
+#' @details 
+#' 
+#' Do \strong{not} write as S3 method of \code{\link[MASS]{dropterm}}; there's no \strong{term} for \code{\linkS4class{fmx_QLMDe}} object.
+#' 
+#' @return
+#' 
+#' \code{\link{drop1.fmx_QLMDe}} returns an \code{\link[stats]{anova}} table with additional attributes
+#' \itemize{
+#' \item{\code{models}} {a \code{\link[base]{list}} of \code{\linkS4class{fmx_QLMDe}} objects}
+#' \item{\code{objF}} {a \code{\link[base]{list}} of objective functions (depends on \code{test})}
+#' \item{\code{o1}} {the location of the optimal models by \code{test}.  If the original model is optimal, this value is \code{integer()}}
+#' }
+#'
+#' \code{\link{add1.fmx_QLMDe}} will be added in the next release.
+#' 
+#' @seealso \code{\link[stats]{add1}}, \code{\link[stats]{drop1}}.
+#' 
+#' @name drop1_fmx
+#' @export
+drop1.fmx_QLMDe <- function(object, scope, test = c('logLik', 'AIC', 'BIC'), trace = TRUE, ...) { # `...` not used
+  
+  K <- dim(object@parM)[1L]
+  
+  y0 <- lapply(scope, FUN = function(iscope) { # (iscope = scope[[1L]])
+    if (trace) cat(paste0(object@distname, K), paste(c(iscope, '0'), collapse = '='), '.. ')
+    ret <- QLMDe(object@data, data.name = object@data.name, distname = object@distname, K = K, p = object@p, constraint = iscope)
+    if (trace) cat('done!\n', sep = '')
+    return(ret)
+  })
+  y <- c(list(object), y0) # input `object` \strong{is} included in the elements of return
+  names(y) <- vapply(y, FUN = fmx_constraint_brief, FUN.VALUE = '', USE.NAMES = FALSE)
+  
+  lr <- LikRatio(models = y, type = 'plain', compare = 'first') # print(lr) # ?stats:::print.anova
+  attr(lr, which = 'models') <- y
+  
+  test <- match.arg(test)
+  attr(lr, which = 'o1') <- switch(test, logLik = {
+    pval <- lr[[length(lr)]] # p-value must on last column (see my ?.pval.anova); 1st element of p-value always NA_real_
+    o1 <- which.max(pval) # 1st element NA_real_ omitted automatically
+    if (pval[o1] > .05) o1 else integer() # original `object` is significantly different from reduced model(s)
+  }, AIC =, BIC = {
+    o1 <- order(lr[[test]])[1L]
+    if (o1 != 1L) o1 else integer() # original `object` has smallest AIC/BIC
+  })
+  
+  return(lr)
+  
+}
+
+#' @rdname drop1_fmx
 #' @export
 add1.fmx_QLMDe <- function(object, scope, ...) {
   stop('not written yet')
 }
 
-
-# S3 method for ?stats::drop1
-# do \strong{not} write as S3 of ?MASS::dropterm; there's no \strong{term} for 'fmx_QLMDe' object
-#' @export
-drop1.fmx_QLMDe <- function(object, scope, silent = FALSE, ...) { # `...` not used
-  K <- dim(object@parM)[1L]
-  nms <- paste0(K, '-comp ', object@distname, ': ', vapply(scope, FUN = \(i) paste(c(i,'0'), collapse = '='), FUN.VALUE = ''))
-  # input `object` is \strong{not} included in the elements of return
-  lapply(setNames(seq_along(scope), nm = nms), FUN = \(i) {
-    if (!silent) cat(nms[i], '.. ')
-    ret <- QLMDe(object@data, data.name = object@data.name, distname = object@distname, K = K, p = object@p, constraint = scope[[i]])
-    if (!silent) cat('done! (stats::optim iter. ', ret@optim$counts['function'], ')\n', sep = '')
-    return(ret)
-  })
-}
 
 
 
@@ -28,17 +82,15 @@ drop1.fmx_QLMDe <- function(object, scope, silent = FALSE, ...) { # `...` not us
 #' 
 #' @description 
 #' 
-#' The function \code{\link{Step_fmx}} selects a \eqn{gh}-parsimonious model with \eqn{g} and/or \eqn{h} parameters equal to zero 
+#' \code{\link{Step_fmx}} selects a \eqn{gh}-parsimonious model with \eqn{g} and/or \eqn{h} parameters equal to zero 
 #' for all or some of the mixture components conditionally on fixed number of components \eqn{K}.
 #' 
-#' @param object \code{'fmx_QLMDe'} object returned from \code{\link{QLMDe}}
+#' @param object \code{\linkS4class{fmx_QLMDe}} object returned from \code{\link{QLMDe}}
 #' 
-#' @param by criterion, currently supporting 
-#' \code{'logLik'} (via my \code{\link{LikRatio}}, likelihood ratio test, default and recommended), 
-#' \code{'AIC'} (via \code{\link[stats]{AIC}}) and 
-#' \code{'BIC'} (via \code{\link[stats]{BIC}}).
-#' 
-#' @param silent 'logical' value, whether messages should be suppressed (default \code{FALSE})
+#' @param test \code{\link[base]{character}} value indicating the criterion to be used, with options
+#' \code{'logLik'} (via likelihood ratio test \code{\link{LikRatio}}, default and recommended), 
+#' \code{'AIC'} (via Akaike's information criterion \code{\link[stats]{AIC}}) and 
+#' \code{'BIC'} (via Bayesian information criterion \code{\link[stats]{BIC}}).
 #' 
 #' @param ... additional parameters
 #' 
@@ -58,19 +110,18 @@ drop1.fmx_QLMDe <- function(object, scope, silent = FALSE, ...) { # `...` not us
 #' 
 #' @return 
 #' 
-#' \code{\link{Step_fmx}} returns an \code{'fmx_QLMDe'} object, with attributes
+#' \code{\link{Step_fmx}} returns an \code{\linkS4class{fmx_QLMDe}} object, with attributes
 #' \itemize{
 #' \item{\code{anova}} {ANOVA table}
 #' \item{\code{objF}} {value of the objective function (either the log-likelihood, AIC or BIC)}
 #' }
 #' 
 #' @export
-Step_fmx <- function(object, by = c('logLik', 'AIC', 'BIC'), silent = FALSE, ...) {
+Step_fmx <- function(object, test = c('logLik', 'AIC', 'BIC'), ...) {
   
-  # 'fmx_fit' is for back-compatibility for simulation results
   # in future may add 'fmx_newMethod'
-  if (!inherits(object, what = c('fmx_QLMDe', 'fmx_fit'))) stop('input must be \'fmx_QLMDe\'')
-  by <- match.arg(by)
+  if (!inherits(object, what = c('fmx_QLMDe'))) stop('input must be \'fmx_QLMDe\'')
+  test <- match.arg(test)
   
   K <- dim(object@parM)[1L]
   candpar <- switch(object@distname, GH = { # candidate parameter(s) to be eliminated
@@ -78,46 +129,31 @@ Step_fmx <- function(object, by = c('logLik', 'AIC', 'BIC'), silent = FALSE, ...
   }, norm = character(), stop('unsupported ', sQuote(object@distname)))
   
   fit <- object
-  fit_constr <- attr(fmx_constraint(object), which = 'user', exact = TRUE)
+  fit_constr <- attr(fmx_constraint(fit), which = 'user', exact = TRUE)
   
   if (length(fit_constr)) { # in future
     # then add1
   }
   
-  npar <- npar_fmx(object)
-  model_name <- paste0(K, '-comp ', switch(object@distname, GH = {
-    paste0(object@distname, ': ', if (!length(fit_constr)) 'Unconstraint' else paste(c(fit_constr,0), collapse = '='))
-  }, norm = 'Normal'))
-  fit_orig <- setNames(list(object), nm = model_name)
-  objF <- objF_orig <- setNames(list(eval(call(by, object))), nm = model_name)
+  npar <- npar_fmx(fit)
+  model_name <- fmx_constraint_brief(fit)
+  #fit_orig <- setNames(list(fit), nm = model_name)
+  objF <- setNames(list(eval(call(test, fit))), nm = model_name)
   
-  # comparison is to original `object`
+  # comparison vs original `object`
   while (length(freepar <- setdiff(candpar, fit_constr))) { # still have `freepar` to be eliminated
+    scope <- lapply(freepar, FUN = function(i) candpar[candpar %in% c(i, fit_constr)]) # preserve conventional order of parameter(s)
     
-    scope <- lapply(freepar, FUN = \(i) candpar[candpar %in% c(i, fit_constr)]) # preserve conventional order of parameter(s)
-    tmp <- c(fit_orig, drop1(object = fit, scope = scope, silent = silent)) # ?drop1.fmx_QLMDe
-    n_objF <- c(objF_orig, lapply(tmp[-1L], FUN = \(i) {
-      tryCatch(eval(call(by, i)), error = as.null.default) # mal-fit, very very rare
-    })) # new objF
-    if (any(id <- (lengths(n_objF, use.names = FALSE) == 0L))) {
-      cat('.. mal-fit:', paste(sQuote(names(n_objF)[id]), collapse = ', '), '(at %\'s of original fit)\n')
-      n_objF <- n_objF[!id]
-    }
+    lr <- drop1.fmx_QLMDe(object = object, scope = scope, test = test, ...)
+    if (!length(o1 <- attr(lr, which = 'o1', exact = TRUE))) break # original `object` is best by `test`
     
-    switch(by, logLik = {
-      lr <- LikRatio(models = n_objF, type = 'plain', compare = 'first') # print(lr) # ?stats:::print.anova
-      pval <- lr[[length(lr)]] # p-value must on last column (see my ?.pval.anova); 1st element of p-value always NA_real_
-      o1 <- which.max(pval) # 1st element NA_real_ omitted automatically
-      if (pval[o1] < .05) break # original `object` is significantly different from reduced model(s)
-    }, AIC =, BIC = {
-      o1 <- order(unlist(n_objF, use.names = FALSE))[1L]
-      if (o1 == 1L) break # original `object` has smallest AIC/BIC
-    }, stop('unsupported ', sQuote(by)))
+    imods <- attr(lr, which = 'models', exact = TRUE) 
+    iobjF <- attr(lr, which = test, exact = TRUE)
     
-    fit <- tmp[[o1]]
-    model_name <- c(model_name, names(tmp)[o1])
+    fit <- imods[[o1]]
+    model_name <- c(model_name, names(imods)[o1])
     npar <- c(npar, npar_fmx(fit))
-    objF <- c(objF, n_objF[o1]) # 'list'
+    objF <- c(objF, iobjF[o1]) # 'list'
     fit_constr <- attr(fmx_constraint(fit), which = 'user', exact = TRUE)
     
   }
@@ -126,10 +162,9 @@ Step_fmx <- function(object, by = c('logLik', 'AIC', 'BIC'), silent = FALSE, ...
     '# Parameter' = rev.default(npar),
     objF = rev.default(unlist(objF, use.names = FALSE)), 
     check.names = FALSE, row.names = rev.default(model_name))
-  names(aod)[2L] <- by 
+  names(aod)[2L] <- test 
   attr(aod, 'heading') <- 'Stepwise Parameter Elimination (Fixed # of Comp.)'
   class(aod) <- c('anova', 'data.frame')
-  if (!silent) print(aod)
   attr(fit, 'anova') <- aod
   attr(fit, 'objF') <- rev.default(objF)
   return(fit)

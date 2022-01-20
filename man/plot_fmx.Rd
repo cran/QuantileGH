@@ -6,25 +6,30 @@
 \alias{autoplot.fmx}
 \alias{plot.fmx_QLMDe}
 \alias{autoplot.fmx_QLMDe}
-\title{Plot \code{'fmx'} and \code{'fmx_QLMDe'} object using vanilla R and/or \pkg{ggplot2}}
+\title{Plot \code{\linkS4class{fmx}} and \code{\linkS4class{fmx_QLMDe}} object using vanilla R and/or \pkg{ggplot2}}
 \usage{
 \method{plot}{fmx}(
   x,
+  type = c("pdf", "cdf", "log_pdf"),
   xlim = qfmx(p = c(0.01, 0.99), dist = dist),
-  ylab = paste("Finite Mixture of", dist@distname),
   n = 501L,
+  xlab = "",
+  ylab = paste(dist@distname, "mixture"),
   ...
 )
 
 \method{autoplot}{fmx}(
   object,
   type = c("pdf", "cdf"),
-  xlim = qfmx(p = c(0.005, 0.995), dist = object),
+  xlim = qfmx(p = c(0.01, 0.99), dist = object),
   v = double(),
   layer = FALSE,
   lty = 1L,
   curve.col = 1L,
+  xlab = NULL,
   ylab = paste(object@distname, "mixture"),
+  title = NULL,
+  caption = NULL,
   n = 501L,
   ...
 )
@@ -33,7 +38,7 @@
   x,
   xlab = x@data.name,
   main = NULL,
-  hist.col = "grey90",
+  hist.col = "grey95",
   breaks = "Sturges",
   border = "white",
   curve.col = "black",
@@ -48,11 +53,14 @@
   plot_ef = TRUE,
   plot_init = FALSE,
   plot_p = TRUE,
-  plot_origK = TRUE,
+  plot_origK = FALSE,
+  hist.col = "grey95",
+  border = "white",
   curve.col = 1,
   xlim = c(min(object@data), max(object@data)),
   xlab = object@data.name,
-  main = NULL,
+  ylab = paste(object@distname, "mixture"),
+  title = NULL,
   caption = if (plot_p) paste(length(object@p), "percentiles matched"),
   layer = FALSE,
   n = 501L,
@@ -60,42 +68,56 @@
 )
 }
 \arguments{
-\item{x, object}{\code{'fmx'} or \code{'fmx_QLMDe'} object, to match the S3 definition of \code{\link[base]{plot}} and \code{\link[ggplot2]{autoplot}}}
+\item{x, object}{\code{\linkS4class{fmx}} or \code{\linkS4class{fmx_QLMDe}} object, to match the S3 definition of \code{\link[base]{plot}} and \code{\link[ggplot2]{autoplot}}}
 
-\item{xlim}{see \code{\link[graphics]{curve}} and \code{\link[ggplot2]{stat_function}}.}
-
-\item{n}{see \code{\link[graphics]{curve}} and/or \code{\link[ggplot2]{stat_function}}.}
-
-\item{...}{potential parameters of \code{\link[graphics]{curve}} in \code{\link{plot.fmx}}, or 
-potential parameters of \code{\link[graphics]{hist.default}} in \code{\link{plot.fmx_QLMDe}}.}
-
-\item{type}{\code{'character'} value. For an input of \code{'fmx'} object, this argument specifies 
+\item{type}{\code{\link[base]{character}} value. For an input of \code{\linkS4class{fmx}} object, this argument specifies 
 whether to generate a plot of probability density function (\code{'pdf'}, default), 
-or to generate a plot of cumulative distribution function (\code{'cdf'}).
-For an input of \code{'fmx_QLMDe'} object, this argument specifies 
+log of probability density function (\code{'log-pdf'}),
+or cumulative distribution function (\code{'cdf'}).
+For an input of \code{\linkS4class{fmx_QLMDe}} object, this argument specifies 
 whether to generate a plot of histogram (\code{'hist'}, default) together with the estimated probability density function,
 or to generate a plot of empirical cumulative distribution function (\code{'ecdf'}) together with the estimated cumulative distribution function.}
 
-\item{v}{\code{'double'} vector, the vertical lines to be added to the plot of an \code{'fmx'} object, default \code{double()} indicating no vertical lines.}
+\item{xlim, n}{see \code{\link[graphics]{curve}} and/or \code{\link[ggplot2]{stat_function}}.}
 
-\item{layer}{\code{'logical'} value, whether to produce the figure as a \pkg{ggplot2} \code{\link[ggplot2]{layer}} (default \code{FALSE}).}
+\item{xlab, ylab, main, title, caption}{see \code{\link[graphics]{curve}}, \code{\link[graphics]{hist.default}} and/or \code{\link[ggplot2]{labs}}.}
 
-\item{lty}{line type of the finite mixture density curve, see \code{\link[graphics]{plot.xy}}, 
+\item{...}{potential parameters of \code{\link[graphics]{curve}} in \code{\link{plot.fmx}}, 
+potential parameters of \code{\link[graphics]{hist.default}} in \code{\link{plot.fmx_QLMDe}}, or
+potential parameters of \code{\link[ggplot2]{stat_function}} in \code{\link{autoplot.fmx}} and \code{\link{autoplot.fmx_QLMDe}}.}
+
+\item{v}{\code{\link[base]{double}} vector, the vertical lines to be added to the plot of an \code{\linkS4class{fmx}} object, default \code{double()} indicating no vertical lines.}
+
+\item{layer}{\code{\link[base]{logical}} value, whether to produce the figure as a \code{\link[ggplot2]{layer}} (default \code{FALSE}).}
+
+\item{lty}{line type of the finite mixture density curve, 
+see parameter \code{lty} of \code{\link[graphics]{plot.xy}}, 
 or parameter \code{linetype} of \code{\link[ggplot2]{stat_function}}.}
 
-\item{curve.col}{color of the finite mixture density curve, the parameter \code{col} of \code{\link[graphics]{plot.xy}}, or
-the parameter \code{colour} of \code{\link[ggplot2]{stat_function}}.}
+\item{curve.col}{color of the density curve of the fitted finite mixture distribution.
+See parameter \code{col} of \code{\link[graphics]{plot.xy}},
+or parameter \code{colour} of \code{\link[ggplot2]{stat_function}}.}
 
-\item{xlab, ylab, main, caption, border, breaks}{see \code{\link[graphics]{hist.default}} and/or \code{\link[ggplot2]{labs}}.}
+\item{hist.col}{color of the body of histogram, default \code{'grey95'}.
+See parameter \code{col} of \code{\link[graphics]{hist.default}}, 
+or parameter \code{fill} of \code{\link[ggplot2]{geom_histogram}}.}
 
-\item{hist.col}{color of the body of histogram, see the parameter \code{col} of \code{\link[graphics]{hist.default}}.}
+\item{breaks}{see parameter \code{breaks} of \code{\link[graphics]{hist.default}}, or parameter \code{bins} of \code{\link[ggplot2]{geom_histogram}}.}
 
-\item{plot_ef, plot_init, plot_p, plot_origK}{\code{'logical'} value, whether 
-to plot the empirical probability density function or the empirical probability density function (default \code{TRUE}),
-to plot the initial estimates (default \code{FALSE}),
-to plot the percentages at which the sample and theoretical quantiles are matched (default \code{TRUE}),
-or to plot the \code{'fmx_QLMDe'} at the user-specified number of components \eqn{K} 
-(if backward-forward selection on number of component is performed; default \code{TRUE}).}
+\item{border}{color of the border around the histogram bars, default \code{'white'}.
+See parameter \code{border} of \code{\link[graphics]{hist.default}}, 
+or parameter \code{colour} of \code{\link[ggplot2]{geom_histogram}}.}
+
+\item{plot_ef}{\code{\link[base]{logical}} value, whether to plot 
+the empirical probability density or cumulative probability function, default \code{TRUE}.}
+
+\item{plot_init}{\code{\link[base]{logical}} value, whether to plot the initial estimates used in \code{\link{QLMDe}}, default \code{FALSE}.}
+
+\item{plot_p}{\code{\link[base]{logical}} value, whether to plot the percentages used in \code{\link{QLMDe}}, default \code{TRUE}.}
+
+\item{plot_origK}{\code{\link[base]{logical}} value, 
+whether to plot the \code{\linkS4class{fmx_QLMDe}} at the user-specified number of components \eqn{K}
+if backward-forward selection on number of component is performed, default \code{FALSE}.}
 }
 \value{
 \code{\link{plot.fmx}} and \code{\link{plot.fmx_QLMDe}} do not have return value; only \code{\link[graphics]{curve}} is called for plotting.
@@ -103,5 +125,16 @@ or to plot the \code{'fmx_QLMDe'} at the user-specified number of components \eq
 \code{\link{autoplot.fmx}} and \code{\link{autoplot.fmx_QLMDe}} return \code{'ggplot'} object, created by \code{\link[ggplot2]{ggplot}}.
 }
 \description{
-Plot \code{'fmx'} and \code{'fmx_QLMDe'} object using vanilla R and/or \pkg{ggplot2}.
+Plot \code{\linkS4class{fmx}} and \code{\linkS4class{fmx_QLMDe}} object using vanilla R and/or \pkg{ggplot2}.
+}
+\examples{
+(d2 = fmx('GH', A = c(1,6), B = 2, g = c(0,.3), h = c(.2,0), w = c(1,2)))
+plot(d2)
+plot(d2, type = 'cdf')
+autoplot(d2)
+autoplot(d2, type = 'cdf')
+
+}
+\seealso{
+\code{\link[graphics]{plot}}, \code{\link[ggplot2]{autoplot}}
 }

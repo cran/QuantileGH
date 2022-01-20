@@ -6,50 +6,49 @@
 \usage{
 QLMDe(
   x,
-  distname,
+  distname = c("norm", "GH"),
   K,
   data.name = deparse1(substitute(x)),
   constraint = character(),
   p = QLMDp(obs = x),
   init = clust_fmx(x, distname = distname, K = K, constraint = constraint),
-  method = "Nelder-Mead",
-  control = list(maxit = 10000L, reltol = 1e-06),
+  tol = .Machine$double.eps^0.25,
+  maxiter = 1000,
   ...
 )
 }
 \arguments{
-\item{x}{vector of 'numeric' observations}
+\item{x}{\code{\link[base]{numeric}} vector, the one-dimensional observations.}
 
-\item{distname}{'character', name of mixture distribution to be fitted.  Currently supports \code{'norm'} and \code{'GH'}}
+\item{distname}{\code{\link[base]{character}} value, name of mixture distribution to be fitted.  Currently supports \code{'norm'} and \code{'GH'}.}
 
-\item{K}{'integer', number of components (must use \code{2L} instead of \code{2})}
+\item{K}{\code{\link[base]{integer}} value, number of components (e.g., must use \code{2L} instead of \code{2}).}
 
-\item{data.name}{'character', user-assigned name for the observations. Default is the model call of the input observations.}
+\item{data.name}{\code{\link[base]{character}} value, name for the observations for user-friendly print out.}
 
-\item{constraint}{the parameters (\eqn{g} and/or \eqn{h} for Tukey's \eqn{g}-&-\eqn{h} mixture) to be set at 0.
+\item{constraint}{\code{\link[base]{character}} vector, parameters (\eqn{g} and/or \eqn{h} for Tukey's \eqn{g}-&-\eqn{h} mixture) to be set at 0.
 See \code{\link{fmx_constraint}} for details.}
 
-\item{p}{vector of \code{'numeric'} percentiles, at where the sample and theoretical quantiles are to be matched.
-Default \code{QLMDp(obs = x)}, see \code{\link{QLMDp}} for details.}
+\item{p}{\code{\link[base]{numeric}} vector, percentiles at where the sample and theoretical quantiles are to be matched.
+See \code{\link{QLMDp}} for details.}
 
-\item{init}{\code{'fmx'} object, initial values of the optimization algorithm. Default value is provided by function \code{\link{clust_fmx}}.}
+\item{init}{\code{\linkS4class{fmx}} object, the initial values for the optimization algorithm, default provided by \code{\link{clust_fmx}}.}
 
-\item{method, control}{see \code{\link[stats]{optim}}.}
+\item{tol, maxiter}{see \code{\link{vuniroot2}}}
 
-\item{...}{only potential parameters of \code{\link[stats]{optim}} are allowed.}
+\item{...}{additional parameters of \code{\link[stats]{optim}}.}
 }
 \value{
-An \code{'fmx_QLMDe'} object (see \code{\link{fmx_QLMDe-class}}).
+An \code{\linkS4class{fmx_QLMDe}} object
 }
 \description{
 The quantile least Mahalanobis distance algorithm (\code{\link{QLMDe}}) estimates the parameters of 
 single-component or finite mixture distributions   
 by minimizing the Mahalanobis distance between the vectors of sample and theoretical quantiles.
+See \code{\link{QLMDp}} for the default selection of probabilities at which the sample and theoretical quantiles are compared.
 
-{Add a paragraph about quantiles}
-
-The initial values of finite mixture distribution are based on trimmed \eqn{k}-means 
-clustering with re-assignment provided by function \code{\link{clust_fmx}}.
+The default initial values are based on trimmed \eqn{k}-means 
+clustering with re-assignment provided by \code{\link{clust_fmx}}.
 }
 \details{
 Quantile Least Mahalanobis Distance estimator (\code{\link{QLMDe}}) fits a single-component or finite mixture distribution 
@@ -59,45 +58,39 @@ using the empirical quantile variance-covariance matrix \code{\link{quantile_vco
 }
 \examples{
 
+\donttest{
+# Generated from 1-component normal; start with 2-component normal fit
 set.seed(1623); (y0n <- QLMDe(rnorm(1e3L), distname = 'norm', K = 2L))
-\donttest{
-# slow, masked for package check
-StepK_fmx(y0n, by = 'logLik') # one-component
-}
+StepK_fmx(y0n, test = 'logLik', Kmax = 2L) # one-component
 
-set.seed(1623); x0gh = rGH(1e3L, g = .2, h = .1)
-\donttest{
-print(y0gh <- QLMDe(x0gh, distname = 'GH', K = 2L))
-print(StepK_fmx(y0gh, by = 'logLik')) # really good!
-}
-
+# Generated from 2-component normal; start with 1-component normal fit
 (d1 <- fmx('norm', mean = c(0, 1.5), sd = .5, w = c(.4, .6)))
 set.seed(100); hist(x1 <- rfmx(n = 1e3L, dist = d1))
-\donttest{
-system.time(tmp <- QLMDe(x1, distname = 'norm', K = 1L))
-tmp
-QLMDe(x1, distname = 'norm', K = 2L)
-y1n <- StepK_fmx(tmp, by = 'logLik')
-slotNames(y1n)
-logLik(y1n)
-AIC(y1n)
-BIC(y1n)
+StepK_fmx(QLMDe(x1, distname = 'norm', K = 1L), test = 'logLik', Kmax = 2L)
 }
-  
-(d2 = fmx('GH', A = c(0,6), B = 1.2, g = c(0,.3), h = c(.2,0), w = c(1,2)))
-set.seed(3123); hist(x2 <- rfmx(n = 1e3L, dist = d2))
-\donttest{
-system.time(y2gh <- QLMDe(x2, distname = 'GH', K = 2L)) # 8~9 secs
-y2gh@optim$counts # ~840 iteration
-y2gh
-Step_fmx(y2gh, by = 'logLik') # not always identifying true constraint
 
-system.time(y2gh_0 <- QLMDe(x2, distname = 'GH', K = 2L, constraint = c('g1', 'h2')))
-y2gh_0
-system.time(y2n <- QLMDe(x2, distname = 'norm', K = 2L))
-y2n
-print(StepK_fmx(y2gh_0))
-stopifnot(AIC(y2gh_0) < AIC(y2n), BIC(y2gh_0) < BIC(y2n))
+(d2 = fmx('GH', A = c(1,6), B = 1.2, g = c(0,.3), h = c(.2,0), w = c(1,2)))
+set.seed(3123); hist(x2 <- rfmx(n = 1e3L, dist = d2))
+# using user-specified constraint
+system.time(QLMDe(x2, distname = 'GH', K = 2L, constraint = c('g1', 'h2')))
+\donttest{
+# using Step_fmx
+system.time(y2gh <- QLMDe(x2, distname = 'GH', K = 2L)) # ~2 secs
+y2gh
+ks_test(y2gh)
+CvM_test(y2gh)
+KL_dist(y2gh)
+Step_fmx(y2gh, test = 'logLik') # identified true constraint :)
+}
+
+\donttest{
+system.time(y1gh <- QLMDe(x2, distname = 'GH', K = 1L))
+y1gh
+StepK_fmx(y1gh, test = 'logLik', Kmax = 2L) # correct
+
+#set.seed(1323); x3 <- rGH(n = 1e3L, g = .2, h = .1)
+#system.time(tmp <- QLMDe(x3, distname = 'GH', K = 2L)) # ~2 secs
+#StepK_fmx(tmp, Kmax = 2L) # very difficult to drop K ..
 }
 
 }

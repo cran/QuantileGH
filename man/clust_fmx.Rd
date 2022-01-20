@@ -2,21 +2,21 @@
 % Please edit documentation in R/clust_fmx.R
 \name{clust_fmx}
 \alias{clust_fmx}
-\title{Estimates of Finite Mixture Distribution (\code{'fmx'}) via Clustering}
+\title{Estimates of Finite Mixture Distribution (\code{linkS4class{fmx}}) via Clustering}
 \usage{
 clust_fmx(x, distname, K, constraint = character())
 }
 \arguments{
-\item{x}{'numeric' vector of observations}
+\item{x}{\code{\link[base]{numeric}} vector of observations}
 
-\item{distname}{'character' value for the name of parametric distribution}
+\item{distname}{\code{\link[base]{character}} value for the name of parametric distribution}
 
-\item{K}{'integer' value of the number of components}
+\item{K}{\code{\link[base]{integer}} value of the number of components}
 
 \item{constraint}{see \code{\link{QLMDe}}}
 }
 \value{
-An S4 \code{'fmx'} object fitted on given observations, using trimmed \eqn{k}-means clustering with re-assignment,
+An S4 \code{\linkS4class{fmx}} object fitted on given observations, using trimmed \eqn{k}-means clustering with re-assignment,
 and cluster-wise robust parameter estimates.
 }
 \description{

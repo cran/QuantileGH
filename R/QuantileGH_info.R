@@ -33,6 +33,8 @@
 #' @import graphics methods stats utils
 #' @import ggplot2
 #' 
+#' @importFrom goftest cvm.test
+#' @importFrom LaplacesDemon KLD
 #' @importFrom rstpm2 vuniroot
 #' @importFrom scales percent
 #' @importFrom tclust tkmeans

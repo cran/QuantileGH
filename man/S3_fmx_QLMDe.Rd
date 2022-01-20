@@ -5,6 +5,8 @@
 \alias{vcov.fmx_QLMDe}
 \alias{coef.fmx}
 \alias{confint.fmx_QLMDe}
+\alias{logLik.fmx_QLMDe}
+\alias{nobs.fmx_QLMDe}
 \title{Inference for Quantile Least Mahalanobis Distance estimates}
 \usage{
 \method{vcov}{fmx_QLMDe}(object, parm = c("user", "internal"), ...)
@@ -12,18 +14,29 @@
 \method{coef}{fmx}(object, parm = c("user", "internal"), ...)
 
 \method{confint}{fmx_QLMDe}(object, parm = c("internal", "user"), level = 0.95, ...)
+
+\method{logLik}{fmx_QLMDe}(object, ...)
+
+\method{nobs}{fmx_QLMDe}(object, ...)
 }
 \arguments{
-\item{object}{an \code{'fmx'} or \code{'fmx_QLMDe'} object}
+\item{object}{an \code{\linkS4class{fmx}} or \code{\linkS4class{fmx_QLMDe}} object}
 
-\item{parm}{\code{'character'} value. Use \code{'user'} for the user-friendly parameters (e.g., \code{mean,sd} for normal, and \code{A,B,g,h} for Tukey's \eqn{g}-and-\eqn{h}), via delta-method.
-Use \code{'internal'} for the internal/unconstrained parameters.}
+\item{parm}{\code{\link[base]{character}} value, either \code{'user'} for the user-friendly parameters 
+(e.g., \code{mean,sd} for normal mixture, and \code{A,B,g,h} for Tukey's \eqn{g}-and-\eqn{h} mixture), or
+\code{'internal'} for the internal/unconstrained parameters.}
 
 \item{...}{place holder for S3 naming convention}
 
 \item{level}{confidence level, default \eqn{95\%}.}
 }
 \value{
+\code{\link{nobs.fmx_QLMDe}} returns an \code{\link[base]{integer}} scalar indicating the sample size of
+the observations used in \code{\link{QLMDe}} estimation. 
+
+\code{\link{logLik.fmx_QLMDe}} returns a \code{\link[stats]{logLik}} object indicating the log-likelihood.
+An additional attribute \code{attr(, 'logl')} indicates the point-wise log-likelihood, to be use in Vuong's closeness test.
+
 \code{\link{coef.fmx}} returns the estimates of the user-friendly parameters (\code{parm = 'user'}), 
 or the internal/unconstrained parameters (\code{parm = 'internal'}).
 
@@ -35,8 +48,24 @@ or the asymptotic variance-covariance matrix of the internal/unconstrained param
  or the internal/unconstrained parameters (\code{parm = 'internal'}).
 
 When the distribution has constraints on one or more parameters, none of \code{\link{coef.fmx}}, \code{\link{vcov.fmx_QLMDe}} and 
-\code{\link{confint.fmx_QLMDe}} will return the corresponding values only for the constrained parameters.
+\code{\link{confint.fmx_QLMDe}} return the corresponding values only for the constrained parameters.
 }
 \description{
-S3 method for \code{\link[stats]{vcov}}, \code{\link[stats]{coef}} and \code{\link[stats]{confint}}.
+S3 methods of 
+\code{\link[stats]{nobs}}, 
+\code{\link[stats]{logLik}},
+\code{\link[stats]{coef}},
+\code{\link[stats]{vcov}} and
+\code{\link[stats]{confint}}
+for class \code{\linkS4class{fmx}} and/or \code{\linkS4class{fmx_QLMDe}}.
+}
+\details{
+The inference for the user-friendly parameters is obtained via delta-method.
+}
+\seealso{
+\code{\link[stats]{nobs}}, 
+\code{\link[stats]{logLik}},
+\code{\link[stats]{coef}},
+\code{\link[stats]{vcov}} and
+\code{\link[stats]{confint}}
 }

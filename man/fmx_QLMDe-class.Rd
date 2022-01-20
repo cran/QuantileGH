@@ -3,27 +3,27 @@
 \docType{class}
 \name{fmx_QLMDe-class}
 \alias{fmx_QLMDe-class}
-\title{Defining S4 Object \code{'fmx_QLMDe'}}
+\title{Specification of \code{\linkS4class{fmx_QLMDe}} Class}
 \description{
 Quantile least Mahalanobis distance estimates (\code{\link{QLMDe}}) of finite mixture distribution, with the one-dimensional observations included.
-The \code{'fmx_QLMDe'} object contains (i.e., inherits from) the \code{'fmx'} object.
+The \code{\linkS4class{fmx_QLMDe}} object contains (i.e., inherits from) the \code{\linkS4class{fmx}} object.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{data}}{'numeric' vector of the one-dimensional observations}
+\item{\code{data}}{\code{\link[base]{numeric}} vector of the one-dimensional observations}
 
-\item{\code{data.name}}{'character' scalar for the name of observations}
+\item{\code{data.name}}{\code{\link[base]{character}} scalar for the name of observations}
 
-\item{\code{epdf}}{empirical probability density functions fitted by \code{\link[stats]{approxfun}}}
+\item{\code{epdf}}{empirical probability density \code{\link[base]{function}} fitted by \code{\link[stats]{approxfun}}}
 
-\item{\code{quantile_vv}}{variance-covariance matrix of selected quantiles (based on the selected probabilities \code{@p})}
+\item{\code{quantile_vv}}{variance-covariance \code{\link[base]{matrix}} of selected quantiles (based on the selected probabilities stored in slot \code{@p})}
 
-\item{\code{init}}{\code{'fmx'} object indicating the initial values to be sent to \code{\link[stats]{optim}}}
+\item{\code{init}}{\code{\linkS4class{fmx}} object indicating the initial values to be sent to \code{\link[stats]{optim}}}
 
-\item{\code{p}}{'numeric' vectors of probabilities, where the distance between the empirical and true quantiles will be measured}
+\item{\code{p}}{\code{\link[base]{numeric}} vectors of probabilities, where the distance between the empirical and true quantiles will be measured}
 
-\item{\code{optim}}{'list' object returned from \code{\link[stats]{optim}}}
+\item{\code{optim}}{a \code{\link[base]{list}} returned from \code{\link[stats]{optim}}}
 }}
 
 \examples{

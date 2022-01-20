@@ -3,26 +3,23 @@
 \docType{class}
 \name{fmx-class}
 \alias{fmx-class}
-\title{Specification of S4 Object \code{'fmx'}}
+\title{Specification of \code{\linkS4class{fmx}} Class}
 \description{
-An S4 class representing a one-dimensional finite mixture distribution.
-}
-\details{
-..
+Parameter specification for a one-dimensional finite mixture distribution.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{distname}}{'character' value for the name of parametric distribution of mixture components.
+\item{\code{distname}}{\code{\link[base]{character}} value for the name of parametric distribution of mixture components.
 Currently normal (\code{'norm'}) and Tukey's \eqn{g}-&-\eqn{h} (\code{'GH'}) distributions are supported.}
 
-\item{\code{parM}}{'matrix' of all distribution parameters in the mixture. 
+\item{\code{parM}}{\code{\link[base]{matrix}} of all distribution parameters in the mixture. 
 Each row corresponds to one component. Each column includes the same parameters of all components.
 The order of rows corresponds to the (non-strictly) increasing order of the component location parameters.
-The column names, e.g., \code{'mean'} and \code{'sd'} for norm distribution, or \code{'A'}, \code{'B'}, \code{'g'} and \code{'h'} for Tukey's \eqn{g}-&-\eqn{h} distribution,
-are the same as argument names used in \code{\link[stats]{dnorm}} or our \code{\link{dGH}} functions, respectively.}
+The column names, e.g., \code{mean} and \code{sd} for norm distribution (see \code{\link[stats]{dnorm}}), 
+or \code{A}, \code{B}, \code{g} and \code{h} for Tukey's \eqn{g}-&-\eqn{h} distribution (see \code{\link{dGH}}).}
 
-\item{\code{w}}{'numeric' vector of mixing proportions that must sum to 1}
+\item{\code{w}}{\code{\link[base]{numeric}} vector of mixing proportions that must sum to 1}
 }}
 
 \examples{

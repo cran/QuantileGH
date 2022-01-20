@@ -5,19 +5,14 @@
 #' 
 #' @description
 #' 
-#' The function \code{\link{StepK_fmx}} compares \eqn{gh}-parsimonious models with different number of components \eqn{K}
+#' \code{\link{StepK_fmx}} compares \eqn{gh}-parsimonious models with different number of components \eqn{K}
 #' and selects the optimal model using the Vuong's closeness test.
 #' 
-#' @param object \code{'fmx_QLMDe'} object returned from \code{\link{QLMDe}}
+#' @param object \code{\linkS4class{fmx_QLMDe}} object returned from \code{\link{QLMDe}}
 #' 
-#' @param by criterion, currently supporting 
-#' \code{'logLik'} (via my \code{\link{LikRatio}}, likelihood ratio test, default and recommended), 
-#' \code{'AIC'} (via \code{\link[stats]{AIC}}) and 
-#' \code{'BIC'} (via \code{\link[stats]{BIC}}).
+#' @param test,trace see parameter \code{test} and \code{trace} of \code{\link{Step_fmx}}
 #' 
-#' @param Kmax 'integer' value, the maximum number of component to be considered
-#' 
-#' @param silent 'logical' value, whether messages should be suppressed (default \code{FALSE})
+#' @param Kmax \code{\link[base]{integer}} value, the maximum number of component to be considered
 #' 
 #' @param ... additional parameters
 #' 
@@ -43,22 +38,22 @@
 #' 
 #' @return 
 #' 
-#' \code{\link{StepK_fmx}} returns an \code{'fmx_QLMDe'} object, with attributes
+#' \code{\link{StepK_fmx}} returns an \code{\linkS4class{fmx_QLMDe}} object, with attributes
 #' \itemize{
 #' \item{\code{anova}} {ANOVA table}
 #' \item{\code{objF}} {value of the objective function (either the log-likelihood, AIC or BIC)}
 #' }
 #' 
 #' @export
-StepK_fmx <- function(object, by = c('logLik', 'AIC', 'BIC'), Kmax = 3L, silent = FALSE, ...) {
-  by <- match.arg(by)
+StepK_fmx <- function(object, test = c('logLik', 'AIC', 'BIC'), Kmax = stop('must specify maximum `Kmax`'), trace = TRUE, ...) {
+  test <- match.arg(test)
   K <- K_orig <- dim(object@parM)[1L]
-  if (!silent) cat('Finding parsimonious model at K =', K, '\n')
-  modelK <- model_orig <- Step_fmx(object, by = by, silent = silent) # comparison is to parsimonious model at original `K`
+  if (!trace) cat('Finding parsimonious model at K =', K, '\n')
+  modelK <- model_orig <- Step_fmx(object, test = test, trace = trace) # comparison is to parsimonious model at original `K`
   objF <- objF_orig <- attr(model_orig, which = 'objF', exact = TRUE)[1L] # 'list'; objective function for parsimonious model at original `K`
   aod <- aod_orig <- attr(model_orig, which = 'anova', exact = TRUE)[1L, ] # # aod line for parsimonious model at original `K`
   
-  compareK <- function(model0, model1) {
+  compareK <- function(model0, model1, test) {
     # K0 > K1
     K0 <- dim(model0@parM)[1L]
     K1 <- dim(model1@parM)[1L]
@@ -69,7 +64,7 @@ StepK_fmx <- function(object, by = c('logLik', 'AIC', 'BIC'), Kmax = 3L, silent 
     if ((distname <- model0@distname) != model1@distname) stop('`model0` has different `distname` than `model1`')
     objF0 <- attr(model0, which = 'objF', exact = TRUE)[1L]
     objF1 <- attr(model1, which = 'objF', exact = TRUE)[1L]
-    switch(by, AIC = , BIC = {
+    switch(test, AIC = , BIC = {
       # smaller the better
       return(unlist(objF1) <= (unlist(objF0) + 1e-07)) # 'TRUE' for selecting `K1` (K_less)
     }, logLik = {
@@ -87,7 +82,7 @@ StepK_fmx <- function(object, by = c('logLik', 'AIC', 'BIC'), Kmax = 3L, silent 
         return(lr_K[2L, length(lr_K)] > .05) # p-value of K_less; 'TRUE' for selecting `K1` (K_less)
       } else stop('should not come here')
       # `lr_K` is not returned, for now
-    }, stop('unsupported ', sQuote(by)))
+    }, stop('unsupported ', sQuote(test)))
     return(FALSE)
   }
   
@@ -97,16 +92,16 @@ StepK_fmx <- function(object, by = c('logLik', 'AIC', 'BIC'), Kmax = 3L, silent 
   while ((K + 1L) <= Kmax) {
     tmp_old <- modelK
     obj_K <- QLMDe(object@data, distname = object@distname, data.name = object@data.name, K = K + 1L, p = object@p)
-    if (!silent) cat('Finding parsimonious model at K =', K + 1L, '\n')
-    tmp_new <- Step_fmx(obj_K, by = by, silent = silent, ...)
+    if (trace) cat('Finding parsimonious model at K =', K + 1L, '\n')
+    tmp_new <- Step_fmx(obj_K, test = test, trace = trace, ...)
     #if (FALSE) {
     #  tmp_old <<- tmp_old
     #  tmp_new <<- tmp_new
     #  stop('here :)')
     #}
-    if (compareK(model0 = tmp_new, model1 = tmp_old)) break # smaller model (i.e. `tmp_old`) is selected 
+    if (compareK(model0 = tmp_new, model1 = tmp_old, test = test)) break # smaller model (i.e. `tmp_old`) is selected 
     K <- K + 1L
-    if (!silent) cat('Increased K = ', K, ' is selected.\n', sep = '')
+    if (trace) cat('Increased K = ', K, ' is selected.\n', sep = '')
     modelK <- tmp_new
     aod <- rbind.data.frame(aod, attr(modelK, which = 'anova', exact = TRUE)[1L, ]) # still 'anova'
     objF <- c(objF, attr(modelK, which = 'objF', exact = TRUE)[1L]) # 'list'
@@ -119,11 +114,11 @@ StepK_fmx <- function(object, by = c('logLik', 'AIC', 'BIC'), Kmax = 3L, silent 
     # always compare to `K_orig`, not K-1
     while (K > 1L) {
       obj_K <- QLMDe(object@data, distname = object@distname, data.name = object@data.name, K = K - 1L, p = object@p)
-      if (!silent) cat('Finding parsimonious model at K =', K - 1L, '\n')
-      tmpK <- Step_fmx(obj_K, by = by, silent = silent, ...)
-      if (!compareK(model0 = model_orig, model1 = tmpK)) break # larger model (i.e. `model_orig` is retained)
+      if (trace) cat('Finding parsimonious model at K =', K - 1L, '\n')
+      tmpK <- Step_fmx(obj_K, test = test, trace = trace, ...)
+      if (!compareK(model0 = model_orig, model1 = tmpK, test = test)) break # larger model (i.e. `model_orig` is retained)
       K <- K - 1L
-      if (!silent) cat('Reduced K = ', K, ' is selected.\n', sep = '')
+      if (trace) cat('Reduced K = ', K, ' is selected.\n', sep = '')
       modelK <- tmpK
       aod <- rbind.data.frame(aod, attr(modelK, which = 'anova', exact = TRUE)[1L, ]) # still 'anova'
       objF <- c(objF, attr(modelK, which = 'objF', exact = TRUE)[1L]) # 'list'

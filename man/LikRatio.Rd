@@ -7,9 +7,9 @@
 LikRatio(models, type = c("plain", "vuong"), compare = c("seq", "first"), ...)
 }
 \arguments{
-\item{models}{a \code{'list'} of regression models, or a \code{'list'} of \code{'logLik'} objects.}
+\item{models}{a \code{\link[base]{list}} of regression models, or a \code{\link[base]{list}} of \code{\link[stats]{logLik}} objects.}
 
-\item{type}{\code{'character'} value, \code{'plain'} (default) for ordinary likelihood ratio test;
+\item{type}{\code{\link[base]{character}} scalar, \code{'plain'} (default) for ordinary likelihood ratio test;
 \code{'vuong'} for Vuong's closeness test for non-nested models}
 
 \item{compare}{type of comparison between the models, sequentially (\code{'seq'}) or 
@@ -23,10 +23,13 @@ all models versus the first model (\code{'first'})}
 \description{
 ...
 }
-\details{
-Inspired by \code{\link[lmtest]{lrtest.default}}.
-}
 \examples{
 # no examples for now
 
+}
+\references{
+Vuong's closeness test, \doi{10.2307/1912557}.
+}
+\seealso{
+\code{\link[lmtest]{lrtest.default}}
 }

@@ -20,22 +20,22 @@ pGH(q, A = 0, B = 1, g = 0, h = 0, lower.tail = TRUE, log.p = FALSE, ...)
 
 z2qGH(z, A = 0, B = 1, g = 0, h = 0)
 
-qGH2z(q, q0 = (q - A)/B, qok = is.finite(q0), A = 0, B = 1, ...)
+qGH2z(q, q0 = (q - A)/B, A = 0, B = 1, ...)
 }
 \arguments{
 \item{x, q}{vector of quantiles.}
 
-\item{A}{location parameter, with default value of 0, as parameter \code{mean} of \code{\link[stats]{dnorm}}}
+\item{A}{location parameter, default \eqn{0} (as parameter \code{mean} of \code{\link[stats]{dnorm}})}
 
-\item{B}{(>0) scale parameter, with default value of 1, as parameter \code{sd} of \code{\link[stats]{dnorm}}}
+\item{B}{scale parameter (\eqn{>0}), default \eqn{1} (as parameter \code{sd} of \code{\link[stats]{dnorm}})}
 
-\item{g}{skewness parameter}
+\item{g}{skewness parameter, default \eqn{0} indicating no skewness}
 
-\item{h}{(>=0) kurtosis parameter}
+\item{h}{kurtosis parameter (\eqn{\geq 0}), default \eqn{0} indicating no kurtosis}
 
-\item{log, log.p}{logical; if \code{TRUE}, probabilities \eqn{p} are given as \eqn{log(p)}.}
+\item{log, log.p}{logical; if \code{TRUE}, probabilities \eqn{p} are given as \eqn{\log(p)}.}
 
-\item{...}{potential parameters}
+\item{...}{other parameters of \code{\link{vuniroot2}}}
 
 \item{n}{number of observations, see \code{\link[stats]{rnorm}} for more details.}
 
@@ -45,7 +45,7 @@ qGH2z(q, q0 = (q - A)/B, qok = is.finite(q0), A = 0, B = 1, ...)
 
 \item{z}{standard normal quantiles.}
 
-\item{q0, qok}{parameters for internal use}
+\item{q0}{\eqn{(q-A)/B}, for internal use to increase compute speed}
 }
 \value{
 \code{\link{dGH}} gives the density and accommodates vector arguments \code{A}, \code{B}, \code{g} and \code{h}.
@@ -63,11 +63,8 @@ This function takes about 1/2 time of \code{\link[gk]{qgh}} and 1/10 time of \co
 \code{\link{z2qGH}} is the Tukey's \eqn{g}-&-\eqn{h} transformation.
 Note that \code{gk:::z2gh} is only an \strong{approximation} to Tukey's \eqn{g}-&-\eqn{h} transformation.
 
-Unfortunately, the inverse of Tukey's \eqn{g}-&-\eqn{h} transformation, \code{\link{qGH2z}}, does not have a closed form.
-We make use of the numerical solution provided in \code{\link[rstpm2]{vuniroot}}.
-This function takes scalar arguments and vector quantiles \code{q}.
-The computation cost of \code{\link{qGH2z}} is considerable, 
-as we need to solve the Tukey's \eqn{g}-&-\eqn{h} transformation for each quantile provided.
+Unfortunately, the inverse of Tukey's \eqn{g}-&-\eqn{h} transformation, \code{\link{qGH2z}}, 
+does not have a closed form and needs to be evaluated numerically (via \code{\link[rstpm2]{vuniroot}}).
 }
 \description{
 Density, distribution function, quantile function and random generation 
@@ -78,7 +75,7 @@ skewness \code{g} and
 kurtosis \code{h}.
 }
 \details{
-..
+Argument \code{A}, \code{B}, \code{g} and \code{h} will be recycled to the maximum length of the four.
 }
 \examples{
 
@@ -97,4 +94,7 @@ range(qGH(p2, g = .2, h = 0) - q, na.rm = TRUE)
 
 curve(dGH(x, g = .3, h = .1), from = -2.5, to = 3.5)
 
+}
+\seealso{
+\code{\link[OpVaR]{dgh}}, \code{\link[gk]{dgh}}
 }
