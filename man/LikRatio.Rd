@@ -4,24 +4,25 @@
 \alias{LikRatio}
 \title{Likelihood Ratio Test for General Models}
 \usage{
-LikRatio(models, type = c("plain", "vuong"), compare = c("seq", "first"), ...)
+LikRatio(dots, type = c("plain", "vuong"), compare = c("seq", "first"), ...)
 }
 \arguments{
-\item{models}{a \code{\link[base]{list}} of regression models, or a \code{\link[base]{list}} of \code{\link[stats]{logLik}} objects.}
+\item{dots}{a \link[base]{list} of regression models, or a \link[base]{list} of \link[stats]{logLik} objects.}
 
-\item{type}{\code{\link[base]{character}} scalar, \code{'plain'} (default) for ordinary likelihood ratio test;
-\code{'vuong'} for Vuong's closeness test for non-nested models}
+\item{type}{\link[base]{character} scalar, ordinary likelihood ratio test (\code{'plain'}, default)
+or Vuong's closeness test for non-nested models (\code{'vuong'}).}
 
-\item{compare}{type of comparison between the models, sequentially (\code{'seq'}) or 
+\item{compare}{type of comparison between the models, sequentially (\code{'seq'}, default) or 
 all models versus the first model (\code{'first'})}
 
-\item{...}{potential arguments (currently not in use)}
+\item{...}{additional arguments of \link[stats]{logLik} function(s)}
 }
 \value{
-\code{\link{LikRatio}} returns an ANOVA table of class \code{'anova'} for likelihood ratios test, or class \code{'vuong'} for Vuong's test.
+\link{LikRatio} returns an \link[stats:anova]{ANOVA} table for likelihood ratios test, 
+or a \code{'vuong'} object for Vuong's test.
 }
 \description{
-...
+Likelihood ratio test for models fitted by R.
 }
 \examples{
 # no examples for now
@@ -31,5 +32,5 @@ all models versus the first model (\code{'first'})}
 Vuong's closeness test, \doi{10.2307/1912557}.
 }
 \seealso{
-\code{\link[lmtest]{lrtest.default}}
+\link[lmtest]{lrtest.default}
 }

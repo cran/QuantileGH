@@ -4,42 +4,39 @@
 \alias{drop1_fmx}
 \alias{drop1.fmx_QLMDe}
 \alias{add1.fmx_QLMDe}
-\title{Add or Drop All Possible Parameters of \code{\linkS4class{fmx_QLMDe}} Object}
+\title{Add or Drop One Possible Parameters of \linkS4class{fmx_QLMDe} Object}
 \usage{
-\method{drop1}{fmx_QLMDe}(object, scope, test = c("logLik", "AIC", "BIC"), trace = TRUE, ...)
+\method{drop1}{fmx_QLMDe}(object, scope, test = c("logLik", "AIC", "BIC"), ...)
 
 \method{add1}{fmx_QLMDe}(object, scope, ...)
 }
 \arguments{
-\item{object}{\code{\linkS4class{fmx_QLMDe}} object}
+\item{object}{\linkS4class{fmx_QLMDe} object}
 
-\item{scope}{a \code{\link[base]{list}} of \code{\link[base]{character}} vectors to denote one or more constraints}
+\item{scope}{a \link[base]{list} of \link[base]{character} vectors to denote one or more constraints}
 
-\item{test}{\code{\link[base]{character}}, either \code{'logLik'} (default), \code{'AIC'} or \code{'BIC'}}
+\item{test}{\link[base]{character}, either \code{'logLik'} (default), \code{'AIC'} or \code{'BIC'}}
 
-\item{trace}{\code{\link[base]{logical}} scalar, whether to print out progress reports (default \code{FALSE})}
-
-\item{...}{place holder to match the S3 generic \code{\link[stats]{drop1}}, currently not in use}
+\item{...}{additional parameters, currently not in use.}
 }
 \value{
-\code{\link{drop1.fmx_QLMDe}} returns an \code{\link[stats]{anova}} table with additional attributes
+\link{drop1.fmx_QLMDe} returns an \link[stats:anova]{ANOVA} table with additional attributes
 \itemize{
-\item{\code{models}} {a \code{\link[base]{list}} of \code{\linkS4class{fmx_QLMDe}} objects}
-\item{\code{objF}} {a \code{\link[base]{list}} of objective functions (depends on \code{test})}
+\item{\code{models}} {a \link[base]{list} of \linkS4class{fmx_QLMDe} objects}
+\item{\code{objF}} {a \link[base]{list} of objective functions (depends on \code{test})}
 \item{\code{o1}} {the location of the optimal models by \code{test}.  If the original model is optimal, this value is \code{integer()}}
 }
 
-\code{\link{add1.fmx_QLMDe}} will be added in the next release.
+\link{add1.fmx_QLMDe} will be added in the next release.
 }
 \description{
 Compute all the single terms in the \code{scope} argument that can be added to or dropped from the model, 
 fit those models and compute a table of the changes in fit.
-
-These are additional S3 methods of \code{\link[stats]{add1}} and \code{\link[stats]{drop1}}.
 }
 \details{
-Do \strong{not} write as S3 method of \code{\link[MASS]{dropterm}}; there's no \strong{term} for \code{\linkS4class{fmx_QLMDe}} object.
+Do \strong{not} write as S3 method of \link[MASS]{dropterm} function, 
+as there's no \strong{term} for \linkS4class{fmx_QLMDe} object.
 }
 \seealso{
-\code{\link[stats]{add1}}, \code{\link[stats]{drop1}}.
+\link[stats]{add1} \link[stats]{drop1}
 }

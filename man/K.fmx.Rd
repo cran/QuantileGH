@@ -2,19 +2,19 @@
 % Please edit documentation in R/fmx.R
 \name{K.fmx}
 \alias{K.fmx}
-\title{Number of Components in \code{\linkS4class{fmx}} and \code{\linkS4class{fmx_QLMDe}} Object}
+\title{Number of Components in \linkS4class{fmx} and \linkS4class{fmx_QLMDe} Object}
 \usage{
 K.fmx(x)
 }
 \arguments{
-\item{x}{\code{\linkS4class{fmx}} and \code{\linkS4class{fmx_QLMDe}} object.}
+\item{x}{\linkS4class{fmx} and \linkS4class{fmx_QLMDe} object.}
 }
 \value{
-An \code{\link[base]{integer}} value indicating the number of components in 
-an \code{\linkS4class{fmx}} and.or \code{\linkS4class{fmx_QLMDe}} object.
+An \link[base]{integer} value indicating the number of components in 
+an \linkS4class{fmx} and.or \linkS4class{fmx_QLMDe} object.
 }
 \description{
-Obtain the number of components in \code{\linkS4class{fmx}} and \code{\linkS4class{fmx_QLMDe}} object.
+Obtain the number of components in \linkS4class{fmx} and \linkS4class{fmx_QLMDe} object.
 }
 \details{
 For user convenience

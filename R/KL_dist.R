@@ -5,19 +5,19 @@
 #' 
 #' @description 
 #' 
-#' Calculate the Kullback-Leibler divergence for distribution estimates, via \code{\link[LaplacesDemon]{KLD}}.
+#' Calculate the Kullback-Leibler divergence for distribution estimates.
 #' 
 #' @param x an R object of distribution estimates
 #' 
-#' @param base see \code{\link[LaplacesDemon]{KLD}}
+#' @param base see \link[LaplacesDemon]{KLD}
 #' 
 #' @param ... additional parameters, currently not in use
 #' 
 #' @return 
 #' 
-#' \code{\link{KL_dist}} returns a \code{\link[base]{list}}, which is returned from \code{\link[LaplacesDemon]{KLD}}.
+#' \link{KL_dist} returns a \link[base]{list}, which is returned from \link[LaplacesDemon]{KLD} function.
 #' 
-#' @seealso \code{\link[LaplacesDemon]{KLD}}.
+#' @seealso \link[LaplacesDemon]{KLD}
 #' 
 #' @export
 KL_dist <- function(x, base, ...) UseMethod('KL_dist')

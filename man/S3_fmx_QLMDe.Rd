@@ -5,67 +5,62 @@
 \alias{vcov.fmx_QLMDe}
 \alias{coef.fmx}
 \alias{confint.fmx_QLMDe}
-\alias{logLik.fmx_QLMDe}
+\alias{logLik.fmx}
 \alias{nobs.fmx_QLMDe}
 \title{Inference for Quantile Least Mahalanobis Distance estimates}
 \usage{
-\method{vcov}{fmx_QLMDe}(object, parm = c("user", "internal"), ...)
+\method{vcov}{fmx_QLMDe}(object, internal = FALSE, ...)
 
-\method{coef}{fmx}(object, parm = c("user", "internal"), ...)
+\method{coef}{fmx}(object, internal = FALSE, ...)
 
-\method{confint}{fmx_QLMDe}(object, parm = c("internal", "user"), level = 0.95, ...)
+\method{confint}{fmx_QLMDe}(object, ..., level = 0.95)
 
-\method{logLik}{fmx_QLMDe}(object, ...)
+\method{logLik}{fmx}(object, data = object@data, ...)
 
 \method{nobs}{fmx_QLMDe}(object, ...)
 }
 \arguments{
-\item{object}{an \code{\linkS4class{fmx}} or \code{\linkS4class{fmx_QLMDe}} object}
+\item{object}{an \linkS4class{fmx} or \linkS4class{fmx_QLMDe} object}
 
-\item{parm}{\code{\link[base]{character}} value, either \code{'user'} for the user-friendly parameters 
+\item{internal}{\link[base]{logical} scalar, either for the user-friendly parameters (\code{FALSE}, default)
 (e.g., \code{mean,sd} for normal mixture, and \code{A,B,g,h} for Tukey's \eqn{g}-and-\eqn{h} mixture), or
-\code{'internal'} for the internal/unconstrained parameters.}
+for the internal/unconstrained parameters (\code{TRUE}).}
 
 \item{...}{place holder for S3 naming convention}
 
 \item{level}{confidence level, default \eqn{95\%}.}
+
+\item{data}{\link[base]{double} vector, actual observations}
 }
 \value{
-\code{\link{nobs.fmx_QLMDe}} returns an \code{\link[base]{integer}} scalar indicating the sample size of
-the observations used in \code{\link{QLMDe}} estimation. 
+\link{nobs.fmx_QLMDe} returns an \link[base]{integer} scalar indicating the sample size of
+the observations used in \link{QLMDe} estimation. 
 
-\code{\link{logLik.fmx_QLMDe}} returns a \code{\link[stats]{logLik}} object indicating the log-likelihood.
-An additional attribute \code{attr(, 'logl')} indicates the point-wise log-likelihood, to be use in Vuong's closeness test.
+\link{logLik.fmx} returns a \link[stats]{logLik} object indicating the log-likelihood.
+An additional attribute \code{attr(, 'logl')} indicates the point-wise log-likelihood, 
+to be use in Vuong's closeness test.
 
-\code{\link{coef.fmx}} returns the estimates of the user-friendly parameters (\code{parm = 'user'}), 
+\link{coef.fmx} returns the estimates of the user-friendly parameters (\code{parm = 'user'}), 
 or the internal/unconstrained parameters (\code{parm = 'internal'}).
 
-\code{\link{vcov.fmx_QLMDe}} returns 
+\link{vcov.fmx_QLMDe} returns 
 the approximate asymptotic variance-covariance matrix of the user-friendly parameters via delta-method (\code{parm = 'user'}), 
 or the asymptotic variance-covariance matrix of the internal/unconstrained parameters (\code{parm = 'internal'}). 
 
-\code{\link{confint.fmx_QLMDe}} returns the Wald-type confidence intervals based on the user-friendly parameters (\code{parm = 'user'}),
+\link{confint.fmx_QLMDe} returns the Wald-type confidence intervals based on the user-friendly parameters (\code{parm = 'user'}),
  or the internal/unconstrained parameters (\code{parm = 'internal'}).
 
-When the distribution has constraints on one or more parameters, none of \code{\link{coef.fmx}}, \code{\link{vcov.fmx_QLMDe}} and 
-\code{\link{confint.fmx_QLMDe}} return the corresponding values only for the constrained parameters.
+When the distribution has constraints on one or more parameters, none of \code{\link{coef.fmx}}, \link{vcov.fmx_QLMDe} and 
+\link{confint.fmx_QLMDe} return the corresponding values only for the constrained parameters.
 }
 \description{
-S3 methods of 
-\code{\link[stats]{nobs}}, 
-\code{\link[stats]{logLik}},
-\code{\link[stats]{coef}},
-\code{\link[stats]{vcov}} and
-\code{\link[stats]{confint}}
-for class \code{\linkS4class{fmx}} and/or \code{\linkS4class{fmx_QLMDe}}.
+Additional methods of class \linkS4class{fmx} and/or \linkS4class{fmx_QLMDe},
+for generic functions defined in \pkg{stats} package.
 }
 \details{
 The inference for the user-friendly parameters is obtained via delta-method.
 }
 \seealso{
-\code{\link[stats]{nobs}}, 
-\code{\link[stats]{logLik}},
-\code{\link[stats]{coef}},
-\code{\link[stats]{vcov}} and
-\code{\link[stats]{confint}}
+\link[stats]{nobs} \link[stats]{logLik} \link[stats]{coef} \link[stats]{vcov}
+\link[stats]{confint}
 }

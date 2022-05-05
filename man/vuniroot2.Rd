@@ -2,46 +2,42 @@
 % Please edit documentation in R/vuniroot2.R
 \name{vuniroot2}
 \alias{vuniroot2}
-\title{A Slight Modification of \code{\link[rstpm2]{vuniroot}}}
+\title{Vectorised One Dimensional Root (Zero) Finding}
 \usage{
 vuniroot2(
   y,
   f,
   interval = stop("must provide a length-2 `interval`"),
   tol = .Machine$double.eps^0.25,
-  maxiter = 1000
+  maxiter = 1000L
 )
 }
 \arguments{
-\item{y}{\code{\link[base]{numeric}} vector of \eqn{y} values}
+\item{y}{\link[base]{numeric} vector of \eqn{y} values}
 
-\item{f}{the \code{\link[base]{function}} \eqn{f(x)}}
+\item{f}{monotone \link[base]{function} \eqn{f(x)} whose roots are to be solved}
 
-\item{interval}{length-2 \code{\link[base]{numeric}} vector}
+\item{interval}{length two \link[base]{numeric} vector}
 
-\item{tol}{desired accuracy (convergence tolerance), see \code{\link[rstpm2]{vuniroot}}}
+\item{tol}{\link[base]{double} scalar, desired accuracy (convergence tolerance),}
 
-\item{maxiter}{maximum number of iterations, see \code{\link[rstpm2]{vuniroot}}}
+\item{maxiter}{\link[base]{integer} scalar, maximum number of iterations}
 }
 \value{
-A \code{\link[base]{numeric}} vector \eqn{x} as the solution of \eqn{y = f(x)} with given \eqn{y}.
+\link{vuniroot2} returns a \link[base]{numeric} vector \eqn{x} as the solution of \eqn{y = f(x)} with given vector \eqn{y}.
 }
 \description{
-A slight modification of \code{\link[rstpm2]{vuniroot}} to solve \eqn{y = f(x)}, 
-for a given vector of \eqn{y} values.
+To solve a monotone function \eqn{y = f(x)} for a given vector of \eqn{y} values.
 }
 \details{
-\code{\link{vuniroot2}}, different from \code{\link[rstpm2]{vuniroot}}, does
+\link{vuniroot2} function, different from \link[rstpm2]{vuniroot} function, does
 \itemize{
 \item{accept \code{NA_real_} as element(s) of \eqn{y}}
 \item{handle the case when the analytical root is at \code{lower} and/or \code{upper}}
 \item{return a root of \code{Inf} (if \code{abs(f(lower)) >= abs(f(upper))}) or 
 \code{-Inf} (if \code{abs(f(lower)) < abs(f(upper))}), 
-when the function value \code{f(lower)} and \code{f(upper)} are not-of-opposite-sign.}
+when the function value \code{f(lower)} and \code{f(upper)} are not of opposite sign.}
 }
-
-Note that we do not have parameter \code{...} in \code{\link{vuniroot2}}, otherwise it will cause warning message 
-`The \code{\link{dGH}}/\code{\link{pGH}} function should raise an error when names are incorrectly named' in \code{fitdistrplus:::test1fun}.
 }
 \examples{
 library(rstpm2)
@@ -50,17 +46,16 @@ lwr = rep(1, times = 9L); upr = rep(3, times = 9L)
 # ?rstpm2::vuniroot does not accept NA \eqn{y}
 tryCatch(vuniroot(function(x) x^2 - c(NA, 1:8), lower = lwr, upper = upr), error = identity)
 
-# ?rstpm2::vuniroot not good when root is at `lower` or `upper`
+# ?rstpm2::vuniroot not good when the analytic root is at `lower` or `upper`
 f <- function(x) x^2 - 1:9
 tryCatch(vuniroot(f, lower = lwr, upper = upr, extendInt = 'no'), warning = identity)
 tryCatch(vuniroot(f, lower = lwr, upper = upr, extendInt = 'yes'), warning = identity)
 tryCatch(vuniroot(f, lower = lwr, upper = upr, extendInt = 'downX'), error = identity)
 tryCatch(vuniroot(f, lower = lwr, upper = upr, extendInt = 'upX'), warning = identity)
 
-# all good
-vuniroot2(c(NA, 1:9), f = function(x) x^2, interval = c(1, 3))
+vuniroot2(c(NA, 1:9), f = function(x) x^2, interval = c(1, 3)) # all good
 
 }
 \seealso{
-\code{\link[rstpm2]{vuniroot}}
+\link[rstpm2]{vuniroot}
 }

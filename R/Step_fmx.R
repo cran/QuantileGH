@@ -1,58 +1,58 @@
 
 
 
-#' @title Add or Drop All Possible Parameters of \code{\linkS4class{fmx_QLMDe}} Object
+#' @title Add or Drop One Possible Parameters of \linkS4class{fmx_QLMDe} Object
 #' 
 #' @description 
 #' 
 #' Compute all the single terms in the \code{scope} argument that can be added to or dropped from the model, 
 #' fit those models and compute a table of the changes in fit.
 #' 
-#' These are additional S3 methods of \code{\link[stats]{add1}} and \code{\link[stats]{drop1}}.
+#' @param object \linkS4class{fmx_QLMDe} object
 #' 
-#' @param object \code{\linkS4class{fmx_QLMDe}} object
+#' @param scope a \link[base]{list} of \link[base]{character} vectors to denote one or more constraints
 #' 
-#' @param scope a \code{\link[base]{list}} of \code{\link[base]{character}} vectors to denote one or more constraints
+#' @param test \link[base]{character}, either \code{'logLik'} (default), \code{'AIC'} or \code{'BIC'}
 #' 
-#' @param test \code{\link[base]{character}}, either \code{'logLik'} (default), \code{'AIC'} or \code{'BIC'}
-#' 
-#' @param trace \code{\link[base]{logical}} scalar, whether to print out progress reports (default \code{FALSE})
-#' 
-#' @param ... place holder to match the S3 generic \code{\link[stats]{drop1}}, currently not in use
+#' @param ... additional parameters, currently not in use.
 #' 
 #' @details 
 #' 
-#' Do \strong{not} write as S3 method of \code{\link[MASS]{dropterm}}; there's no \strong{term} for \code{\linkS4class{fmx_QLMDe}} object.
+#' Do \strong{not} write as S3 method of \link[MASS]{dropterm} function, 
+#' as there's no \strong{term} for \linkS4class{fmx_QLMDe} object.
 #' 
 #' @return
 #' 
-#' \code{\link{drop1.fmx_QLMDe}} returns an \code{\link[stats]{anova}} table with additional attributes
+#' \link{drop1.fmx_QLMDe} returns an \link[stats:anova]{ANOVA} table with additional attributes
 #' \itemize{
-#' \item{\code{models}} {a \code{\link[base]{list}} of \code{\linkS4class{fmx_QLMDe}} objects}
-#' \item{\code{objF}} {a \code{\link[base]{list}} of objective functions (depends on \code{test})}
+#' \item{\code{models}} {a \link[base]{list} of \linkS4class{fmx_QLMDe} objects}
+#' \item{\code{objF}} {a \link[base]{list} of objective functions (depends on \code{test})}
 #' \item{\code{o1}} {the location of the optimal models by \code{test}.  If the original model is optimal, this value is \code{integer()}}
 #' }
 #'
-#' \code{\link{add1.fmx_QLMDe}} will be added in the next release.
+#' \link{add1.fmx_QLMDe} will be added in the next release.
 #' 
-#' @seealso \code{\link[stats]{add1}}, \code{\link[stats]{drop1}}.
+#' @seealso \link[stats]{add1} \link[stats]{drop1}
 #' 
 #' @name drop1_fmx
 #' @export
-drop1.fmx_QLMDe <- function(object, scope, test = c('logLik', 'AIC', 'BIC'), trace = TRUE, ...) { # `...` not used
+drop1.fmx_QLMDe <- function(object, scope, test = c('logLik', 'AIC', 'BIC'), ...) { # `...` not used
   
   K <- dim(object@parM)[1L]
   
   y0 <- lapply(scope, FUN = function(iscope) { # (iscope = scope[[1L]])
-    if (trace) cat(paste0(object@distname, K), paste(c(iscope, '0'), collapse = '='), '.. ')
-    ret <- QLMDe(object@data, data.name = object@data.name, distname = object@distname, K = K, p = object@p, constraint = iscope)
-    if (trace) cat('done!\n', sep = '')
+    message(paste0(object@distname, K), ' ', paste(c(iscope, '0'), collapse = '='), ' .. ', appendLF = FALSE)
+    ret <- QLMDe(object@data, data.name = object@data.name, distname = object@distname, K = K, 
+                 p = object@p, 
+                 # init = object@init, # old `@init` does not satisfy new `constraint`
+                 constraint = iscope)
+    message('done!')
     return(ret)
   })
-  y <- c(list(object), y0) # input `object` \strong{is} included in the elements of return
+  y <- c(list(object), y0[lengths(y0) > 0L]) # input `object` \strong{is} included in the elements of return
   names(y) <- vapply(y, FUN = fmx_constraint_brief, FUN.VALUE = '', USE.NAMES = FALSE)
   
-  lr <- LikRatio(models = y, type = 'plain', compare = 'first') # print(lr) # ?stats:::print.anova
+  lr <- LikRatio(y, type = 'plain', compare = 'first') # print(lr) # ?stats:::print.anova
   attr(lr, which = 'models') <- y
   
   test <- match.arg(test)
@@ -78,25 +78,25 @@ add1.fmx_QLMDe <- function(object, scope, ...) {
 
 
 
-#' @title Backward Selection \eqn{gh}-parsimonious Model with Fixed Number of Components
+#' @title Backward Selection \eqn{gh}-parsimonious Model with Fixed Number of Components \eqn{K}
 #' 
 #' @description 
 #' 
-#' \code{\link{Step_fmx}} selects a \eqn{gh}-parsimonious model with \eqn{g} and/or \eqn{h} parameters equal to zero 
+#' \link{Step_fmx} selects a \eqn{gh}-parsimonious model with \eqn{g} and/or \eqn{h} parameters equal to zero 
 #' for all or some of the mixture components conditionally on fixed number of components \eqn{K}.
 #' 
-#' @param object \code{\linkS4class{fmx_QLMDe}} object returned from \code{\link{QLMDe}}
+#' @param object \linkS4class{fmx_QLMDe} object
 #' 
-#' @param test \code{\link[base]{character}} value indicating the criterion to be used, with options
-#' \code{'logLik'} (via likelihood ratio test \code{\link{LikRatio}}, default and recommended), 
-#' \code{'AIC'} (via Akaike's information criterion \code{\link[stats]{AIC}}) and 
-#' \code{'BIC'} (via Bayesian information criterion \code{\link[stats]{BIC}}).
+#' @param test \link[base]{character} scalar indicating the criterion to be used, either 
+#' via likelihood ratio test \link[=LikRatio]{'logLik'} (default and recommended)
+#' via Akaike's information criterion \link[stats:AIC]{'AIC'} and 
+#' via Bayesian information criterion \link[stats:BIC]{'BIC'}.
 #' 
 #' @param ... additional parameters
 #' 
 #' @details 
 #' 
-#' The algorithm starts with quantile least Mahalanobis distance estimates (\code{\link{QLMDe}}) 
+#' The algorithm starts with quantile least Mahalanobis distance estimates
 #' of either the full mixture of Tukey \eqn{g}-&-\eqn{h} distributions model, or
 #' a constrained model (i.e., some \eqn{g} and/or \eqn{h} parameters equal to zero according to the user input).
 #' Next, each of the non-zero \eqn{g} and/or \eqn{h} parameters is tested using the likelihood ratio test.
@@ -110,11 +110,13 @@ add1.fmx_QLMDe <- function(object, scope, ...) {
 #' 
 #' @return 
 #' 
-#' \code{\link{Step_fmx}} returns an \code{\linkS4class{fmx_QLMDe}} object, with attributes
+#' \link{Step_fmx} returns an \linkS4class{fmx_QLMDe} object, with attributes
 #' \itemize{
 #' \item{\code{anova}} {ANOVA table}
 #' \item{\code{objF}} {value of the objective function (either the log-likelihood, AIC or BIC)}
 #' }
+#' 
+#' @seealso \link{LikRatio}
 #' 
 #' @export
 Step_fmx <- function(object, test = c('logLik', 'AIC', 'BIC'), ...) {

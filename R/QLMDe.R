@@ -1,53 +1,105 @@
 
+
+
+
+
+#' @title Specification of \linkS4class{fmx_QLMDe} Class
+#' 
+#' @description 
+#' Quantile least Mahalanobis distance estimates of one-dimensional finite mixture distribution.
+#' The \linkS4class{fmx_QLMDe} object contains (i.e., inherits from) the \linkS4class{fmx} object. 
+#' 
+#' @slot data \link[base]{numeric} vector, the one-dimensional observations
+#' 
+#' @slot data.name \link[base]{character} scalar, a human-friendly name of observations
+#'
+#' @slot epdf empirical probability density \link[base]{function} fitted by \link[stats]{approxfun}
+#' 
+#' @slot quantile_vv variance-covariance \link[base]{matrix} of selected quantiles (based on the selected probabilities stored in slot \code{@@p})
+#' 
+#' @slot vcov variance-covariance \link[base]{matrix} of the internal (i.e., unconstrained) estimates
+#' 
+#' @slot init \linkS4class{fmx} object, the initial values to be sent to \link[stats]{optim}
+#' 
+#' @slot p \link[base]{numeric} vectors of probabilities, where the distance between the empirical and true quantiles are measured
+#' 
+#' @slot optim a \link[base]{list} returned from \link[stats]{optim}
+#' 
+#' @export
+setClass(Class = 'fmx_QLMDe', contains = 'fmx', slots = c(
+  data = 'numeric', 
+  data.name = 'character',
+  epdf = 'function', 
+  quantile_vv = 'matrix',
+  vcov = 'matrix',
+  init = 'fmx',
+  p = 'numeric',
+  optim = 'list'
+), prototype = prototype(
+  data.name = 'observations'
+), validity = function(object) {
+  if (!length(object@data)) stop('*Never* remove @data slot from \'fmx_QLMDe\' object')
+  if (anyNA(object@data)) stop('Observations in \'fmx_QLMDe\' must be free of NA_real_')
+  if (!length(object@p)) stop('`p` must be recorded')
+})
+
+
+
+
+
+
 #' @title Quantile Least Mahalanobis Distance estimates
 #' 
 #' @description 
 #' 
-#' The quantile least Mahalanobis distance algorithm (\code{\link{QLMDe}}) estimates the parameters of 
+#' The quantile least Mahalanobis distance algorithm estimates the parameters of 
 #' single-component or finite mixture distributions   
 #' by minimizing the Mahalanobis distance between the vectors of sample and theoretical quantiles.
-#' See \code{\link{QLMDp}} for the default selection of probabilities at which the sample and theoretical quantiles are compared.
+#' See \link{QLMDp} for the default selection of probabilities at which the sample and theoretical quantiles are compared.
 #' 
-#' The default initial values are based on trimmed \eqn{k}-means 
-#' clustering with re-assignment provided by \code{\link{clust_fmx}}.
+#' The default initial values are estimated based on trimmed \eqn{k}-means 
+#' clustering with re-assignment.
 #' 
-#' @param x \code{\link[base]{numeric}} vector, the one-dimensional observations.
+#' @param x \link[base]{numeric} vector, the one-dimensional observations.
 #' 
-#' @param data.name \code{\link[base]{character}} value, name for the observations for user-friendly print out.
+#' @param data.name \link[base]{character} value, name for the observations for user-friendly print out.
 #' 
-#' @param distname \code{\link[base]{character}} value, name of mixture distribution to be fitted.  Currently supports \code{'norm'} and \code{'GH'}.
+#' @param distname \link[base]{character} value, name of mixture distribution to be fitted.  Currently supports \code{'norm'} and \code{'GH'}.
 #' 
-#' @param K \code{\link[base]{integer}} value, number of components (e.g., must use \code{2L} instead of \code{2}).
+#' @param K \link[base]{integer} scalar, number of components (e.g., must use \code{2L} instead of \code{2}).
 #' 
-#' @param p \code{\link[base]{numeric}} vector, percentiles at where the sample and theoretical quantiles are to be matched.
+#' @param p \link[base]{numeric} vector, percentiles at where the sample and theoretical quantiles are to be matched.
 #' See \code{\link{QLMDp}} for details.
 #' 
-#' @param init \code{\linkS4class{fmx}} object, the initial values for the optimization algorithm, default provided by \code{\link{clust_fmx}}.
+#' @param init \link[base]{character} scalar for the method of initial values selection, 
+#' or an \linkS4class{fmx} object of the initial values. 
+#' See \link{QLMDinit} for more details.
 #' 
-#' @param constraint \code{\link[base]{character}} vector, parameters (\eqn{g} and/or \eqn{h} for Tukey's \eqn{g}-&-\eqn{h} mixture) to be set at 0.  
-#' See \code{\link{fmx_constraint}} for details.
+#' @param constraint \link[base]{character} vector, parameters (\eqn{g} and/or \eqn{h} for Tukey's \eqn{g}-&-\eqn{h} mixture) to be set at 0.  
+#' See \link{fmx_constraint} for details.
 #' 
-#' @param tol,maxiter see \code{\link{vuniroot2}}
+#' @param tol,maxiter see \link{vuniroot2}
 #' 
 #' @param ... additional parameters of \code{\link[stats]{optim}}.
 #' 
 #' @details
 #' 
-#' Quantile Least Mahalanobis Distance estimator (\code{\link{QLMDe}}) fits a single-component or finite mixture distribution 
+#' Quantile Least Mahalanobis Distance estimator fits a single-component or finite mixture distribution 
 #' by minimizing the Mahalanobis distance between
 #' the theoretical and observed quantiles,
 #' using the empirical quantile variance-covariance matrix \code{\link{quantile_vcov}}.
 #' 
-#' @return An \code{\linkS4class{fmx_QLMDe}} object
+#' @return An \linkS4class{fmx_QLMDe} object
 #' 
-#' @seealso \code{\link[stats]{optim}}
+#' @seealso \link[stats]{optim} \link{QLMDinit}
 #' 
 #' @examples 
 #' 
 #' \donttest{
 #' # Generated from 1-component normal; start with 2-component normal fit
 #' set.seed(1623); (y0n <- QLMDe(rnorm(1e3L), distname = 'norm', K = 2L))
-#' StepK_fmx(y0n, test = 'logLik', Kmax = 2L) # one-component
+#' (y1n <- StepK_fmx(y0n, test = 'logLik', Kmax = 2L)) # one-component
+#' vcov(y1n)
 #' 
 #' # Generated from 2-component normal; start with 1-component normal fit
 #' (d1 <- fmx('norm', mean = c(0, 1.5), sd = .5, w = c(.4, .6)))
@@ -84,8 +136,8 @@
 QLMDe <- function(
   x, distname = c('norm', 'GH'), K, data.name = deparse1(substitute(x)),
   constraint = character(),
-  p = QLMDp(obs = x),
-  init = clust_fmx(x, distname = distname, K = K, constraint = constraint),
+  p = QLMDp(x = x),
+  init = c('logLik', 'letterValue', 'normix'),
   tol = .Machine$double.eps^.25, maxiter = 1000,
   ...
 ) {
@@ -98,13 +150,23 @@ QLMDe <- function(
   if (anyNA(x)) stop('do not allow NA_real_ in observations `x`')
   if (!is.character(data.name) || length(data.name) != 1L || anyNA(data.name) || !nzchar(data.name)) stop('data.name must be length-1 character')
   
-  interval <- c(min(x), max(x)) # do not think about extending this interval!!!
+  interval <- QLMDe_interval(x = x, ...)
   
   if (anyNA(p)) stop('do not allow NA_real_ in `p`')
   p <- sort.int(unique_allequal(p))
   
-  if (!inherits(init, what = 'fmx')) stop('`init` must be \'fmx\' object (e.g., a returned object from ?clust_fmx)')
-  if (init@distname != distname || dim(init@parM)[1L] != K) stop('`init` is not a ', distname, '-', K, ' fit.')
+  if (missing(init)) {
+    init <- switch(match.arg(init), logLik = {
+      QLMDinit(x, test = 'logLik', distname = distname, K = K, constraint = constraint)
+    }, letterValue = {
+      QLMDinit_letterValue(x, distname = distname, K = K, constraint = constraint)
+    }, normix = {
+      QLMDinit_normix(x, distname = distname, K = K)
+    })
+  }
+  if (!inherits(init, what = 'fmx')) stop('`init` must be \'fmx\' object (e.g., a returned object from ?QLMDinit_letterValue)')
+  if ((init@distname != distname) || (dim(init@parM)[1L] != K)) stop('`init` is not a ', distname, ' ', K, '-component fit.')
+  
   q_init <- qfmx(p = p, interval = interval, distname = distname, K = K, parM = init@parM, w = init@w)
   if (any(id1 <- is.infinite(q_init))) {
     if (all(id1)) stop('starting values too far away?')
@@ -150,8 +212,6 @@ QLMDe <- function(
   }
   
   # or use this: https://stackoverflow.com/questions/52552143/how-to-save-the-coefficients-for-each-optim-iteration
-  #parTrace <- .Internal(array(par_init, c(1L, length(par_init)), list(NULL, names(par_init)))) # I don't know how to use 'trace' in `control` of \code{stats::optim}
-  #env <- environment()
   max_return <- .Machine$double.xmax
   
   fn <- if (K == 1L) {
@@ -164,7 +224,7 @@ QLMDe <- function(
     }, GH = function(x) {
       if (has_constr) parRun[-id_constr] <- x else parRun <- x
       q <- qGH(p, A = parRun[1L], B = exp(parRun[2L]), g = parRun[3L], h = exp(parRun[4L]), lower.tail = TRUE, log.p = FALSE)
-      if (any(is.infinite(q))) return(max_return)
+      if (any(is.infinite(q))) return(max_return) # stop('interval problem again?') #
       return(mahalanobis_int(x = q, center = q_obs, invcov = qvv_inv))
       
     })
@@ -181,18 +241,17 @@ QLMDe <- function(
         t_w <- t.default(pmlogis_first(x[id_w]))
         sdinv <- 1 / exp(.pM[,2L])
         eff <- cumsum(c(.pM[1L,1L], exp(.pM[2:K,1L]))) * sdinv
-        q <- vuniroot2(y = p, f = function(q) { # essentially \code{\link{pfmx}}
+        q <- vuniroot2(y = p, f = function(q) { # essentially \link{pfmx}
           z <- tcrossprod(sdinv, q) - eff
           c(t_w %*% pnorm(z))
         }, interval = interval)
-        if (any(is.infinite(q))) return(max_return)
+        if (any(is.infinite(q))) return(max_return) # stop('interval problem again?') # 
         return(mahalanobis_int(x = q, center = q_obs, invcov = qvv_inv))
       }
       
     }, GH = {
       id_w <- 4L*K + Kseq1
       function(x) {
-        #assign('parTrace', value = rbind(parTrace, x), envir = env)
         if (has_constr) parRun[-id_constr] <- x else parRun <- x
         .pM <- array(parRun[seq_len(4L*K)], dim = c(K, 4L)) # only first 4K elements
         t_w <- t.default(pmlogis_first(parRun[id_w]))
@@ -200,34 +259,123 @@ QLMDe <- function(
         h <- exp(.pM[,4L])
         sdinv <- 1 / exp(.pM[,2L])
         eff <- cumsum(c(.pM[1L,1L], exp(.pM[2:K,1L]))) * sdinv
-        q <- vuniroot2(y = p, f = function(q) { # essentially \code{\link{pfmx}}
+        q <- vuniroot2(y = p, f = function(q) { # essentially \link{pfmx}
           z <- q0 <- tcrossprod(sdinv, q) - eff
           for (i in Kseq) z[i,] <- .qGH2z(q0 = q0[i,], g = g[i], h = h[i], tol = tol, maxiter = maxiter)
           c(t_w %*% pnorm(z))
         }, interval = interval, tol = tol, maxiter = maxiter)
         if (any(is.infinite(q))) return(max_return)
+        #if (any(is.infinite(q))) {
+        #  print(.pM)
+        #  print(p)
+        #  print(q)
+        #  print(interval)
+        #  stop('interval problem again?')
+        #}
         return(mahalanobis_int(x = q, center = q_obs, invcov = qvv_inv))
       }
       
     })
   }
   
-  y <- optim(par = par_init, fn = fn, ...)
+  #repeat {
+    y <- optim(par = par_init, fn = fn, ...)
+    if (FALSE) {
+      fn(par_init)
+      fn(y$par)
+    }
+    if (isTRUE(all.equal.numeric(y$par, par_init))) {
+      print(init)
+      # ret <<- init; x <<- x;
+      stop('stats::optim not working (most likely due to poor starting value)')
+      # autoplot.fmx(ret, data = x)
+      # QLMDe(x, distname = 'GH', K = 2L, init = ret)
+    }
+    #cat('run stats::optim again..\n')
+    # sometimes ?stats::optim will not move.  Weird
+  #}
   
-  if (has_constr) parRun[-id_constr] <- y$par else parRun <- y$par
-  ret <- dbl2fmx(x = parRun, K = K, distname = distname)
+  
+  if (has_constr) {
+    parRun[-id_constr] <- y$par
+  } else parRun <- y$par
+  tmp <- dbl2fmx(x = parRun, K = K, distname = distname)
 
-  new(
+  # variance-covariance of internal estimates
+  #n <- length(x)
+  # `q`: theoretical quantiles
+  q <- qfmx(p, distname = distname, K = K, parM = tmp$parM, w = tmp$w, interval = interval, lower.tail = TRUE, log.p = FALSE)
+  # `d`: densities at theoretical (\hat{\theta}) quantiles
+  d <- dfmx(q, distname = distname, K = K, parM = tmp$parM, w = tmp$w, log = FALSE)
+  # {density at \hat{\theta}} and {kernel density} may have different {=0} status.
+  tol <- sqrt(sqrt(.Machine$double.eps))
+  if (all(d0 <- (abs(d) < tol))) {
+    #cat('malformed estimates with all-0 densities\n')
+    #return(invisible())
+    stop('do not allow this to happen')
+  }
+  if (any(d0)) {
+    p1 <- p[!d0]
+    q1 <- q[!d0]
+    d1 <- d[!d0]
+  } else {
+    p1 <- p
+    q1 <- q
+    d1 <- d
+  }
+  .meat <- quantile_vcov(p = p1, d = d1) # V_(\hat{theta})
+  # in theary, we should use V_{true theta}, but no one knows true theta in practice
+  # so I am using V_{\hat_theta}
+  # now I want to use V_{empirical} (`@quantile_vv` is a slot of \linkS4class{fmx_QLMDe}), can I?
+  q_gr <- qfmx_gr(p = p1, distname = distname, K = K, parM = tmp$parM, w = tmp$w)
+  if (!length(q_gr)) {
+    int_vv <- array(NA_real_, dim = c(0L, 0L)) # exception handling
+  } else {
+    .bread <- tryCatch(crossprod_inv(q_gr) %*% t.default(q_gr), error = as.null.default)
+    if (!length(.bread)) {
+      int_vv <- array(NA_real_, dim = c(0L, 0L)) # exception handling
+    } else {
+      int_vv <- .bread %*% tcrossprod(.meat, .bread) / length(x) # interval variance-covariance
+      if (anyNA(int_vv)) stop('do not allow NA in `int_vv`')
+      if (any(diag(int_vv) < 0)) stop('diagonal terms of VarCov < 0 ?!')
+      dimnames(int_vv) <- list(dimnames(q_gr)[[2L]], dimnames(q_gr)[[2L]])
+    }
+  }
+  # end of vv
+  
+  
+  ret <- new(
     Class = 'fmx_QLMDe',
     data = x, data.name = data.name,
-    distname = distname, parM = ret$parM, w = ret$w,
+    distname = distname, parM = tmp$parM, w = tmp$w,
     quantile_vv = qvv,
+    vcov = int_vv,
     epdf = x_epdf,
     p = p,
     init = init,
     optim = y
   )
   
+  if (!setequal(attr(fmx_constraint(ret), which = 'user', exact = TRUE), constraint)) {
+    #message('not handling constrants correctly')
+    # indicates ?stats::optim did not move
+    #return(invisible())
+    stop('should not happen')
+  }
+  
+  return(ret)
+  
+}
+
+
+
+QLMDe_interval <- function(x, extend_interval = 10, ...) {
+  xmin <- min(x)
+  xmax <- max(x)
+  xdiff <- xmax - xmin
+  if (length(extend_interval) != 1) stop('...')
+  # interval <- c(min(x), max(x)) # old
+  c(xmin - extend_interval * xdiff, xmax + extend_interval * xdiff)
 }
 
 
@@ -252,7 +400,7 @@ print.fmx_QLMDe <- function(x, ...) {
   obj <- if (K == 1L) parM else cbind(parM, w = sprintf(fmt = '%.1f%%', x@w*1e2))
   heading <- paste0(K, '-Component Mixture of ', switch(x@distname, norm = 'Normal', GH = 'Tukey\'s G-&-H'), ' Distribution')
   
-  ci <- confint.fmx_QLMDe(x, parm = 'user')
+  ci <- confint.fmx_QLMDe(x, internal = FALSE)
   id_constr <- fmx_constraint(x)
   if (length(ci) && !anyNA(ci)) {
     ci0 <- sprintf(fmt = '(%.2f~%.2f)', ci[,1L], ci[,2L])
@@ -276,7 +424,7 @@ print.fmx_QLMDe <- function(x, ...) {
     cat('\n')
   }
   
-  print(autoplot.fmx_QLMDe(x))
+  print(autoplot.fmx(x))
   cat('\n')
   return(invisible(x))
 }
@@ -315,8 +463,8 @@ fmx2dbl <- function(x, distname = x@distname, parM = x@parM, K = dim(parM)[1L], 
 
 # invert of ?fmx2dbl
 dbl2fmx <- function(x, K, distname, argnm = dist_anm(distname), ...) {
-  # not used in ?stats::optim inside \code{\link{QLMDe}} (I wrote separate functions for 'GH' and 'norm')
-  # only used in \code{\link{qfmx_gr}}, which is only used in \code{\link{vcov.fmx_QLMDe}}, therefore not compute intensive
+  # not used in ?stats::optim inside \link{QLMDe} (I wrote separate functions for 'GH' and 'norm')
+  # only used in \link{qfmx_gr}, which is only used in \link{vcov.fmx_QLMDe}, therefore not compute intensive
   # can use `argnm = NULL` to save time
   nx <- length(x)
   n_dist <- nx - (K - 1L) # K == 1L or not
@@ -353,19 +501,19 @@ transLog <- function(distname) {
 #' 
 #' Computes the variance-covariance matrix of quantiles based on Theorem 1 and 2 of Mosteller (1946).
 #' 
-#' @param p \code{\link[base]{numeric}} vector of cumulative probabilities at the given quantiles
+#' @param p \link[base]{numeric} vector of cumulative probabilities at the given quantiles
 #' 
-#' @param d \code{\link[base]{numeric}} vector of probability densities at the given quantiles
+#' @param d \link[base]{numeric} vector of probability densities at the given quantiles
 #' 
 #' @details 
 #' 
 #' The end user should make sure no densities too close to 0 is included in argument \code{d}.
 #' 
-#' \code{\link{quantile_vcov}} is not used in a compute-intensive way in \code{\link{QLMDe}}.
+#' \link{quantile_vcov} must not be used in a compute-intensive way.
 #' 
 #' @return 
 #' 
-#' The variance-covariance \code{\link[base]{matrix}} of quantiles based on Mosteller (1946).
+#' The variance-covariance \link[base]{matrix} of quantiles based on Mosteller (1946).
 #' 
 #' @references 
 #' Frederick Mosteller. On Some Useful "Inefficient" Statistics. 
@@ -403,7 +551,10 @@ qfmx_gr <- function(
   # ?fmx2dbl may have log(d) being -Inf; see ?fmx2dbl
   x_dbl <- if (has_constr) x_skeleton[-id_constr] else x_skeleton
   x_nm <- names(x_dbl) # stopifnot(all(make.names(x_nm) == x_nm)); # unicode symbols considered legal :)
-  if (any(is.infinite(x_dbl))) stop('wont happen since implementation of constraint')
+  if (any(is.infinite(x_dbl))) {
+    # stop('wont happen since implementation of constraint') # actually could still happen
+    return(invisible())
+  }
 
   if (!is.numeric(interval) || length(interval) != 2L || !all(is.finite(interval))) stop('`interval` must not contain NA nor Inf')
 
@@ -427,9 +578,10 @@ qfmx_gr <- function(
       rho = list2env(as.list.default(x_dbl), parent = environment())), which = 'gradient', exact = TRUE)
   }, error = function(e) { # very rare
     cat('stats::numericDeriv in `qfmx_gr` error.\n')
-    array(NA_real_, dim = c(length(p), length(x_nm)))
+    #array(NA_real_, dim = c(length(p), length(x_nm)))
+    return(invisible())
   })
-  dimnames(ret)[[2L]] <- x_nm
+  if (length(ret)) dimnames(ret)[[2L]] <- x_nm
   return(ret)
 }
 
@@ -446,19 +598,16 @@ qfmx_gr <- function(
 #' 
 #' @description 
 #' 
-#' S3 methods of 
-#' \code{\link[stats]{nobs}}, 
-#' \code{\link[stats]{logLik}},
-#' \code{\link[stats]{coef}},
-#' \code{\link[stats]{vcov}} and
-#' \code{\link[stats]{confint}}
-#' for class \code{\linkS4class{fmx}} and/or \code{\linkS4class{fmx_QLMDe}}.
+#' Additional methods of class \linkS4class{fmx} and/or \linkS4class{fmx_QLMDe},
+#' for generic functions defined in \pkg{stats} package.
 #' 
-#' @param object an \code{\linkS4class{fmx}} or \code{\linkS4class{fmx_QLMDe}} object
+#' @param object an \linkS4class{fmx} or \linkS4class{fmx_QLMDe} object
 #' 
-#' @param parm \code{\link[base]{character}} value, either \code{'user'} for the user-friendly parameters 
+#' @param data \link[base]{double} vector, actual observations
+#' 
+#' @param internal \link[base]{logical} scalar, either for the user-friendly parameters (\code{FALSE}, default)
 #' (e.g., \code{mean,sd} for normal mixture, and \code{A,B,g,h} for Tukey's \eqn{g}-and-\eqn{h} mixture), or
-#' \code{'internal'} for the internal/unconstrained parameters.
+#' for the internal/unconstrained parameters (\code{TRUE}).
 #' 
 #' @param level confidence level, default \eqn{95\%}.
 #' 
@@ -470,86 +619,42 @@ qfmx_gr <- function(
 #' 
 #' @return 
 #' 
-#' \code{\link{nobs.fmx_QLMDe}} returns an \code{\link[base]{integer}} scalar indicating the sample size of
-#' the observations used in \code{\link{QLMDe}} estimation. 
+#' \link{nobs.fmx_QLMDe} returns an \link[base]{integer} scalar indicating the sample size of
+#' the observations used in \link{QLMDe} estimation. 
 #' 
-#' \code{\link{logLik.fmx_QLMDe}} returns a \code{\link[stats]{logLik}} object indicating the log-likelihood.
-#' An additional attribute \code{attr(, 'logl')} indicates the point-wise log-likelihood, to be use in Vuong's closeness test.
+#' \link{logLik.fmx} returns a \link[stats]{logLik} object indicating the log-likelihood.
+#' An additional attribute \code{attr(, 'logl')} indicates the point-wise log-likelihood, 
+#' to be use in Vuong's closeness test.
 #' 
-#' \code{\link{coef.fmx}} returns the estimates of the user-friendly parameters (\code{parm = 'user'}), 
+#' \link{coef.fmx} returns the estimates of the user-friendly parameters (\code{parm = 'user'}), 
 #' or the internal/unconstrained parameters (\code{parm = 'internal'}).
 #' 
-#' \code{\link{vcov.fmx_QLMDe}} returns 
+#' \link{vcov.fmx_QLMDe} returns 
 #' the approximate asymptotic variance-covariance matrix of the user-friendly parameters via delta-method (\code{parm = 'user'}), 
 #' or the asymptotic variance-covariance matrix of the internal/unconstrained parameters (\code{parm = 'internal'}). 
 #' 
-#' \code{\link{confint.fmx_QLMDe}} returns the Wald-type confidence intervals based on the user-friendly parameters (\code{parm = 'user'}),
+#' \link{confint.fmx_QLMDe} returns the Wald-type confidence intervals based on the user-friendly parameters (\code{parm = 'user'}),
 #'  or the internal/unconstrained parameters (\code{parm = 'internal'}).
 #' 
-#' When the distribution has constraints on one or more parameters, none of \code{\link{coef.fmx}}, \code{\link{vcov.fmx_QLMDe}} and 
-#' \code{\link{confint.fmx_QLMDe}} return the corresponding values only for the constrained parameters.
+#' When the distribution has constraints on one or more parameters, none of \code{\link{coef.fmx}}, \link{vcov.fmx_QLMDe} and 
+#' \link{confint.fmx_QLMDe} return the corresponding values only for the constrained parameters.
 #' 
-#' @seealso 
-#' \code{\link[stats]{nobs}}, 
-#' \code{\link[stats]{logLik}},
-#' \code{\link[stats]{coef}},
-#' \code{\link[stats]{vcov}} and
-#' \code{\link[stats]{confint}}
+#' @seealso \link[stats]{nobs} \link[stats]{logLik} \link[stats]{coef} \link[stats]{vcov}
+#' \link[stats]{confint}
 #' 
 #' @name S3_fmx_QLMDe
-#' @method vcov fmx_QLMDe
 #' @export
-vcov.fmx_QLMDe <- function(object, parm = c('user', 'internal'), ...) {
-  # not compute-intensive
-  parm <- match.arg(parm)
+vcov.fmx_QLMDe <- function(object, internal = FALSE, ...) {
+  
+  int_vv <- object@vcov
+  if (internal) return(int_vv)
+  
+  if (!length(int_vv)) return(int_vv) # wont be able to computer user-vcov if internal-vcov is wrong
+  
   distname <- object@distname
   parM <- object@parM
   K <- dim(parM)[1L]
-  w <- object@w
-  x <- object@data
-  n <- length(x)
-  interval <- c(min(x), max(x))
-  p <- object@p
-  
-  # `q`: theoretical quantiles
-  q <- qfmx(p, distname = distname, K = K, parM = parM, w = w, interval = interval, lower.tail = TRUE, log.p = FALSE)
-  # if (any(xid <- is.infinite(q))) then allow infinite
-  
-  # `d`: densities at theoretical (\hat{\theta}) quantiles
-  d <- dfmx(q, distname = distname, K = K, parM = parM, w = w, log = FALSE)
-  # {density at \hat{\theta}} and {kernel density} may have different {=0} status.
-  tol <- sqrt(sqrt(.Machine$double.eps))
-  if (all(d0 <- (abs(d) < tol))) {
-    cat('malformed estimates with all-0 densities\n')
-    return(invisible())
-  }
-  if (any(d0)) {
-    p <- p[!d0]
-    q <- q[!d0]
-    d <- d[!d0]
-  }
-  .meat <- quantile_vcov(p = p, d = d) # V_(\hat{theta})
-  # in theary, we should use V_{true theta}, but no one knows true theta in practice
-  # so I am using V_{\hat_theta}
-  # now I want to use V_{empirical} (`@quantile_vv` is a slot of \linkS4class{fmx_QLMDe}), can I?
-  
-  q_gr <- qfmx_gr(p = p, distname = distname, K = K, parM = parM, w = w)
-  int_nm <- dimnames(q_gr)[[2L]]
-  
-  if (all(is.na(q_gr))) {
-    int_dim <- dim(q_gr)[2L]
-    int_vv <- array(NA_real_, dim = c(int_dim, int_dim), dimnames = list(int_nm, int_nm))
-  } else {
-    .bread <- crossprod_inv(q_gr) %*% t.default(q_gr)
-    int_vv <- .bread %*% tcrossprod(.meat, .bread) / n # interval variance-covariance
-    if (anyNA(int_vv)) {
-      #tmp <<- object
-      stop('do not allow NA in `int_vv`')
-    }
-    if (any(diag(int_vv) < 0)) stop('diagonal terms of VarCov < 0 ?!')
-    dimnames(int_vv) <- list(int_nm, int_nm)
-  }
-  if (parm == 'internal') return(int_vv)
+  int_nm <- dimnames(int_vv)[[1L]]
   
   int_p <- fmx2dbl(object) # internal parameters
   anm <- dist_anm(distname)
@@ -590,14 +695,14 @@ vcov.fmx_QLMDe <- function(object, parm = c('user', 'internal'), ...) {
 
 #' @rdname S3_fmx_QLMDe
 #' @export
-coef.fmx <- function(object, parm = c('user', 'internal'), ...) {
+coef.fmx <- function(object, internal = FALSE, ...) {
   anm <- dist_anm(object@distname)
   K <- dim(object@parM)[1L]
-  cf0 <- switch(match.arg(parm), internal = fmx2dbl(object), user = {
-    if (K > 1L) {
-      setNames(c(object@parM, object@w), nm = c(t.default(outer(c(anm, 'w'), 1:K, FUN = paste0))))
-    } else setNames(c(object@parM), nm = c(t.default(outer(anm, 1:K, FUN = paste0))))
-  })
+  cf0 <- if (internal) fmx2dbl(object) else if (K == 1L) {
+    setNames(c(object@parM), nm = c(t.default(outer(anm, 1:K, FUN = paste0))))
+  } else {
+    setNames(c(object@parM, object@w), nm = c(t.default(outer(c(anm, 'w'), 1:K, FUN = paste0))))
+  }
   if (!length(id_constr <- fmx_constraint(object))) return(cf0)
   return(cf0[-id_constr])
 }
@@ -605,11 +710,10 @@ coef.fmx <- function(object, parm = c('user', 'internal'), ...) {
 
 #' @rdname S3_fmx_QLMDe
 #' @export
-confint.fmx_QLMDe <- function(object, parm = c('internal', 'user'), level = .95, ...) {
-  parm <- match.arg(parm)
+confint.fmx_QLMDe <- function(object, ..., level = .95) {
   # essentially ?stats::confint.default
-  cf <- coef.fmx(object, parm = parm)
-  if (!length(vv <- vcov.fmx_QLMDe(object, parm = parm))) return(invisible())
+  cf <- coef.fmx(object, ...)
+  if (!length(vv <- vcov.fmx_QLMDe(object, ...))) return(invisible())
   ses <- sqrt(diag(vv))
   p1 <- (1 - level) / 2
   p <- c(p1, 1 - p1)
@@ -622,13 +726,13 @@ confint.fmx_QLMDe <- function(object, parm = c('internal', 'user'), level = .95,
 
 #' @rdname S3_fmx_QLMDe
 #' @export
-logLik.fmx_QLMDe <- function(object, ...) {
+logLik.fmx <- function(object, data = object@data, ...) {
   # for developer to batch-calculate AIC/BIC quickly
-  if (nobjF <- length(objF <- attr(object, which = 'objF', exact = TRUE))) {
+  if (inherits(object, 'fmx_QLMDe') && (nobjF <- length(objF <- attr(object, which = 'objF', exact = TRUE)))) {
     if (inherits(objF[[nobjF]], what = 'logLik')) return(objF[[nobjF]])
   }
   
-  logd <- dfmx(x = object@data, dist = object, log = TRUE, ...)
+  logd <- dfmx(x = data, dist = object, log = TRUE, ...)
   if (!all(is.finite(logd))) {
     #print(logd)
     #object <<- object
@@ -637,10 +741,15 @@ logLik.fmx_QLMDe <- function(object, ...) {
     # do not stop.  settle with -Inf log-likelihood
   }
   out <- sum(logd)
-  attr(out, 'logl') <- logd # additional attributes; needed in Vuong's test
-  attr(out, 'nobs') <- length(object@data)
-  attr(out, 'npar') <- npar_fmx(object)
-  attr(out, 'df') <- attr(out, which = 'nobs', exact = TRUE) - attr(out, which = 'npar', exact = TRUE)
+  attr(out, which = 'logl') <- logd # additional attributes; needed in Vuong's test
+  attr(out, which = 'nobs') <- length(data)
+  
+  # https://en.wikipedia.org/wiki/Akaike_information_criterion
+  # ?stats::logLik
+  # ?stats:::AIC.default
+  # attr(, 'df') is the number of (estimated) parameters in the model.
+  attr(out, which = 'df') <- npar_fmx(object)
+  
   class(out) <- 'logLik'
   return(out)
 }

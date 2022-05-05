@@ -23,56 +23,56 @@ z2qGH(z, A = 0, B = 1, g = 0, h = 0)
 qGH2z(q, q0 = (q - A)/B, A = 0, B = 1, ...)
 }
 \arguments{
-\item{x, q}{vector of quantiles.}
+\item{x, q}{\link[base]{double} vector, quantiles}
 
-\item{A}{location parameter, default \eqn{0} (as parameter \code{mean} of \code{\link[stats]{dnorm}})}
+\item{A}{\link[base]{double} scalar, location parameter \eqn{A}, default \eqn{A=0} (as parameter \code{mean} of \link[stats]{dnorm} function)}
 
-\item{B}{scale parameter (\eqn{>0}), default \eqn{1} (as parameter \code{sd} of \code{\link[stats]{dnorm}})}
+\item{B}{\link[base]{double} scalar, scale parameter \eqn{B>0}, default \eqn{B=1} (as parameter \code{sd} of \link[stats]{dnorm} function)}
 
-\item{g}{skewness parameter, default \eqn{0} indicating no skewness}
+\item{g}{\link[base]{double} scalar, skewness parameter \eqn{g}, default \eqn{g=0} indicating no skewness}
 
-\item{h}{kurtosis parameter (\eqn{\geq 0}), default \eqn{0} indicating no kurtosis}
+\item{h}{\link[base]{double} scalar, kurtosis parameter \eqn{h\geq 0}, default \eqn{h=0} indicating no kurtosis}
 
-\item{log, log.p}{logical; if \code{TRUE}, probabilities \eqn{p} are given as \eqn{\log(p)}.}
+\item{log, log.p}{\link[base]{logical} scalar, if \code{TRUE}, probabilities \eqn{p} are given as \eqn{\log(p)}.}
 
-\item{...}{other parameters of \code{\link{vuniroot2}}}
+\item{...}{other parameters of \link{vuniroot2}}
 
-\item{n}{number of observations, see \code{\link[stats]{rnorm}} for more details.}
+\item{n}{\link[base]{integer} scalar, number of observations}
 
-\item{p}{vector of probabilities.}
+\item{p}{\link[base]{double} vector, probabilities}
 
-\item{lower.tail}{logical; if \code{TRUE} (default), probabilities are \eqn{Pr(X\le x)} otherwise, \eqn{Pr(X>x)}.}
+\item{lower.tail}{\link[base]{logical} scalar, if \code{TRUE} (default), probabilities are \eqn{Pr(X\le x)} otherwise, \eqn{Pr(X>x)}.}
 
-\item{z}{standard normal quantiles.}
+\item{z}{\link[base]{double} vector, standard normal quantiles.}
 
-\item{q0}{\eqn{(q-A)/B}, for internal use to increase compute speed}
+\item{q0}{\link[base]{double} vector of \eqn{(q-A)/B}, for internal use to increase compute speed}
 }
 \value{
-\code{\link{dGH}} gives the density and accommodates vector arguments \code{A}, \code{B}, \code{g} and \code{h}.
+\link{dGH} gives the density and accommodates vector arguments \code{A}, \code{B}, \code{g} and \code{h}.
 The quantiles \code{x} can be either vector or matrix.
-This function takes about 1/5 time of \code{\link[gk]{dgh}}.
+This function takes about 1/5 time of \link[gk]{dgh} function.
 
-\code{\link{pGH}} gives the distribution function, only taking scalar arguments and vector quantiles \code{q}.
-This function takes about 1/10 time of \code{\link[gk]{pgh}} and \code{\link[OpVaR]{pgh}}.
+\link{pGH} gives the distribution function, only taking scalar arguments and vector quantiles \code{q}.
+This function takes about 1/10 time of \link[gk]{pgh} and \link[OpVaR]{pgh} functions.
 
-\code{\link{qGH}} gives the quantile function, only taking scalar arguments and vector probabilities \code{p}.
-This function takes about 1/2 time of \code{\link[gk]{qgh}} and 1/10 time of \code{\link[OpVaR]{qgh}}.
+\link{qGH} gives the quantile function, only taking scalar arguments and vector probabilities \code{p}.
+This function takes about 1/2 time of \link[gk]{qgh} and 1/10 time of \link[OpVaR]{qgh} functions.
 
-\code{\link{rGH}} generates random deviates, only taking scalar arguments.
+\link{rGH} generates random deviates, only taking scalar arguments.
 
-\code{\link{z2qGH}} is the Tukey's \eqn{g}-&-\eqn{h} transformation.
+\link{z2qGH} is the Tukey's \eqn{g}-&-\eqn{h} transformation.
 Note that \code{gk:::z2gh} is only an \strong{approximation} to Tukey's \eqn{g}-&-\eqn{h} transformation.
 
-Unfortunately, the inverse of Tukey's \eqn{g}-&-\eqn{h} transformation, \code{\link{qGH2z}}, 
-does not have a closed form and needs to be evaluated numerically (via \code{\link[rstpm2]{vuniroot}}).
+Unfortunately, \link{qGH2z} function, the inverse of Tukey's \eqn{g}-&-\eqn{h} transformation, 
+does not have a closed form and needs to be solved numerically.
 }
 \description{
 Density, distribution function, quantile function and random generation 
 for the Tukey's \eqn{g}-&-\eqn{h} distribution with 
-location parameter \code{A},
-scale parameter \code{B},
-skewness \code{g} and 
-kurtosis \code{h}.
+location parameter \eqn{A},
+scale parameter \eqn{B},
+skewness \eqn{g} and 
+kurtosis \eqn{h}.
 }
 \details{
 Argument \code{A}, \code{B}, \code{g} and \code{h} will be recycled to the maximum length of the four.
@@ -96,5 +96,5 @@ curve(dGH(x, g = .3, h = .1), from = -2.5, to = 3.5)
 
 }
 \seealso{
-\code{\link[OpVaR]{dgh}}, \code{\link[gk]{dgh}}
+\link[OpVaR]{dgh} \link[gk]{dgh}
 }

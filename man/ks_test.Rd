@@ -4,20 +4,22 @@
 \alias{ks_test}
 \title{Kolmogorov-Smirnov Tests for Distribution Estimates}
 \usage{
-ks_test(x, ...)
+ks_test(x, data, ...)
 }
 \arguments{
 \item{x}{an R object of distribution estimates}
 
-\item{...}{additional parameters of \code{\link[stats]{ks.test}}}
+\item{data}{\link[base]{double} vector, the actual observations}
+
+\item{...}{additional parameters of \link[stats]{ks.test}}
 }
 \value{
-\code{\link{ks_test}} returns the \code{'htest'} object (returned from \code{\link[stats]{ks.test}}),
+\link{ks_test} returns an \link[stats:ks.test]{htest} object,
 in which the element \code{$statistic} is the Kolmogorov–Smirnov distance.
 }
 \description{
-Perform the Kolmogorov-Smirnov tests for various distribution estimates, via \code{\link[stats]{ks.test}}.
+Perform the Kolmogorov-Smirnov tests for various distribution estimates.
 }
 \seealso{
-\code{\link[stats]{ks.test}}
+\link[stats]{ks.test}
 }

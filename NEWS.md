@@ -1,3 +1,6 @@
+# QuantileGH 0.1.2
+New starting values provided in \code{?QLMDinit}.
+
 # QuantileGH 0.1.1
 Update on documentations.
 

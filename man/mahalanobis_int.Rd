@@ -7,18 +7,18 @@
 mahalanobis_int(x, center, invcov)
 }
 \arguments{
-\item{x}{\code{\link[base]{numeric}} vector}
+\item{x}{\link[base]{numeric} vector}
 
-\item{center}{\code{\link[base]{numeric}} vector}
+\item{center}{\link[base]{numeric} vector, mean \eqn{\mathbf{\mu}}}
 
-\item{invcov}{the \emph{inverted} covariance \code{\link[base]{matrix}}}
+\item{invcov}{\link[base]{numeric} \link[base]{matrix}, \emph{inverted} variance-covariance \eqn{\mathbf{\Sigma}}}
 }
 \value{
-A \code{\link[base]{numeric}} scalar.
+\link{mahalanobis_int} returns a \link[base]{numeric} scalar.
 }
 \description{
-Mahalanobis distance, simpler and faster than \code{\link[stats]{mahalanobis}}.
+A simpler and faster \link[stats:mahalanobis]{Mahalanobis} distance.
 }
 \seealso{
-\code{\link[stats]{mahalanobis}}
+\link[stats]{mahalanobis}
 }

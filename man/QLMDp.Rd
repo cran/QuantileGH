@@ -10,35 +10,35 @@ QLMDp(
   length.out = 15L,
   equidistant = c("prob", "quantile"),
   extra = c(0.005, 0.01, 0.02, 0.03, 0.97, 0.98, 0.99, 0.995),
-  obs
+  x
 )
 }
 \arguments{
-\item{from}{\code{\link[base]{numeric}} scalar, minimum of the equidistant (in probability or quantile) probabilities.  Default \code{.05}.}
+\item{from}{\link[base]{numeric} scalar, minimum of the equidistant (in probability or quantile) probabilities.  Default \code{.05}.}
 
-\item{to}{\code{\link[base]{numeric}} scalar, maximum of the equidistant (in probability or quantile) probabilities.  Default \code{.95}.}
+\item{to}{\link[base]{numeric} scalar, maximum of the equidistant (in probability or quantile) probabilities.  Default \code{.95}.}
 
-\item{length.out}{non-negative \code{\link[base]{integer}} scalar, the number of the equidistant (in probability or quantile) probabilities.}
+\item{length.out}{non-negative \link[base]{integer} scalar, the number of the equidistant (in probability or quantile) probabilities.}
 
-\item{equidistant}{\code{\link[base]{character}} scalar.
+\item{equidistant}{\link[base]{character} scalar.
 If \code{'prob'} (default), then the probabilities are equidistant.  
-If \code{'quantile'}, then the quantiles (of the observations \code{obs}) corresponding to the probabilities are equidistant.}
+If \code{'quantile'}, then the quantiles (of the observations \code{x}) corresponding to the probabilities are equidistant.}
 
-\item{extra}{\code{\link[base]{numeric}} vector of \emph{additional} probabilities, default \code{c(.005, .01, .02, .03, .97, .98, .99, .995)}.}
+\item{extra}{\link[base]{numeric} vector of \emph{additional} probabilities, default \code{c(.005, .01, .02, .03, .97, .98, .99, .995)}.}
 
-\item{obs}{\code{\link[base]{numeric}} vector of observations, only used when \code{equidistant = 'quantile'}.}
+\item{x}{\link[base]{numeric} vector of observations, only used when \code{equidistant = 'quantile'}.}
 }
 \value{
-A \code{\link[base]{numeric}} vector of probabilities to be supplied to parameter \code{p} of 
-Quantile Least Mahalanobis Distance estimation (\code{\link{QLMDe}}).
+A \link[base]{numeric} vector of probabilities to be supplied to parameter \code{p} of 
+Quantile Least Mahalanobis Distance \link{QLMDe} estimation).
 In practice, the length of this probability vector \code{p} 
-must be equal or larger than the number of parameters in the distribution model to be estimated in \code{\link{QLMDe}}.
+must be equal or larger than the number of parameters in the distribution model to be estimated.
 }
 \description{
 A vector of probabilities to be used in Quantile Least Mahalanobis Distance estimation (\code{\link{QLMDe}}).
 }
 \details{
-The default arguments of \code{\link{QLMDp}} gives the probabilities of 
+The default arguments of \link{QLMDp} returns the probabilities of 
 \code{c(.005, .01, .02, .03, seq.int(.05, .95, length.out = 15L), .97, .98, .99, .995)}.
 }
 \examples{
@@ -53,7 +53,7 @@ p_hist = geom_histogram(
 autoplot(d2, v = setNames(qfmx(p1, dist = d2), nm = sprintf('\%.1f\%\%', 1e2*p1)))
 autoplot(d2, v = quantile(x2, probs = p1, digits = 3L)) + p_hist
 
-(p2 = QLMDp(equidistant = 'quantile', obs = x2)) # equidistnat in quantiles
+(p2 = QLMDp(equidistant = 'quantile', x = x2)) # equidistnat in quantiles
 autoplot(d2, v = quantile(x2, probs = p2, digits = 3L)) + p_hist
 
 

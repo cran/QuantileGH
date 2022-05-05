@@ -9,16 +9,16 @@ KL_dist(x, base, ...)
 \arguments{
 \item{x}{an R object of distribution estimates}
 
-\item{base}{see \code{\link[LaplacesDemon]{KLD}}}
+\item{base}{see \link[LaplacesDemon]{KLD}}
 
 \item{...}{additional parameters, currently not in use}
 }
 \value{
-\code{\link{KL_dist}} returns a \code{\link[base]{list}}, which is returned from \code{\link[LaplacesDemon]{KLD}}.
+\link{KL_dist} returns a \link[base]{list}, which is returned from \link[LaplacesDemon]{KLD} function.
 }
 \description{
-Calculate the Kullback-Leibler divergence for distribution estimates, via \code{\link[LaplacesDemon]{KLD}}.
+Calculate the Kullback-Leibler divergence for distribution estimates.
 }
 \seealso{
-\code{\link[LaplacesDemon]{KLD}}.
+\link[LaplacesDemon]{KLD}
 }

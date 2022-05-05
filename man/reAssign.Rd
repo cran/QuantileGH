@@ -3,26 +3,31 @@
 \name{reAssign}
 \alias{reAssign}
 \alias{reAssign.tkmeans}
-\title{Re-Assign Observations Trimmed Prior to Clustering}
+\title{Re-Assign Observations Trimmed Prior to Trimmed \eqn{k}-Means Clustering}
 \usage{
 reAssign(x, ...)
 
 \method{reAssign}{tkmeans}(x, ...)
 }
 \arguments{
-\item{x}{a trimmed clustering object, currently only 
-\code{'tkmeans'} object (return of \code{\link[tclust]{tkmeans}}) is supported}
+\item{x}{a \link[tclust]{tkmeans} object}
 
-\item{...}{potential parameters}
+\item{...}{potential parameters, currently not in use.}
 }
 \value{
-An \code{'reAssign_tkmeans'} object inheriting from class \code{'tkmeans'}, 
-which is the returned object class of \code{\link[tclust]{tkmeans}}.
+An \code{'reAssign_tkmeans'} object, which inherits from \link[tclust]{tkmeans} class.
 }
 \description{
-Re-assign observations trimmed prior to clustering using \eqn{k}-means algorithm 
-(via \code{\link[tclust]{tkmeans}}) to the closest cluster (at the smallest 
-Mahalanobis distance).
+Re-assign the observations,
+which are trimmed in the trimmed \eqn{k}-means algorithm,
+back to the closest cluster as determined by the smallest 
+Mahalanobis distance.
+}
+\details{
+Given the \link[tclust]{tkmeans} input, 
+the \link[stats:mahalanobis]{Mahalanobis} distance is computed between each trimmed observation 
+and each cluster.
+Each trimmed observation is assigned to the closest cluster (i.e., with the smallest Mahalanobis distance).
 }
 \examples{
 library(tclust)
@@ -31,5 +36,7 @@ clus = tkmeans(geyser2, k = 3L, alpha = .03)
 plot(clus, main = 'Before Re-Assigning')
 plot(reAssign(clus), main = 'After Re-Assigning')
 
-
+}
+\seealso{
+\link[tclust]{tkmeans}
 }

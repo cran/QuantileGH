@@ -4,24 +4,26 @@
 
 #' @title Likelihood Ratio Test for General Models
 #' 
-#' @description ...
+#' @description 
 #' 
-#' @param models a \code{\link[base]{list}} of regression models, or a \code{\link[base]{list}} of \code{\link[stats]{logLik}} objects.
+#' Likelihood ratio test for models fitted by R.
 #' 
-#' @param type \code{\link[base]{character}} scalar, \code{'plain'} (default) for ordinary likelihood ratio test;
-#' \code{'vuong'} for Vuong's closeness test for non-nested models
+#' @param dots a \link[base]{list} of regression models, or a \link[base]{list} of \link[stats]{logLik} objects.
 #' 
-#' @param compare type of comparison between the models, sequentially (\code{'seq'}) or 
+#' @param type \link[base]{character} scalar, ordinary likelihood ratio test (\code{'plain'}, default)
+#' or Vuong's closeness test for non-nested models (\code{'vuong'}).
+#' 
+#' @param compare type of comparison between the models, sequentially (\code{'seq'}, default) or 
 #' all models versus the first model (\code{'first'})
 #' 
-#' @param ... potential arguments (currently not in use)
+#' @param ... additional arguments of \link[stats]{logLik} function(s)
 #' 
-#' @seealso
-#' \code{\link[lmtest]{lrtest.default}}
+#' @seealso \link[lmtest]{lrtest.default}
 #' 
 #' @return 
 #' 
-#' \code{\link{LikRatio}} returns an ANOVA table of class \code{'anova'} for likelihood ratios test, or class \code{'vuong'} for Vuong's test.
+#' \link{LikRatio} returns an \link[stats:anova]{ANOVA} table for likelihood ratios test, 
+#' or a \code{'vuong'} object for Vuong's test.
 #' 
 #' @examples 
 #' # no examples for now
@@ -30,14 +32,14 @@
 #' Vuong's closeness test, \doi{10.2307/1912557}.
 #' 
 #' @export
-LikRatio <- function(models, type = c('plain', 'vuong'), compare = c('seq', 'first'), ...) {
+LikRatio <- function(dots, type = c('plain', 'vuong'), compare = c('seq', 'first'), ...) {
   
-  if (!is.list(models) || any(!lengths(models, use.names = FALSE))) stop('must manually remove NULL elements in `models`')
-  if ((n <- length(models)) < 2L) stop('Must provide 2 or more models')
-  nm <- names(models)
-  if (!length(nm) || anyNA(nm) || !all(nzchar(nm))) stop('`models` must be fully named')
+  if (!is.list(dots) || any(!lengths(dots, use.names = FALSE))) stop('must manually remove NULL elements in `dots`')
+  if ((n <- length(dots)) < 2L) stop('Must provide 2 or more models in `dots`')
+  nm <- names(dots)
+  if (!length(nm) || anyNA(nm) || !all(nzchar(nm))) stop('`dots` must be fully named')
   
-  .logL <- lapply(models, FUN = logLik) # ?stats:::logLik.logLik
+  .logL <- lapply(dots, FUN = logLik, ...) # ?stats:::logLik.logLik
   .AIC <- lapply(.logL, FUN = AIC) # ?stats:::AIC.logLik
   .BIC <- lapply(.logL, FUN = BIC) # ?stats:::BIC.logLik
   
@@ -72,7 +74,7 @@ LikRatio <- function(models, type = c('plain', 'vuong'), compare = c('seq', 'fir
       '2*|delta-logLik|' = c(NA_real_, chisq),
       'Pr(>Chisq)' = c(NA_real_, pval),
       check.names = FALSE)
-    attr(out, 'heading') <- 'Likelihood ratio test'
+    attr(out, which = 'heading') <- 'Likelihood ratio test'
     class(out) <- c('anova', 'data.frame') # can invoke ?stats:::print.anova
     
   }, vuong = {
@@ -118,13 +120,13 @@ LikRatio <- function(models, type = c('plain', 'vuong'), compare = c('seq', 'fir
       Decision_BIC = c(NA_character_, Vuong_decision(z_BIC)),
       check.names = FALSE
     )
-    attr(out, 'heading') <- 'Vuong\'s closeness test'
+    attr(out, which = 'heading') <- 'Vuong\'s closeness test'
     class(out) <- c('vuong', 'data.frame') # write ?print.vuong later
   })
   
-  attr(out, 'logLik') <- .logL
-  attr(out, 'AIC') <- .AIC
-  attr(out, 'BIC') <- .BIC
+  attr(out, which = 'logLik') <- .logL
+  #attr(out, which = 'AIC') <- .AIC
+  #attr(out, which = 'BIC') <- .BIC
   return(out) 
   
 }

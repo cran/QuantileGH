@@ -8,46 +8,65 @@ StepK_fmx(
   object,
   test = c("logLik", "AIC", "BIC"),
   Kmax = stop("must specify maximum `Kmax`"),
-  trace = TRUE,
   ...
 )
 }
 \arguments{
-\item{object}{\code{\linkS4class{fmx_QLMDe}} object returned from \code{\link{QLMDe}}}
+\item{object}{\linkS4class{fmx_QLMDe} object}
 
-\item{test, trace}{see parameter \code{test} and \code{trace} of \code{\link{Step_fmx}}}
+\item{test}{see parameter \code{test} of \link{Step_fmx} function}
 
-\item{Kmax}{\code{\link[base]{integer}} value, the maximum number of component to be considered}
+\item{Kmax}{\link[base]{integer} scalar \eqn{K_M}, the maximum number of components to be considered}
 
 \item{...}{additional parameters}
 }
 \value{
-\code{\link{StepK_fmx}} returns an \code{\linkS4class{fmx_QLMDe}} object, with attributes
+\link{StepK_fmx} returns an \linkS4class{fmx_QLMDe} object, with attributes
 \itemize{
 \item{\code{anova}} {ANOVA table}
 \item{\code{objF}} {value of the objective function (either the log-likelihood, AIC or BIC)}
 }
 }
 \description{
-\code{\link{StepK_fmx}} compares \eqn{gh}-parsimonious models with different number of components \eqn{K}
-and selects the optimal model using the Vuong's closeness test.
+To compare \eqn{gh}-parsimonious models with different number of components \eqn{K}
+and select the optimal model using the Vuong's closeness test.
 }
 \details{
-The algorithm starts with selection \eqn{gh}-parsimonious model with user-specified initial number of components \eqn{K_0}.
-Then the number of components is increased by \eqn{1} and the corresponding 
-\eqn{gh}-parsimonious model is compared to the \eqn{gh}-parsimonious model with \eqn{K_0} components using the Vuong's closeness test. 
-If \eqn{gh}-parsimonious model with \eqn{K_0} components is preferred then the algorithm is stopped if \eqn{K_0=1} 
-or switches to backward selection if \eqn{K_0 > 1}.
-If \eqn{gh}-parsimonious model with \eqn{K_0 + 1} components is preferred then
-the algorithm is stopped if \eqn{K_0+1=Kmax} (prespecified maximum number of components)
-or the next iteration of the algorithm is performed if \eqn{K_0+1<Kmax}.
-The backward selection is performed only if \eqn{gh}-parsimonious model with \eqn{K_0} components 
-is preferred to \eqn{gh}-parsimonious model with \eqn{K_0+1} components. 
-Then \eqn{gh}-parsimonious model with \eqn{K_0-1} components is compared to
-\eqn{gh}-parsimonious model with \eqn{K_0} components. 
-If \eqn{gh}-parsimonious model with \eqn{K_0} components is preferred then the algorithm is stopped
-and \eqn{gh}-parsimonious model with \eqn{K_0} components is optimal.
-If \eqn{gh}-parsimonious model with \eqn{K_0-1} components is preferred then
-the algorithm is stopped if \eqn{K_0-1=1} 
-or the next iteration of the algorithm is performed if \eqn{K_0-1>1}.
+\link{StepK_fmx} compares the \eqn{gh}-parsimonious models with different number of components,
+and selects the optimal model using the Vuong's closeness test.
+
+The forward-backward selection starts with finding the \eqn{gh}-parsimonious model 
+at a user-specified initial number of components \eqn{K = K_0} (as reflected in the input \code{object}).
+
+The forward selection compares the \eqn{gh}-parsimonious models at \eqn{K_0+1} and at \eqn{K_0} component, respectively,
+using the Vuong's closeness test. 
+If \eqn{K_0} component is preferred, then the forward-backward selection is stopped if \eqn{K_0=1},
+otherwise (if \eqn{K_0>1}) switches to the backward selection.
+If \eqn{K_0+1} component is preferred, then
+the algorithm is stopped if \eqn{K_0+1=K_M} (prespecified maximum number of components),
+otherwise (if \eqn{K_0+1<K_M}) \eqn{K_0+2} versus \eqn{K_0+1} component is compared.
+
+The backward selection is performed only if \eqn{K_0} component 
+is preferred over \eqn{K_0+1} component. 
+The \eqn{gh}-parsimonious model at \eqn{K_0-1} and at \eqn{K_0} component, respectively, is compared. 
+If \eqn{K_0} component is preferred, then the forward-backward selection is stopped.
+If \eqn{K_0-1} component is preferred, then
+the forward-backward selection is stopped if \eqn{K_0-1=1},
+otherwise (if \eqn{K_0-1>1}) \eqn{K_0-2} versus \eqn{K_0} (\strong{not} \eqn{K_0-1}) component is compared.
+}
+\examples{
+(d = fmx('norm', mean = c(1, 4, 8), w = c(3, 3, 4)))
+x = rfmx(n = 1e3L, dist = d)
+y1 = QLMDe(x, distname = 'norm', K = 1L)
+StepK_fmx(y1, Kmax = 3L)
+
+if (FALSE) {
+# slow, but works
+(d = fmx('GH', A = c(0, 3), g = c(.2, -.3), h = c(.2, .2), w = c(6, 4)))
+x = rfmx(n = 1e3L, dist = d)
+(y1 = QLMDe(x, distname = 'GH', K = 1L))
+StepK_fmx(y1, Kmax = 3L)
+}
+
+
 }

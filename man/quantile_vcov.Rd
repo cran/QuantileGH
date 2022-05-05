@@ -7,12 +7,12 @@
 quantile_vcov(p, d)
 }
 \arguments{
-\item{p}{\code{\link[base]{numeric}} vector of cumulative probabilities at the given quantiles}
+\item{p}{\link[base]{numeric} vector of cumulative probabilities at the given quantiles}
 
-\item{d}{\code{\link[base]{numeric}} vector of probability densities at the given quantiles}
+\item{d}{\link[base]{numeric} vector of probability densities at the given quantiles}
 }
 \value{
-The variance-covariance \code{\link[base]{matrix}} of quantiles based on Mosteller (1946).
+The variance-covariance \link[base]{matrix} of quantiles based on Mosteller (1946).
 }
 \description{
 Computes the variance-covariance matrix of quantiles based on Theorem 1 and 2 of Mosteller (1946).
@@ -20,7 +20,7 @@ Computes the variance-covariance matrix of quantiles based on Theorem 1 and 2 of
 \details{
 The end user should make sure no densities too close to 0 is included in argument \code{d}.
 
-\code{\link{quantile_vcov}} is not used in a compute-intensive way in \code{\link{QLMDe}}.
+\link{quantile_vcov} must not be used in a compute-intensive way.
 }
 \references{
 Frederick Mosteller. On Some Useful "Inefficient" Statistics. 

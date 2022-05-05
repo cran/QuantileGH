@@ -10,48 +10,50 @@ QLMDe(
   K,
   data.name = deparse1(substitute(x)),
   constraint = character(),
-  p = QLMDp(obs = x),
-  init = clust_fmx(x, distname = distname, K = K, constraint = constraint),
+  p = QLMDp(x = x),
+  init = c("logLik", "letterValue", "normix"),
   tol = .Machine$double.eps^0.25,
   maxiter = 1000,
   ...
 )
 }
 \arguments{
-\item{x}{\code{\link[base]{numeric}} vector, the one-dimensional observations.}
+\item{x}{\link[base]{numeric} vector, the one-dimensional observations.}
 
-\item{distname}{\code{\link[base]{character}} value, name of mixture distribution to be fitted.  Currently supports \code{'norm'} and \code{'GH'}.}
+\item{distname}{\link[base]{character} value, name of mixture distribution to be fitted.  Currently supports \code{'norm'} and \code{'GH'}.}
 
-\item{K}{\code{\link[base]{integer}} value, number of components (e.g., must use \code{2L} instead of \code{2}).}
+\item{K}{\link[base]{integer} scalar, number of components (e.g., must use \code{2L} instead of \code{2}).}
 
-\item{data.name}{\code{\link[base]{character}} value, name for the observations for user-friendly print out.}
+\item{data.name}{\link[base]{character} value, name for the observations for user-friendly print out.}
 
-\item{constraint}{\code{\link[base]{character}} vector, parameters (\eqn{g} and/or \eqn{h} for Tukey's \eqn{g}-&-\eqn{h} mixture) to be set at 0.
-See \code{\link{fmx_constraint}} for details.}
+\item{constraint}{\link[base]{character} vector, parameters (\eqn{g} and/or \eqn{h} for Tukey's \eqn{g}-&-\eqn{h} mixture) to be set at 0.
+See \link{fmx_constraint} for details.}
 
-\item{p}{\code{\link[base]{numeric}} vector, percentiles at where the sample and theoretical quantiles are to be matched.
+\item{p}{\link[base]{numeric} vector, percentiles at where the sample and theoretical quantiles are to be matched.
 See \code{\link{QLMDp}} for details.}
 
-\item{init}{\code{\linkS4class{fmx}} object, the initial values for the optimization algorithm, default provided by \code{\link{clust_fmx}}.}
+\item{init}{\link[base]{character} scalar for the method of initial values selection, 
+or an \linkS4class{fmx} object of the initial values. 
+See \link{QLMDinit} for more details.}
 
-\item{tol, maxiter}{see \code{\link{vuniroot2}}}
+\item{tol, maxiter}{see \link{vuniroot2}}
 
 \item{...}{additional parameters of \code{\link[stats]{optim}}.}
 }
 \value{
-An \code{\linkS4class{fmx_QLMDe}} object
+An \linkS4class{fmx_QLMDe} object
 }
 \description{
-The quantile least Mahalanobis distance algorithm (\code{\link{QLMDe}}) estimates the parameters of 
+The quantile least Mahalanobis distance algorithm estimates the parameters of 
 single-component or finite mixture distributions   
 by minimizing the Mahalanobis distance between the vectors of sample and theoretical quantiles.
-See \code{\link{QLMDp}} for the default selection of probabilities at which the sample and theoretical quantiles are compared.
+See \link{QLMDp} for the default selection of probabilities at which the sample and theoretical quantiles are compared.
 
-The default initial values are based on trimmed \eqn{k}-means 
-clustering with re-assignment provided by \code{\link{clust_fmx}}.
+The default initial values are estimated based on trimmed \eqn{k}-means 
+clustering with re-assignment.
 }
 \details{
-Quantile Least Mahalanobis Distance estimator (\code{\link{QLMDe}}) fits a single-component or finite mixture distribution 
+Quantile Least Mahalanobis Distance estimator fits a single-component or finite mixture distribution 
 by minimizing the Mahalanobis distance between
 the theoretical and observed quantiles,
 using the empirical quantile variance-covariance matrix \code{\link{quantile_vcov}}.
@@ -61,7 +63,8 @@ using the empirical quantile variance-covariance matrix \code{\link{quantile_vco
 \donttest{
 # Generated from 1-component normal; start with 2-component normal fit
 set.seed(1623); (y0n <- QLMDe(rnorm(1e3L), distname = 'norm', K = 2L))
-StepK_fmx(y0n, test = 'logLik', Kmax = 2L) # one-component
+(y1n <- StepK_fmx(y0n, test = 'logLik', Kmax = 2L)) # one-component
+vcov(y1n)
 
 # Generated from 2-component normal; start with 1-component normal fit
 (d1 <- fmx('norm', mean = c(0, 1.5), sd = .5, w = c(.4, .6)))
@@ -95,5 +98,5 @@ StepK_fmx(y1gh, test = 'logLik', Kmax = 2L) # correct
 
 }
 \seealso{
-\code{\link[stats]{optim}}
+\link[stats]{optim} \link{QLMDinit}
 }

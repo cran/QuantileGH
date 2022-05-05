@@ -5,51 +5,70 @@
 #' 
 #' @description
 #' 
-#' \code{\link{StepK_fmx}} compares \eqn{gh}-parsimonious models with different number of components \eqn{K}
-#' and selects the optimal model using the Vuong's closeness test.
+#' To compare \eqn{gh}-parsimonious models with different number of components \eqn{K}
+#' and select the optimal model using the Vuong's closeness test.
 #' 
-#' @param object \code{\linkS4class{fmx_QLMDe}} object returned from \code{\link{QLMDe}}
+#' @param object \linkS4class{fmx_QLMDe} object
 #' 
-#' @param test,trace see parameter \code{test} and \code{trace} of \code{\link{Step_fmx}}
+#' @param test see parameter \code{test} of \link{Step_fmx} function
 #' 
-#' @param Kmax \code{\link[base]{integer}} value, the maximum number of component to be considered
+#' @param Kmax \link[base]{integer} scalar \eqn{K_M}, the maximum number of components to be considered
 #' 
 #' @param ... additional parameters
 #' 
 #' @details 
 #' 
-#' The algorithm starts with selection \eqn{gh}-parsimonious model with user-specified initial number of components \eqn{K_0}.
-#' Then the number of components is increased by \eqn{1} and the corresponding 
-#' \eqn{gh}-parsimonious model is compared to the \eqn{gh}-parsimonious model with \eqn{K_0} components using the Vuong's closeness test. 
-#' If \eqn{gh}-parsimonious model with \eqn{K_0} components is preferred then the algorithm is stopped if \eqn{K_0=1} 
-#' or switches to backward selection if \eqn{K_0 > 1}.
-#' If \eqn{gh}-parsimonious model with \eqn{K_0 + 1} components is preferred then
-#' the algorithm is stopped if \eqn{K_0+1=Kmax} (prespecified maximum number of components)
-#' or the next iteration of the algorithm is performed if \eqn{K_0+1<Kmax}.
-#' The backward selection is performed only if \eqn{gh}-parsimonious model with \eqn{K_0} components 
-#' is preferred to \eqn{gh}-parsimonious model with \eqn{K_0+1} components. 
-#' Then \eqn{gh}-parsimonious model with \eqn{K_0-1} components is compared to
-#' \eqn{gh}-parsimonious model with \eqn{K_0} components. 
-#' If \eqn{gh}-parsimonious model with \eqn{K_0} components is preferred then the algorithm is stopped
-#' and \eqn{gh}-parsimonious model with \eqn{K_0} components is optimal.
-#' If \eqn{gh}-parsimonious model with \eqn{K_0-1} components is preferred then
-#' the algorithm is stopped if \eqn{K_0-1=1} 
-#' or the next iteration of the algorithm is performed if \eqn{K_0-1>1}.
+#' \link{StepK_fmx} compares the \eqn{gh}-parsimonious models with different number of components,
+#' and selects the optimal model using the Vuong's closeness test.
+#' 
+#' The forward-backward selection starts with finding the \eqn{gh}-parsimonious model 
+#' at a user-specified initial number of components \eqn{K = K_0} (as reflected in the input \code{object}).
+#' 
+#' The forward selection compares the \eqn{gh}-parsimonious models at \eqn{K_0+1} and at \eqn{K_0} component, respectively,
+#' using the Vuong's closeness test. 
+#' If \eqn{K_0} component is preferred, then the forward-backward selection is stopped if \eqn{K_0=1},
+#' otherwise (if \eqn{K_0>1}) switches to the backward selection.
+#' If \eqn{K_0+1} component is preferred, then
+#' the algorithm is stopped if \eqn{K_0+1=K_M} (prespecified maximum number of components),
+#' otherwise (if \eqn{K_0+1<K_M}) \eqn{K_0+2} versus \eqn{K_0+1} component is compared.
+#' 
+#' The backward selection is performed only if \eqn{K_0} component 
+#' is preferred over \eqn{K_0+1} component. 
+#' The \eqn{gh}-parsimonious model at \eqn{K_0-1} and at \eqn{K_0} component, respectively, is compared. 
+#' If \eqn{K_0} component is preferred, then the forward-backward selection is stopped.
+#' If \eqn{K_0-1} component is preferred, then
+#' the forward-backward selection is stopped if \eqn{K_0-1=1},
+#' otherwise (if \eqn{K_0-1>1}) \eqn{K_0-2} versus \eqn{K_0} (\strong{not} \eqn{K_0-1}) component is compared.
 #' 
 #' @return 
 #' 
-#' \code{\link{StepK_fmx}} returns an \code{\linkS4class{fmx_QLMDe}} object, with attributes
+#' \link{StepK_fmx} returns an \linkS4class{fmx_QLMDe} object, with attributes
 #' \itemize{
 #' \item{\code{anova}} {ANOVA table}
 #' \item{\code{objF}} {value of the objective function (either the log-likelihood, AIC or BIC)}
 #' }
 #' 
+#' @examples 
+#' (d = fmx('norm', mean = c(1, 4, 8), w = c(3, 3, 4)))
+#' x = rfmx(n = 1e3L, dist = d)
+#' y1 = QLMDe(x, distname = 'norm', K = 1L)
+#' StepK_fmx(y1, Kmax = 3L)
+#' 
+#' if (FALSE) {
+#' # slow, but works
+#' (d = fmx('GH', A = c(0, 3), g = c(.2, -.3), h = c(.2, .2), w = c(6, 4)))
+#' x = rfmx(n = 1e3L, dist = d)
+#' (y1 = QLMDe(x, distname = 'GH', K = 1L))
+#' StepK_fmx(y1, Kmax = 3L)
+#' }
+#' 
+#' 
 #' @export
-StepK_fmx <- function(object, test = c('logLik', 'AIC', 'BIC'), Kmax = stop('must specify maximum `Kmax`'), trace = TRUE, ...) {
+StepK_fmx <- function(object, test = c('logLik', 'AIC', 'BIC'), Kmax = stop('must specify maximum `Kmax`'), ...) {
   test <- match.arg(test)
   K <- K_orig <- dim(object@parM)[1L]
-  if (!trace) cat('Finding parsimonious model at K =', K, '\n')
-  modelK <- model_orig <- Step_fmx(object, test = test, trace = trace) # comparison is to parsimonious model at original `K`
+  message('Finding parsimonious model at K = ', K)
+  modelK <- model_orig <- Step_fmx(object, test = test) # comparison is to parsimonious model at original `K`
   objF <- objF_orig <- attr(model_orig, which = 'objF', exact = TRUE)[1L] # 'list'; objective function for parsimonious model at original `K`
   aod <- aod_orig <- attr(model_orig, which = 'anova', exact = TRUE)[1L, ] # # aod line for parsimonious model at original `K`
   
@@ -68,7 +87,7 @@ StepK_fmx <- function(object, test = c('logLik', 'AIC', 'BIC'), Kmax = stop('mus
       # smaller the better
       return(unlist(objF1) <= (unlist(objF0) + 1e-07)) # 'TRUE' for selecting `K1` (K_less)
     }, logLik = {
-      lr_K <- LikRatio(models = c(objF0, objF1), # `model0` is more complicated than `model1`
+      lr_K <- LikRatio(c(objF0, objF1), # `model0` is more complicated than `model1`
                        type = switch(distname, norm = 'plain', GH = 'vuong', stop('unsupported ', sQuote(object@distname))), 
                        compare = 'first')
       if (inherits(lr_K, what = 'vuong')) {
@@ -92,33 +111,27 @@ StepK_fmx <- function(object, test = c('logLik', 'AIC', 'BIC'), Kmax = stop('mus
   while ((K + 1L) <= Kmax) {
     tmp_old <- modelK
     obj_K <- QLMDe(object@data, distname = object@distname, data.name = object@data.name, K = K + 1L, p = object@p)
-    if (trace) cat('Finding parsimonious model at K =', K + 1L, '\n')
-    tmp_new <- Step_fmx(obj_K, test = test, trace = trace, ...)
-    #if (FALSE) {
-    #  tmp_old <<- tmp_old
-    #  tmp_new <<- tmp_new
-    #  stop('here :)')
-    #}
+    message('Finding parsimonious model at K = ', K + 1L)
+    tmp_new <- Step_fmx(obj_K, test = test, ...)
     if (compareK(model0 = tmp_new, model1 = tmp_old, test = test)) break # smaller model (i.e. `tmp_old`) is selected 
     K <- K + 1L
-    if (trace) cat('Increased K = ', K, ' is selected.\n', sep = '')
+    message('Increased K = ', K, ' is selected.')
     modelK <- tmp_new
     aod <- rbind.data.frame(aod, attr(modelK, which = 'anova', exact = TRUE)[1L, ]) # still 'anova'
     objF <- c(objF, attr(modelK, which = 'objF', exact = TRUE)[1L]) # 'list'
   }
   
   ###################################
-  # then, decrease `K`
+  # then, decrease `K` (always compare to `K_orig`, not K+1)
   
   if (dim(modelK@parM)[1L] == K_orig) { # only do `descreasing` if no `increasing`
-    # always compare to `K_orig`, not K-1
     while (K > 1L) {
       obj_K <- QLMDe(object@data, distname = object@distname, data.name = object@data.name, K = K - 1L, p = object@p)
-      if (trace) cat('Finding parsimonious model at K =', K - 1L, '\n')
-      tmpK <- Step_fmx(obj_K, test = test, trace = trace, ...)
+      message('Finding parsimonious model at K = ', K - 1L)
+      tmpK <- Step_fmx(obj_K, test = test, ...)
       if (!compareK(model0 = model_orig, model1 = tmpK, test = test)) break # larger model (i.e. `model_orig` is retained)
       K <- K - 1L
-      if (trace) cat('Reduced K = ', K, ' is selected.\n', sep = '')
+      message('Reduced K = ', K, ' is selected.')
       modelK <- tmpK
       aod <- rbind.data.frame(aod, attr(modelK, which = 'anova', exact = TRUE)[1L, ]) # still 'anova'
       objF <- c(objF, attr(modelK, which = 'objF', exact = TRUE)[1L]) # 'list'
@@ -132,26 +145,6 @@ StepK_fmx <- function(object, test = c('logLik', 'AIC', 'BIC'), Kmax = stop('mus
   return(modelK)
   
 }
-
-
-
-
-
-
-if (FALSE) {
-  (d = fmx('norm', mean = c(1, 4, 8), w = c(3, 3, 4)))
-  x = rfmx(n = 1e3L, dist = d)
-  gghist(x)
-  y1 = QLMDe(x, distname = 'norm', K = 1L)
-  StepK_fmx(y1, Kmax = 3L)
-  
-  (d = fmx('GH', A = c(1, 4, 8), g = c(.2, 0, -.3), h = c(.2, .2, .2), w = c(3, 3, 4)))
-  x = rfmx(n = 1e3L, dist = d)
-  gghist(x)
-  (y1 = QLMDe(x, distname = 'GH', K = 1L))
-  StepK_fmx(y1)
-}
-
 
 
 

@@ -4,25 +4,31 @@
 \alias{CvM_test}
 \title{Cramer-Von Mises Test of Goodness-of-Fit for Distribution Estimates}
 \usage{
-CvM_test(x, nullname, ...)
+CvM_test(x, data, nullname, ...)
 }
 \arguments{
 \item{x}{an R object of distribution estimates}
 
+\item{data}{\link[base]{double} vector, the actual observations}
+
 \item{nullname, ...}{additional parameters of \code{\link[goftest]{cvm.test}}}
 }
 \value{
-\code{\link[goftest]{cvm.test}}
-
-\code{\link{CvM_test}} returns the \code{'htest'} object (returned from \code{\link[goftest]{cvm.test}}),
+\link{CvM_test} returns an \link[goftest:cvm.test]{htest} object,
 in which the element \code{$statistic} is the Cramer-Von Mises quadratic distance.
 }
 \description{
-Perform the Cramer-Von Mises test of goodness-of-fit for distribution estimates, via \code{\link[goftest]{cvm.test}}.
+Perform the Cramer-Von Mises test of goodness-of-fit for distribution estimates.
 }
 \details{
 Note that we are currently not using the discrete version \code{\link[dgof]{cvm.test}}.
 }
+\examples{
+(d1 <- fmx('norm', mean = c(0, 1.5), sd = .5, w = c(.4, .6)))
+x = rfmx(1e2L, dist = d1)
+CvM_test(d1, data = x)
+
+}
 \seealso{
-\code{\link[goftest]{cvm.test}}
+\link[goftest]{cvm.test}
 }

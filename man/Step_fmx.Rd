@@ -2,33 +2,33 @@
 % Please edit documentation in R/Step_fmx.R
 \name{Step_fmx}
 \alias{Step_fmx}
-\title{Backward Selection \eqn{gh}-parsimonious Model with Fixed Number of Components}
+\title{Backward Selection \eqn{gh}-parsimonious Model with Fixed Number of Components \eqn{K}}
 \usage{
 Step_fmx(object, test = c("logLik", "AIC", "BIC"), ...)
 }
 \arguments{
-\item{object}{\code{\linkS4class{fmx_QLMDe}} object returned from \code{\link{QLMDe}}}
+\item{object}{\linkS4class{fmx_QLMDe} object}
 
-\item{test}{\code{\link[base]{character}} value indicating the criterion to be used, with options
-\code{'logLik'} (via likelihood ratio test \code{\link{LikRatio}}, default and recommended), 
-\code{'AIC'} (via Akaike's information criterion \code{\link[stats]{AIC}}) and 
-\code{'BIC'} (via Bayesian information criterion \code{\link[stats]{BIC}}).}
+\item{test}{\link[base]{character} scalar indicating the criterion to be used, either 
+via likelihood ratio test \link[=LikRatio]{'logLik'} (default and recommended)
+via Akaike's information criterion \link[stats:AIC]{'AIC'} and 
+via Bayesian information criterion \link[stats:BIC]{'BIC'}.}
 
 \item{...}{additional parameters}
 }
 \value{
-\code{\link{Step_fmx}} returns an \code{\linkS4class{fmx_QLMDe}} object, with attributes
+\link{Step_fmx} returns an \linkS4class{fmx_QLMDe} object, with attributes
 \itemize{
 \item{\code{anova}} {ANOVA table}
 \item{\code{objF}} {value of the objective function (either the log-likelihood, AIC or BIC)}
 }
 }
 \description{
-\code{\link{Step_fmx}} selects a \eqn{gh}-parsimonious model with \eqn{g} and/or \eqn{h} parameters equal to zero 
+\link{Step_fmx} selects a \eqn{gh}-parsimonious model with \eqn{g} and/or \eqn{h} parameters equal to zero 
 for all or some of the mixture components conditionally on fixed number of components \eqn{K}.
 }
 \details{
-The algorithm starts with quantile least Mahalanobis distance estimates (\code{\link{QLMDe}}) 
+The algorithm starts with quantile least Mahalanobis distance estimates
 of either the full mixture of Tukey \eqn{g}-&-\eqn{h} distributions model, or
 a constrained model (i.e., some \eqn{g} and/or \eqn{h} parameters equal to zero according to the user input).
 Next, each of the non-zero \eqn{g} and/or \eqn{h} parameters is tested using the likelihood ratio test.
@@ -39,4 +39,7 @@ for the next iteration of the algorithm.
 
 The algorithm iterates until only significantly-different-from-zero \eqn{g} and \eqn{h} parameters 
 are retained, which corresponds to \eqn{gh}-parsimonious Tukey's \eqn{g}-&-\eqn{h} mixture model.
+}
+\seealso{
+\link{LikRatio}
 }

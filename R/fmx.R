@@ -13,52 +13,53 @@
 #' 
 #' @param n number of observations.
 #' 
-#' @param dist \code{\linkS4class{fmx}} object, representing a finite mixture distribution
+#' @param dist \linkS4class{fmx} object, representing a finite mixture distribution
 #' 
-#' @param silent \code{\link[base]{logical}} scalar, whether to print out necessary messages, default \code{TRUE}
+#' @param log,log.p \link[base]{logical} scalar. 
+#' If \code{TRUE}, probabilities \eqn{p} are given as \eqn{\log(p)}.
 #' 
-#' @param log,log.p \code{\link[base]{logical}} scalar; if \code{TRUE}, probabilities \eqn{p} are given as \eqn{\log(p)}.
+#' @param lower.tail \link[base]{logical} scalar. 
+#' If \code{TRUE} (default), probabilities are \eqn{Pr(X\le x)}, otherwise, \eqn{Pr(X>x)}.
 #' 
-#' @param lower.tail \code{\link[base]{logical}} scalar; if \code{TRUE} (default), probabilities are \eqn{Pr(X\le x)} otherwise, \eqn{Pr(X>x)}.
-#' 
-#' @param interval interval for root finding (see \code{\link[rstpm2]{vuniroot}})
+#' @param interval interval for root finding, see \link[rstpm2]{vuniroot}
 #' 
 #' @param distname,K,parM,w auxiliary parameters, whose default values are determined by
-#' the \code{\linkS4class{fmx}} object provided in argument \code{dist}.
+#' the \linkS4class{fmx} object provided in argument \code{dist}.
 #' The user-specified vector of \code{w} does not need to sum up to 1; \code{w/sum(w)} will be used internally.
 #' 
-#' @param ... mixture distribution parameters in \code{\link{fmx}}.
-#' See \code{\link{dGH}} for the names and default values of Tukey's \eqn{g}-&-\eqn{h} distribution parameters, 
-#' or \code{\link[stats]{dnorm}} for the names and default values of normal distribution parameters.
+#' @param ... mixture distribution parameters in \link{fmx} function.
+#' See \link{dGH} for the names and default values of Tukey's \eqn{g}-&-\eqn{h} distribution parameters, 
+#' or \link[stats]{dnorm} for the names and default values of normal distribution parameters.
 #' 
 #' @details 
 #' 
-#' A computational challenge in \code{\link{dfmx}} is when mixture density is very close to 0,
+#' A computational challenge in \link{dfmx} is when mixture density is very close to 0,
 #' which happens when the per-component log densities are negative with big absolute values.  
-#' In such case, we cannot compute the log mixture densities (i.e., \code{-Inf}), for the log-likelihood \code{\link{logLik.fmx_QLMDe}}.
+#' In such case, we cannot compute the log mixture densities (i.e., \code{-Inf}), 
+#' for the log-likelihood using \link{logLik.fmx} function.
 #' Our solution is to replace these \code{-Inf} log mixture densities by 
 #' the weighted average (using the mixing proportions of \code{dist}) 
 #' of the per-component log densities.
 #' 
-#' \code{\link{qfmx}} gives the quantile function, by solving \code{\link{pfmx}} by \code{\link[rstpm2]{vuniroot}}.
+#' \link{qfmx} gives the quantile function, by numerically solving the \link{pfmx} function.
 #' One major challenge when dealing with the finite mixture of Tukey's \eqn{g}-&-\eqn{h} family distribution
-#' is that Brent–Dekker's method needs to be performed in both \code{\link{pGH}} and \code{\link{qfmx}}, 
-#' i.e. `two layers' of root-finding algorithm.
+#' is that Brent–Dekker's method needs to be performed in both \link{pGH} and \link{qfmx} functions, 
+#' i.e. \emph{two layers} of root-finding algorithm.
 #' 
 #' 
 #' @return 
 #' 
-#' \code{\link{fmx}} returns an \code{\linkS4class{fmx}} object which specifies the parameters of a finite mixture distribution.
+#' \link{fmx} returns an \linkS4class{fmx} object which specifies the parameters of a finite mixture distribution.
 #' 
-#' \code{\link{dfmx}} returns a vector of probability density values of an \code{\linkS4class{fmx}} object at specified quantiles \code{x}.
+#' \link{dfmx} returns a vector of probability density values of an \linkS4class{fmx} object at specified quantiles \code{x}.
 #' 
-#' \code{\link{pfmx}} returns a vector of cumulative probability values of an \code{\linkS4class{fmx}} object at specified quantiles \code{q}.
+#' \link{pfmx} returns a vector of cumulative probability values of an \linkS4class{fmx} object at specified quantiles \code{q}.
 #' 
-#' \code{\link{qfmx}} returns an unnamed vector of quantiles of an \code{\linkS4class{fmx}} object, based on specified cumulative probabilities \code{p}.
-#' Note that \code{\link[stats]{qnorm}} returns an unnamed vector of quantiles, 
-#' although \code{\link[stats]{quantile}} returns a named vector of quantiles.
+#' \link{qfmx} returns an unnamed vector of quantiles of an \linkS4class{fmx} object, based on specified cumulative probabilities \code{p}.
+#' Note that \link[stats]{qnorm} returns an unnamed vector of quantiles, 
+#' although \link[stats]{quantile} returns a named vector of quantiles.
 #' 
-#' \code{\link{rfmx}} generates random deviates of an \code{\linkS4class{fmx}} object.
+#' \link{rfmx} generates random deviates of an \linkS4class{fmx} object.
 #' 
 #' @examples 
 #' 
@@ -70,8 +71,7 @@
 #' (e1 = fmx('norm', mean = c(0,3), sd = c(1,1.3), w = c(1, 1)))
 #' isS4(e1) # TRUE
 #' slotNames(e1)
-#' plot(e1) # using vanilla R
-#' autoplot(e1) # using ggplot2 package
+#' autoplot(e1)
 #' hist(rfmx(n = 1e3L, dist = e1), main = '1000 obs from e1')
 #' # generate a sample of size 1e3L from mixture distribution `e1`
 #' round(dfmx(x, dist = e1), digits = 3L)
@@ -95,7 +95,7 @@
 #' if (FALSE) {
 #'   # log-mixture-density smoothing, for developers
 #'   (e4 = fmx('norm', mean = c(0,3), w = c(2, 3)))
-#'   plot(e4, type = 'log_pdf', xlim = c(-50, 50))
+#'   curve(dfmx(x, dist = e4, log = TRUE), xlim = c(-50, 50))
 #' }
 #' 
 #' @name fmx
@@ -141,7 +141,7 @@ dist_anm <- function(distname) {
 
 #' @rdname fmx
 #' @export
-dfmx <- function(x, dist, distname = dist@distname, K = dim(parM)[1L], parM = dist@parM, w = dist@w, silent = TRUE, ..., log = FALSE) {
+dfmx <- function(x, dist, distname = dist@distname, K = dim(parM)[1L], parM = dist@parM, w = dist@w, ..., log = FALSE) {
   if (K == 1L) { # no mixture required!!
     switch(distname, 
            norm = return(dnorm(x = x, mean = parM[,1L], sd = parM[,2L], log = log)), 
@@ -156,8 +156,9 @@ dfmx <- function(x, dist, distname = dist@distname, K = dim(parM)[1L], parM = di
                 GH = .dGH(x = xm, A = parM[,1L], B = parM[,2L], g = parM[,3L], h = parM[,4L], log = TRUE, ...),
                 stop('distribution ', sQuote(distname), ' not ready yet'))
   if (any(is.infinite(lds))) {
-    #tmp <<- dist
-    stop('per-component log-density should not be -Inf (unless `sd` or `B` is 0)') # is.infinite(NA) is \code{FALSE}
+    #tmp <<- dist; x <<- x;
+    #stop('per-component log-density should not be -Inf (unless `sd` or `B` is 0)') # is.infinite(NA) is \code{FALSE}
+    # `sd = 0` or `B = 0` may happen 
   }
   
   d <- c(crossprod(w, exp(lds)))
@@ -168,8 +169,8 @@ dfmx <- function(x, dist, distname = dist@distname, K = dim(parM)[1L], parM = di
   wlds <- log(w) + lds # weighted-lds
   id_max <- max.col(t.default(wlds))  # dont want to import ?matrixStats::colMaxs
   id_max_seq <- cbind(id_max, seq_len(nx))
-  logd <- wlds[id_max_seq] + log(.colSums(tcrossprod(w, 1/w[id_max]) * exp(t.default(t.default(lds) - lds[id_max_seq])), m = K, n = nx))
-  if (!isTRUE(all.equal.numeric(exp(logd), d))) stop('new dfmx wrong?')
+  logd <- wlds[id_max_seq] + log(.colSums(tcrossprod(w, 1/w[id_max]) * exp(t.default(t.default(lds) - lds[id_max_seq])), m = K, n = nx, na.rm = FALSE))
+  # if (!isTRUE(all.equal.numeric(exp(logd), d))) stop('new dfmx wrong?')
   return(logd)
   
 }
@@ -289,13 +290,13 @@ rfmx <- function(n, dist, distname = dist@distname, K = dim(parM)[1L], parM = di
 
 
 
-#' @title Number of Components in \code{\linkS4class{fmx}} and \code{\linkS4class{fmx_QLMDe}} Object
+#' @title Number of Components in \linkS4class{fmx} and \linkS4class{fmx_QLMDe} Object
 #' 
 #' @description
 #' 
-#' Obtain the number of components in \code{\linkS4class{fmx}} and \code{\linkS4class{fmx_QLMDe}} object.
+#' Obtain the number of components in \linkS4class{fmx} and \linkS4class{fmx_QLMDe} object.
 #' 
-#' @param x \code{\linkS4class{fmx}} and \code{\linkS4class{fmx_QLMDe}} object.
+#' @param x \linkS4class{fmx} and \linkS4class{fmx_QLMDe} object.
 #' 
 #' @details 
 #' 
@@ -303,8 +304,8 @@ rfmx <- function(n, dist, distname = dist@distname, K = dim(parM)[1L], parM = di
 #' 
 #' @return 
 #' 
-#' An \code{\link[base]{integer}} value indicating the number of components in 
-#' an \code{\linkS4class{fmx}} and.or \code{\linkS4class{fmx_QLMDe}} object.
+#' An \link[base]{integer} value indicating the number of components in 
+#' an \linkS4class{fmx} and.or \linkS4class{fmx_QLMDe} object.
 #' 
 #' @examples 
 #' 
@@ -317,15 +318,15 @@ K.fmx <- function(x) dim(x@parM)[1L] # only used in high level user-interface
 
 
 
-#' @title Subset of Components in \code{\linkS4class{fmx}} and/or \code{\linkS4class{fmx_QLMDe}} Object
+#' @title Subset of Components in \linkS4class{fmx} and/or \linkS4class{fmx_QLMDe} Object
 #' 
 #' @description 
 #' 
-#' Taking subset of components in \code{\linkS4class{fmx}} and/or \code{\linkS4class{fmx_QLMDe}} object
+#' Taking subset of components in \linkS4class{fmx} and/or \linkS4class{fmx_QLMDe} object
 #' 
-#' @param x \code{\linkS4class{fmx}} and/or \code{\linkS4class{fmx_QLMDe}} object
+#' @param x \linkS4class{fmx} and/or \linkS4class{fmx_QLMDe} object
 #' 
-#' @param i \code{\link[base]{integer}} or \code{\link[base]{logical}} vector, 
+#' @param i \link[base]{integer} or \link[base]{logical} vector, 
 #' the row index(es) of the subset of components to be chosen, see \code{\link[base]{[}}
 #' 
 #' @param j ignored (always \code{TRUE}, i.e., all parameters of such give distribution must be selected), see \code{\link[base]{[}}
@@ -335,12 +336,12 @@ K.fmx <- function(x) dim(x@parM)[1L] # only used in high level user-interface
 #' @details 
 #' 
 #' Note that using definitions as S3 method dispatch \code{`[.fmx`} or \code{`[.fmx_QLMDe`} won't work 
-#' for S4 objects \code{\linkS4class{fmx}} and/or \code{\linkS4class{fmx_QLMDe}}.
+#' for \linkS4class{fmx} and/or \linkS4class{fmx_QLMDe} objects.
 #' 
 #' @return 
 #' 
-#' An \code{\linkS4class{fmx}} object consisting of a subset of components.
-#' Note that subsetting \code{\linkS4class{fmx_QLMDe}} object will return an \code{\linkS4class{fmx}} object, 
+#' An \linkS4class{fmx} object consisting of a subset of components.
+#' Note that subsetting \linkS4class{fmx_QLMDe} object will return an \linkS4class{fmx} object, 
 #' which contains only the mixture parameters, i.e., information about the observations (e.g. slots \code{@@data} and \code{@@data.name}),
 #' as well as other estimation related slots (e.g., \code{@@init}) will be lost.
 #' 
@@ -370,12 +371,10 @@ print.fmx <- function(x, ...) {
   parM <- x@parM
   K <- dim(parM)[1L]
   parM[] <- sprintf(fmt = '%.2f', parM)
-  if (length(id_constr <- fmx_constraint(x))) {
-    parM[id_constr] <- '.'
-  }
+  dimnames(parM)[[1L]] <- paste0(seq_len(K), '-comp.')
+  if (length(id_constr <- fmx_constraint(x))) parM[id_constr] <- '.'
   obj <- if (K == 1L) parM else cbind(parM, w = sprintf(fmt = '%.1f%%', x@w*1e2))
   heading <- paste0(K, '-Component Mixture of ', switch(x@distname, norm = 'Normal', GH = 'Tukey\'s G-&-H'), ' Distribution')
-  dimnames(obj)[[1L]] <- paste0(seq_len(K), '-comp.')
   cat('\n ', heading, '\n\n', sep = '')
   print.default(obj, quote = FALSE)
   if (length(id_constr)) cat('\nwhere ', sQuote('.'), ' denotes an enforced constraint\n', sep = '')
@@ -385,10 +384,20 @@ print.fmx <- function(x, ...) {
 }
 
 
-#' @rdname show_S4
+#' @title Show \linkS4class{fmx} and/or \linkS4class{fmx_QLMDe} Object
+#' 
+#' @description
+#' Print the parameters of an \linkS4class{fmx} object and plot its density curves.
+#' 
+#' @param object an \linkS4class{fmx} or \linkS4class{fmx_QLMDe} object
+#' 
+#' @return 
+#' The \link[methods]{show} method for \linkS4class{fmx} and/or \linkS4class{fmx_QLMDe} object 
+#' does not have a returned value.
+#' 
 #' @export
-setMethod(show, signature(object = 'fmx'), definition = function(object) {
-  print(object) # \code{\link{print.fmx_QLMDe}} or \code{\link{print.fmx}}
+setMethod(f = show, signature = signature(object = 'fmx'), definition = function(object) {
+  print(object) # \link{print.fmx_QLMDe} or \link{print.fmx}
   return(invisible())
 })
 

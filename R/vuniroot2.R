@@ -1,41 +1,41 @@
 
 
-#' @title A Slight Modification of \code{\link[rstpm2]{vuniroot}}
+# Note that we do not have parameter \code{...} in \code{\link{vuniroot2}}, otherwise it will cause warning message 
+# `The \code{\link{dGH}}/\code{\link{pGH}} function should raise an error when names are incorrectly named' in \code{fitdistrplus:::test1fun}.
+
+
+#' @title Vectorised One Dimensional Root (Zero) Finding
 #' 
 #' @description 
 #' 
-#' A slight modification of \code{\link[rstpm2]{vuniroot}} to solve \eqn{y = f(x)}, 
-#' for a given vector of \eqn{y} values.
+#' To solve a monotone function \eqn{y = f(x)} for a given vector of \eqn{y} values.
 #' 
-#' @param y \code{\link[base]{numeric}} vector of \eqn{y} values
+#' @param y \link[base]{numeric} vector of \eqn{y} values
 #' 
-#' @param f the \code{\link[base]{function}} \eqn{f(x)}
+#' @param f monotone \link[base]{function} \eqn{f(x)} whose roots are to be solved
 #' 
-#' @param interval length-2 \code{\link[base]{numeric}} vector
+#' @param interval length two \link[base]{numeric} vector
 #' 
-#' @param tol desired accuracy (convergence tolerance), see \code{\link[rstpm2]{vuniroot}}
-#' 
-#' @param maxiter maximum number of iterations, see \code{\link[rstpm2]{vuniroot}}
+#' @param tol \link[base]{double} scalar, desired accuracy (convergence tolerance), 
+
+#' @param maxiter \link[base]{integer} scalar, maximum number of iterations
 #' 
 #' @details
 #' 
-#' \code{\link{vuniroot2}}, different from \code{\link[rstpm2]{vuniroot}}, does
+#' \link{vuniroot2} function, different from \link[rstpm2]{vuniroot} function, does
 #' \itemize{
 #' \item{accept \code{NA_real_} as element(s) of \eqn{y}}
 #' \item{handle the case when the analytical root is at \code{lower} and/or \code{upper}}
 #' \item{return a root of \code{Inf} (if \code{abs(f(lower)) >= abs(f(upper))}) or 
 #' \code{-Inf} (if \code{abs(f(lower)) < abs(f(upper))}), 
-#' when the function value \code{f(lower)} and \code{f(upper)} are not-of-opposite-sign.}
+#' when the function value \code{f(lower)} and \code{f(upper)} are not of opposite sign.}
 #' }
-#' 
-#' Note that we do not have parameter \code{...} in \code{\link{vuniroot2}}, otherwise it will cause warning message 
-#' `The \code{\link{dGH}}/\code{\link{pGH}} function should raise an error when names are incorrectly named' in \code{fitdistrplus:::test1fun}.
 #' 
 #' @return 
 #' 
-#' A \code{\link[base]{numeric}} vector \eqn{x} as the solution of \eqn{y = f(x)} with given \eqn{y}.
+#' \link{vuniroot2} returns a \link[base]{numeric} vector \eqn{x} as the solution of \eqn{y = f(x)} with given vector \eqn{y}.
 #' 
-#' @seealso \code{\link[rstpm2]{vuniroot}}
+#' @seealso \link[rstpm2]{vuniroot}
 #' 
 #' @examples 
 #' library(rstpm2)
@@ -44,20 +44,19 @@
 #' # ?rstpm2::vuniroot does not accept NA \eqn{y}
 #' tryCatch(vuniroot(function(x) x^2 - c(NA, 1:8), lower = lwr, upper = upr), error = identity)
 #' 
-#' # ?rstpm2::vuniroot not good when root is at `lower` or `upper`
+#' # ?rstpm2::vuniroot not good when the analytic root is at `lower` or `upper`
 #' f <- function(x) x^2 - 1:9
 #' tryCatch(vuniroot(f, lower = lwr, upper = upr, extendInt = 'no'), warning = identity)
 #' tryCatch(vuniroot(f, lower = lwr, upper = upr, extendInt = 'yes'), warning = identity)
 #' tryCatch(vuniroot(f, lower = lwr, upper = upr, extendInt = 'downX'), error = identity)
 #' tryCatch(vuniroot(f, lower = lwr, upper = upr, extendInt = 'upX'), warning = identity)
 #' 
-#' # all good
-#' vuniroot2(c(NA, 1:9), f = function(x) x^2, interval = c(1, 3))
+#' vuniroot2(c(NA, 1:9), f = function(x) x^2, interval = c(1, 3)) # all good
 #' 
 #' @export
 vuniroot2 <- function(
   y, f, interval = stop('must provide a length-2 `interval`'), 
-  tol = .Machine$double.eps^.25, maxiter = 1000
+  tol = .Machine$double.eps^.25, maxiter = 1000L
 ) {
   
   if (any(is.infinite(y))) stop('infinite return from function `f` cannot be handled')
@@ -103,7 +102,7 @@ vuniroot2 <- function(
 
   if (any(sign_same <- (f.lower * f.upper > 0))) {
     # smart!  used in ?base::uniroot and ?rstpm2::vuniroot
-    # `sign_same` are teh indexes of `y` where {f(interval[1L]) - y} and {f(interval[2L]) - y} are of the same signs
+    # `sign_same` are the indexes of `y` where {f(interval[1L]) - y} and {f(interval[2L]) - y} are of the same signs
     # they will cause error in ?rstpm2::vuniroot and/or ?base::uniroot
     # therefore I will let the solution at these indexes to be either -Inf or Inf
     out[yok][sign_same & (abs(f.lower) < abs(f.upper))] <- -Inf # otherwise Inf (as defined as default)

@@ -2,18 +2,18 @@
 % Please edit documentation in R/0Int_base_stats.R
 \name{crossprod_inv}
 \alias{crossprod_inv}
-\title{Inverse of \eqn{X'X} by QR Decomposition}
+\title{Inverse of \eqn{X'X} by \eqn{QR} Decomposition}
 \usage{
 crossprod_inv(X)
 }
 \arguments{
-\item{X}{\eqn{m*n} \code{\link[base]{matrix}}}
+\item{X}{\eqn{m*n} \link[base]{matrix}}
 }
 \value{
-The inverse \code{\link[base]{matrix}} of the cross product \eqn{(X'X)}, where \eqn{X} is the input \code{\link[base]{matrix}}.
+\link{crossprod_inv} returns the inverse \link[base]{matrix} of cross product \eqn{X'X}.
 }
 \description{
-Compute \eqn{(X'X)^{-1}} from the R part of the QR decomposition of \eqn{X}.
+Compute \eqn{(X'X)^{-1}} from the \eqn{R} part of the \eqn{QR} decomposition of \eqn{X}.
 }
 \examples{
 set.seed(123); (X = array(rnorm(40L), dim = c(8L, 5L)))
@@ -25,5 +25,5 @@ stopifnot(all.equal.numeric(solve(crossprod(X)), crossprod_inv(X)))
 \url{https://en.wikipedia.org/wiki/QR_decomposition}, section \strong{Rectangular matrix}
 }
 \seealso{
-\code{\link[base]{chol2inv}}, \code{\link[base]{chol.default}}
+\link[base]{chol2inv} \link[base]{chol.default}
 }
