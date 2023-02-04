@@ -6,8 +6,8 @@
 #'
 #' Tools for simulating and fitting finite mixtures of the 4-parameter Tukey \eqn{g}-&-\eqn{h} distributions. 
 #' Tukey \eqn{g}-&-\eqn{h} mixture is highly flexible to model multimodal distributions with variable degree of skewness and kurtosis in the components. 
-#' The Quantile Least Mahalanobis Distance estimator (\code{\link{QLMDe}}) is used for estimating parameters of the finite Tukey \eqn{g}-&-\eqn{h} mixtures.
-#' \code{\link{QLMDe}} is an indirect estimator that minimizes the Mahalanobis distance between the sample and model-based quantiles.
+#' The Quantile Least Mahalanobis Distance estimator \link{QLMDe} is used for estimating parameters of the finite Tukey \eqn{g}-&-\eqn{h} mixtures.
+#' \link{QLMDe} is an indirect estimator that minimizes the Mahalanobis distance between the sample and model-based quantiles.
 #' A backward-forward stepwise model selection algorithm is provided to find
 #' \itemize{
 #' \item {a parsimonious Tukey \eqn{g}-&-\eqn{h} mixture model, conditional on a given number-of-components; and}
@@ -20,17 +20,42 @@
 #' @examples
 #' # see ?QLMDe
 #'
-#' @import ggplot2 graphics methods stats utils
+#' @import ggplot2 methods
 #' 
-#' @importFrom goftest cvm.test
-#' @importFrom LaplacesDemon KLD
-#' @importFrom latex2exp TeX
-#' @importFrom mixtools normalmixEM
-#' @importFrom rstpm2 vuniroot
-#' @importFrom scales percent
-#' @importFrom tclust tkmeans
-#'
 #' @docType package
-#' @keywords package
+#' @keywords internal
 #' @name QuantileGH-package
 NULL
+
+# @aliases QuantileGH-package
+# '_PACKAGE'
+
+# graphics
+
+
+
+
+
+
+
+
+#' @title CycD1
+#' 
+#' @description ..
+#' 
+#' @format a \link[base]{list} of \link[base]{double} \link[base]{vector}s
+#' 
+#' @name CycD1
+'CycD1'
+
+
+#' @title CK5
+#' 
+#' @description ..
+#' 
+#' @format a \link[base]{list} of \link[base]{double} \link[base]{vector}s
+#' 
+#' @name CK5
+'CK5'
+
+

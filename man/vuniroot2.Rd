@@ -13,29 +13,29 @@ vuniroot2(
 )
 }
 \arguments{
-\item{y}{\link[base]{numeric} vector of \eqn{y} values}
+\item{y}{\link[base]{numeric} \link[base]{vector} of \eqn{y} values}
 
 \item{f}{monotone \link[base]{function} \eqn{f(x)} whose roots are to be solved}
 
-\item{interval}{length two \link[base]{numeric} vector}
+\item{interval}{length two \link[base]{numeric} \link[base]{vector}}
 
 \item{tol}{\link[base]{double} scalar, desired accuracy (convergence tolerance),}
 
 \item{maxiter}{\link[base]{integer} scalar, maximum number of iterations}
 }
 \value{
-\link{vuniroot2} returns a \link[base]{numeric} vector \eqn{x} as the solution of \eqn{y = f(x)} with given vector \eqn{y}.
+\link{vuniroot2} returns a \link[base]{numeric} \link[base]{vector} \eqn{x} as the solution of \eqn{y = f(x)} with given vector \eqn{y}.
 }
 \description{
-To solve a monotone function \eqn{y = f(x)} for a given vector of \eqn{y} values.
+To solve a monotone function \eqn{y = f(x)} for a given \link[base]{vector} of \eqn{y} values.
 }
 \details{
-\link{vuniroot2} function, different from \link[rstpm2]{vuniroot} function, does
+\link{vuniroot2}, different from \link[rstpm2]{vuniroot}, does
 \itemize{
 \item{accept \code{NA_real_} as element(s) of \eqn{y}}
 \item{handle the case when the analytical root is at \code{lower} and/or \code{upper}}
-\item{return a root of \code{Inf} (if \code{abs(f(lower)) >= abs(f(upper))}) or 
-\code{-Inf} (if \code{abs(f(lower)) < abs(f(upper))}), 
+\item{return a root of \code{Inf} (if \code{abs(f(lower)) >= abs(f(upper))}) or
+\code{-Inf} (if \code{abs(f(lower)) < abs(f(upper))}),
 when the function value \code{f(lower)} and \code{f(upper)} are not of opposite sign.}
 }
 }

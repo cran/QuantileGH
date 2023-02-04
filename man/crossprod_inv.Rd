@@ -26,4 +26,6 @@ stopifnot(all.equal.numeric(solve(crossprod(X)), crossprod_inv(X)))
 }
 \seealso{
 \link[base]{chol2inv} \link[base]{chol.default}
+
+\link[base]{qr.default} \link[base]{qr.R} \link[base]{chol2inv}
 }

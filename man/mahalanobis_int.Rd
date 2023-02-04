@@ -7,9 +7,9 @@
 mahalanobis_int(x, center, invcov)
 }
 \arguments{
-\item{x}{\link[base]{numeric} vector}
+\item{x}{\link[base]{numeric} \link[base]{vector}}
 
-\item{center}{\link[base]{numeric} vector, mean \eqn{\mathbf{\mu}}}
+\item{center}{\link[base]{numeric} \link[base]{vector}, mean \eqn{\mathbf{\mu}}}
 
 \item{invcov}{\link[base]{numeric} \link[base]{matrix}, \emph{inverted} variance-covariance \eqn{\mathbf{\Sigma}}}
 }

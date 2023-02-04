@@ -20,14 +20,17 @@ An \code{'reAssign_tkmeans'} object, which inherits from \link[tclust]{tkmeans} 
 \description{
 Re-assign the observations,
 which are trimmed in the trimmed \eqn{k}-means algorithm,
-back to the closest cluster as determined by the smallest 
+back to the closest cluster as determined by the smallest
 Mahalanobis distance.
 }
 \details{
-Given the \link[tclust]{tkmeans} input, 
-the \link[stats:mahalanobis]{Mahalanobis} distance is computed between each trimmed observation 
+Given the \link[tclust]{tkmeans} input,
+the \link[stats:mahalanobis]{Mahalanobis} distance is computed between each trimmed observation
 and each cluster.
 Each trimmed observation is assigned to the closest cluster (i.e., with the smallest Mahalanobis distance).
+}
+\note{
+Either \link[stats]{kmeans} or \link[tclust]{tkmeans} is slow for big \code{x}.
 }
 \examples{
 library(tclust)

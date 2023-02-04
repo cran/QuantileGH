@@ -5,10 +5,10 @@
 \alias{QuantileGH-package}
 \title{Quantile Least Mahalanobis Distance Estimator for Tukey \eqn{g}-&-\eqn{h} Mixture}
 \description{
-Tools for simulating and fitting finite mixtures of the 4-parameter Tukey \eqn{g}-&-\eqn{h} distributions. 
-Tukey \eqn{g}-&-\eqn{h} mixture is highly flexible to model multimodal distributions with variable degree of skewness and kurtosis in the components. 
-The Quantile Least Mahalanobis Distance estimator (\code{\link{QLMDe}}) is used for estimating parameters of the finite Tukey \eqn{g}-&-\eqn{h} mixtures.
-\code{\link{QLMDe}} is an indirect estimator that minimizes the Mahalanobis distance between the sample and model-based quantiles.
+Tools for simulating and fitting finite mixtures of the 4-parameter Tukey \eqn{g}-&-\eqn{h} distributions.
+Tukey \eqn{g}-&-\eqn{h} mixture is highly flexible to model multimodal distributions with variable degree of skewness and kurtosis in the components.
+The Quantile Least Mahalanobis Distance estimator \link{QLMDe} is used for estimating parameters of the finite Tukey \eqn{g}-&-\eqn{h} mixtures.
+\link{QLMDe} is an indirect estimator that minimizes the Mahalanobis distance between the sample and model-based quantiles.
 A backward-forward stepwise model selection algorithm is provided to find
 \itemize{
 \item {a parsimonious Tukey \eqn{g}-&-\eqn{h} mixture model, conditional on a given number-of-components; and}
@@ -19,4 +19,4 @@ A backward-forward stepwise model selection algorithm is provided to find
 # see ?QLMDe
 
 }
-\keyword{package}
+\keyword{internal}

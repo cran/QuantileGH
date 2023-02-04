@@ -7,28 +7,28 @@
 outer_allequal(target, current, tolerance = sqrt(.Machine$double.eps), ...)
 }
 \arguments{
-\item{target}{length-\eqn{n} \link[base]{double} vector, the target value, missing value not allowed}
+\item{target}{length-\eqn{n} \link[base]{double} \link[base]{vector}, the target value, missing value not allowed}
 
-\item{current}{length-\eqn{n} \link[base]{double} vector, the value to be compared with \code{target}, missing value not allowed}
+\item{current}{length-\eqn{n} \link[base]{double} \link[base]{vector}, the value to be compared with \code{target}, missing value not allowed}
 
-\item{tolerance}{\link[base]{double} scalar, see \link[base]{all.equal.numeric}.}
+\item{tolerance}{positive \link[base]{double} scalar, default \code{sqrt(.Machine$double.eps)}}
 
 \item{...}{potential parameters, currently not in use}
 }
 \value{
 \link{outer_allequal} returns an \eqn{m*n} \link[base]{logical} \link[base]{matrix}
-indicating whether the length-\eqn{n} vector \code{current} is element-wise near-equal to the length-\eqn{m} vector \code{target} 
-within the prespecified \code{tolerance}.
+indicating whether the length-\eqn{n} \link[base]{vector} \code{current} is element-wise near-equal to the length-\eqn{m} \link[base]{vector} \code{target}
+within the pre specified \code{tolerance}.
 }
 \description{
 Test if two \link[base]{double} vectors are element-wise (nearly) equal.
 }
 \details{
-\link{outer_allequal} is different from \link[base]{all.equal.numeric}, such that 
+\link{outer_allequal} is different from \link[base]{all.equal.numeric}, such that
 (1). only comparisons between real \link[base]{double} values are performed;
 (2). element-wise comparison is performed, with the rows of returned \link[base]{matrix} correspond to \code{current}
 and columns correspond to \code{target};
-(3). a \link[base]{logical} scalar is returned for each element-wise comparison.
+(3). a \link[base]{logical} scalar is always returned for each element-wise comparison.
 }
 \examples{
 x = c(.3, 1-.7, 0, .Machine$double.eps)

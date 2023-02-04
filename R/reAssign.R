@@ -20,7 +20,12 @@
 #'
 #' @return An \code{'reAssign_tkmeans'} object, which inherits from \link[tclust]{tkmeans} class. 
 #' 
+#' @note 
+#' Either \link[stats]{kmeans} or \link[tclust]{tkmeans} is slow for big \code{x}.
+#' 
 #' @seealso \link[tclust]{tkmeans}
+#' 
+#' @importFrom tclust tkmeans
 #' 
 #' @examples 
 #' library(tclust)
@@ -52,13 +57,13 @@ reAssign.tkmeans <- function(x, ...) {
   
   # distance from each of the k clusters
   if ((d <- x$int$dim[2L]) == 1L) {
-    obss <- split.default(obs, f = fclus) # identical to .Internal(split(obs, fclus)), not compute intensive
+    obss <- split.default(obs, f = fclus)
     centers <- c(x$centers)
     x_mad <- vapply(k_seq, FUN = function(i) mad(obss[[i]], center = centers[i]), FUN.VALUE = 0)
     tobs <- obs[tid, , drop = TRUE]
     tdist <- t.default(abs(tcrossprod(1/x_mad, tobs) - centers/x_mad)) # not compute intensive
   } else {
-    clus_id <- split.default(seq_len(n), f = fclus) # identical to .Internal(split(seq_len(n), fclus)); not compute intensive
+    clus_id <- split.default(seq_len(n), f = fclus)
     tobs_t <- t.default(obs[tid, , drop = FALSE]) # trimmed obs
     t_seq <- seq_len(dim(tobs_t)[2L])
     tdist <- do.call(cbind, args = lapply(k_seq, FUN = function(i) {

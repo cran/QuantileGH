@@ -11,13 +11,13 @@
 #' skewness \eqn{g} and 
 #' kurtosis \eqn{h}.
 #' 
-#' @param x,q \link[base]{double} vector, quantiles
+#' @param x,q \link[base]{double} \link[base]{vector}, quantiles
 #' 
-#' @param p \link[base]{double} vector, probabilities
+#' @param p \link[base]{double} \link[base]{vector}, probabilities
 #' 
 #' @param n \link[base]{integer} scalar, number of observations
 #' 
-#' @param z \link[base]{double} vector, standard normal quantiles.
+#' @param z \link[base]{double} \link[base]{vector}, standard normal quantiles.
 #' 
 #' @param log,log.p \link[base]{logical} scalar, if \code{TRUE}, probabilities \eqn{p} are given as \eqn{\log(p)}.
 #' 
@@ -31,7 +31,7 @@
 #' 
 #' @param h \link[base]{double} scalar, kurtosis parameter \eqn{h\geq 0}, default \eqn{h=0} indicating no kurtosis
 #' 
-#' @param q0 \link[base]{double} vector of \eqn{(q-A)/B}, for internal use to increase compute speed
+#' @param q0 \link[base]{double} \link[base]{vector} of \eqn{(q-A)/B}, for internal use to increase compute speed
 #' 
 # @param interval interval of standard normal quantiles, when solving from Tukey \eqn{g}-&-\eqn{h} quantiles using the vuniroot algorithm 
 #' 
@@ -43,14 +43,14 @@
 #' 
 #' @return 
 #' 
-#' \link{dGH} gives the density and accommodates vector arguments \code{A}, \code{B}, \code{g} and \code{h}.
-#' The quantiles \code{x} can be either vector or matrix.
-#' This function takes about 1/5 time of \link[gk]{dgh} function.
+#' \link{dGH} gives the density and accommodates \link[base]{vector} arguments \code{A}, \code{B}, \code{g} and \code{h}.
+#' The quantiles \code{x} can be either \link[base]{vector} or matrix.
+#' This function takes about 1/5 time of \link[gk]{dgh}.
 #' 
-#' \link{pGH} gives the distribution function, only taking scalar arguments and vector quantiles \code{q}.
+#' \link{pGH} gives the distribution function, only taking scalar arguments and \link[base]{vector} quantiles \code{q}.
 #' This function takes about 1/10 time of \link[gk]{pgh} and \link[OpVaR]{pgh} functions.
 #' 
-#' \link{qGH} gives the quantile function, only taking scalar arguments and vector probabilities \code{p}.
+#' \link{qGH} gives the quantile function, only taking scalar arguments and \link[base]{vector} probabilities \code{p}.
 #' This function takes about 1/2 time of \link[gk]{qgh} and 1/10 time of \link[OpVaR]{qgh} functions.
 #' 
 #' \link{rGH} generates random deviates, only taking scalar arguments.
@@ -58,7 +58,7 @@
 #' \link{z2qGH} is the Tukey's \eqn{g}-&-\eqn{h} transformation.
 #' Note that \code{gk:::z2gh} is only an \strong{approximation} to Tukey's \eqn{g}-&-\eqn{h} transformation.
 #' 
-#' Unfortunately, \link{qGH2z} function, the inverse of Tukey's \eqn{g}-&-\eqn{h} transformation, 
+#' Unfortunately, \link{qGH2z}, the inverse of Tukey's \eqn{g}-&-\eqn{h} transformation, 
 #' does not have a closed form and needs to be solved numerically.
 #' 
 #' @seealso \link[OpVaR]{dgh} \link[gk]{dgh}
@@ -84,8 +84,8 @@
 #' @name TukeyGH
 #' @export
 dGH <- function(x, A = 0, B = 1, g = 0, h = 0, log = FALSE, ...) {
-  parM <- cbind(A, B, g, h)
-  return(.dGH(x = x, A = parM[,1L], B = parM[,2L], g = parM[,3L], h = parM[,4L], log = log, ...))
+  pars <- cbind(A, B, g, h) # recycle
+  return(.dGH(x = x, A = pars[,1L], B = pars[,2L], g = pars[,3L], h = pars[,4L], log = log, ...))
 }
 
 # not compute intensive
@@ -135,7 +135,7 @@ dGH <- function(x, A = 0, B = 1, g = 0, h = 0, log = FALSE, ...) {
 }
 
 
-# Derivative of \code{\link{z2qGH}} against `z`, on the log-scale
+# Derivative of \link{z2qGH} against `z`, on the log-scale
 # inspired by ?OpVaR:::deriv_gh
 # Inf in `z` \strong{will} cause trouble
 # not sure of the usage of ?base::tanh and ?base::cosh in ?gk:::Qgh_deriv
@@ -237,7 +237,7 @@ z2qGH <- function(z, A = 0, B = 1, g = 0, h = 0) {
 
 
 
-# not compute intensive (for compute intensive jobs, use \code{\link{.qGH2z}})
+# not compute intensive (for compute intensive jobs, use \link{.qGH2z})
 # inspired by ?OpVaR:::gh_inv
 #' @rdname TukeyGH
 #' @export
@@ -261,7 +261,7 @@ if (FALSE) {
 }
 
 
-# internal workhorse of \code{\link{qGH2z}}
+# internal workhorse of \link{qGH2z}
 # inverse of Tukey GH transformation; compute intensive!!!
 .qGH2z <- function(
   q, q0 = (q - A)/B, # `q` and `q0` both finite AND non-missing
@@ -270,7 +270,7 @@ if (FALSE) {
   tol = .Machine$double.eps^.25, maxiter = 1000
 ) {
   
-  #if (!length(q0)) return(numeric()) # required by \code{fitdistrplus::fitdist}
+  #if (!length(q0)) return(numeric()) # required by \link[fitdistrplus]{fitdist}
   g0 <- (g == 0)
   h0 <- (h == 0)
   out <- q0
@@ -304,6 +304,16 @@ if (FALSE) {
 
 
 
+
+# need Tingting's \link{ggcurve} function
+# ggcurve(dGH, g = .3, h = 0, xlim = c(-3, 5)) # need Tingting's \link{dGH} function
+# # learn Hoaglin (1985)
+# gv = (1:5)/5
+# hv = (1:5)/10
+# ggcurve(\(z,g) expm1(g*z)/g, g = gv, xlim = c(-2,2), title = 'Fig 11-2')
+# ggcurve(\(z,h) dGH(z,g=0,h=h)-dnorm(z), h = hv, xlim = c(0,8), title = 'Fig 11-8')
+# ggcurve(\(z,h) z*exp(h*z^2/2), h = hv, xlim = c(-2,2), title = 'Fig 11-9')
+# ggcurve(\(z,h) z*exp(h*z^2/2), h = -hv, xlim = c(-6,6), title = 'Not monotone')
 
 
 

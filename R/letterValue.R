@@ -5,45 +5,47 @@
 #' @description
 #' 
 #' Letter-value based estimation (Hoaglin, 2006) of 
-#' Tukey \eqn{g}-&-\eqn{h} distribution and its constrained versions (\eqn{g}-distribution, \eqn{h}-distribution).
-#' 
+#' Tukey's \eqn{g}-, \eqn{h}- and \eqn{g}-&-\eqn{h} distribution. 
 #' All equation numbers mentioned below refer to Hoaglin (2006).
 #' 
-#' @param x \link[base]{double} vector, one-dimensional observations
+#' @param x \link[base]{double} \link[base]{vector}, one-dimensional observations
 #' 
-#' @param p_g \link[base]{double} vector, the probabilities used for estimating parameter \eqn{g}.
-#' Or, use \code{p_g = FALSE} to implement the constraint \eqn{g=0}. 
+#' @param p_g \link[base]{double} \link[base]{vector}, probabilities used for estimating \eqn{g} parameter.
+#' Or, use \code{p_g = FALSE} to implement the constraint \eqn{g=0} 
+#' (i.e., an \eqn{h}-distribution is estimated). 
 #' 
-#' @param p_h \link[base]{double} vector, the probabilities used for estimating parameter \eqn{h}.
-#' Or, use \code{p_h = FALSE} to implement the constraint \eqn{h=0}.
+#' @param p_h \link[base]{double} \link[base]{vector}, probabilities used for estimating \eqn{h} parameter.
+#' Or, use \code{p_h = FALSE} to implement the constraint \eqn{h=0}
+#' (i.e., a \eqn{g}-distribution is estimated). 
 #' 
 #' @param halfSpread \link[base]{character} scalar, 
 #' either to use \code{'both'} half-spreads (default),
 #' \code{'lower'} half-spread, or \code{'upper'} half-spread.
 #' 
-#' @param A,g estimated mean \eqn{\hat{A}} and skewness \eqn{\hat{g}} of Tukey's \eqn{g}-&-\eqn{h} distribution
+#' @param A,g estimated location \eqn{\hat{A}} and skewness \eqn{\hat{g}}
 #' 
 #' @param ... additional parameters, currently not in use
 #' 
 #' @details 
 #' 
-#' \link{letterV_g} estimates parameter \eqn{g} using equation (10).
+#' \link{letterV_g} estimates parameter \eqn{g} using equation (10) for \eqn{g}-distribution
+#' and the equivalent equation (31) for \eqn{g}-&-\eqn{h} distribution.
 #' 
 #' \link{letterV_B} estimates parameter \eqn{B} for Tukey's \eqn{g}-distribution
-#' i.e., when \eqn{h=0} and \eqn{g\neq 0}, using equation (8a) and (8b).
+#' (i.e., \eqn{g\neq 0}, \eqn{h=0}), using equation (8a) and (8b).
 #' 
 #' \link{letterV_B_g_h} estimates parameters \eqn{B} and \eqn{h} when \eqn{g\neq 0}, using equation (33).
 #' 
 #' \link{letterV_B_h} estimates parameters \eqn{B} and \eqn{h} for Tukey's \eqn{h}-distribution,
 #' i.e., when \eqn{g=0} and \eqn{h\neq 0}, using equation (26a), (26b) and (27).
 #' 
-#' \code{letterValue} plays a similar role as \code{fitdistrplus:::start.arg.default},
+#' \link{letterValue} plays a similar role as \code{fitdistrplus:::start.arg.default},
 #' thus extends \link[fitdistrplus]{fitdist} for estimating Tukey's \eqn{g}-&-\eqn{h} distributions.
 #' 
 #' 
 #' @return 
 #' 
-#' \link{letterValue} returns a \link[base]{double} vector of estimates \eqn{(\hat{A}, \hat{B}, \hat{g}, \hat{h})}
+#' \link{letterValue} returns a \link[base]{double} \link[base]{vector} of estimates \eqn{(\hat{A}, \hat{B}, \hat{g}, \hat{h})}
 #' for a Tukey's \eqn{g}-&-\eqn{h} distribution.
 #' 
 #' 
@@ -55,6 +57,8 @@
 #' 
 #' @seealso \link[fitdistrplus]{fitdist}
 #' 
+#' @importFrom stats quantile qnorm lm.fit
+#' 
 #' @examples 
 #' set.seed(77652); x = rGH(n = 1e3L, g = -.3, h = .1)
 #' letterValue(x, p_g = FALSE, p_h = FALSE)
@@ -63,9 +67,8 @@
 #' 
 #' (y0 = letterValue(x))
 #' library(fitdistrplus)
-#' fit <- fitdist(x, distr = 'GH', start = as.list.default(y0))
-#' autoplot(fit)
-#' 
+#' fit = fitdist(x, distr = 'GH', start = as.list.default(y0))
+#' plot(fit) # fitdistrplus:::plot.fitdist
 #' 
 #' @name letterValue
 #' @export

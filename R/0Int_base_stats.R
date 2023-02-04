@@ -7,9 +7,9 @@
 #' 
 #' A simpler and faster \link[stats:mahalanobis]{Mahalanobis} distance.
 #' 
-#' @param x \link[base]{numeric} vector
+#' @param x \link[base]{numeric} \link[base]{vector}
 #' 
-#' @param center \link[base]{numeric} vector, mean \eqn{\mathbf{\mu}}
+#' @param center \link[base]{numeric} \link[base]{vector}, mean \eqn{\mathbf{\mu}}
 #' 
 #' @param invcov \link[base]{numeric} \link[base]{matrix}, \emph{inverted} variance-covariance \eqn{\mathbf{\Sigma}}
 #' 
@@ -18,6 +18,8 @@
 #' \link{mahalanobis_int} returns a \link[base]{numeric} scalar.
 #' 
 #' @seealso \link[stats]{mahalanobis}
+#' 
+#' @importFrom stats mahalanobis
 #' 
 #' @export
 mahalanobis_int <- function(x, center, invcov) {
@@ -56,6 +58,8 @@ mahalanobis_int <- function(x, center, invcov) {
 #' 
 #' \link{crossprod_inv} returns the inverse \link[base]{matrix} of cross product \eqn{X'X}.
 #' 
+#' @seealso \link[base]{qr.default} \link[base]{qr.R} \link[base]{chol2inv}
+#' 
 #' @export
 crossprod_inv <- function(X) {
   Xqr <- qr.default(X) # ?base::qr.default uses Fortran code
@@ -75,11 +79,11 @@ crossprod_inv <- function(X) {
 #' 
 #' Test if two \link[base]{double} vectors are element-wise (nearly) equal.
 #' 
-#' @param current length-\eqn{n} \link[base]{double} vector, the value to be compared with \code{target}, missing value not allowed
+#' @param current length-\eqn{n} \link[base]{double} \link[base]{vector}, the value to be compared with \code{target}, missing value not allowed
 #' 
-#' @param target length-\eqn{n} \link[base]{double} vector, the target value, missing value not allowed
+#' @param target length-\eqn{n} \link[base]{double} \link[base]{vector}, the target value, missing value not allowed
 #' 
-#' @param tolerance \link[base]{double} scalar, see \link[base]{all.equal.numeric}.
+#' @param tolerance positive \link[base]{double} scalar, default \code{sqrt(.Machine$double.eps)} 
 #' 
 #' @param ... potential parameters, currently not in use
 #' 
@@ -89,13 +93,13 @@ crossprod_inv <- function(X) {
 #' (1). only comparisons between real \link[base]{double} values are performed;
 #' (2). element-wise comparison is performed, with the rows of returned \link[base]{matrix} correspond to \code{current}
 #' and columns correspond to \code{target};
-#' (3). a \link[base]{logical} scalar is returned for each element-wise comparison.
+#' (3). a \link[base]{logical} scalar is always returned for each element-wise comparison.
 #' 
 #' @return 
 #' 
 #' \link{outer_allequal} returns an \eqn{m*n} \link[base]{logical} \link[base]{matrix}
-#' indicating whether the length-\eqn{n} vector \code{current} is element-wise near-equal to the length-\eqn{m} vector \code{target} 
-#' within the prespecified \code{tolerance}.  
+#' indicating whether the length-\eqn{n} \link[base]{vector} \code{current} is element-wise near-equal to the length-\eqn{m} \link[base]{vector} \code{target} 
+#' within the pre specified \code{tolerance}.  
 #' 
 #' @seealso \link[base]{all.equal.numeric} \link[base]{outer}
 #' 
@@ -105,8 +109,8 @@ crossprod_inv <- function(X) {
 #' 
 #' @export
 outer_allequal <- function(target, current, tolerance = sqrt(.Machine$double.eps), ...) {
-  if (!(nt <- length(target))) stop('len-0 `target`')
-  if (!(nc <- length(current))) stop('len-0 `current`')
+  if (!(nt <- length(target)) || !is.double(target)) stop('len-0 `target`')
+  if (!(nc <- length(current)) || !is.double(current)) stop('len-0 `current`')
   if (anyNA(target) || anyNA(current)) stop('Do not allow missingness in `target` or `current`')
   
   mc <- array(current, dim = c(nc, nt))
@@ -123,7 +127,7 @@ outer_allequal <- function(target, current, tolerance = sqrt(.Machine$double.eps
 #' @title Determine Nearly-Equal Elements
 #' 
 #' @description 
-#' Determine nearly-equal elements and extract non-nearly-equal elements in a \link[base]{double} vector.
+#' Determine nearly-equal elements and extract non-nearly-equal elements in a \link[base]{double} \link[base]{vector}.
 #' 
 #' @param x \link[base]{double} vector
 #' 
@@ -131,12 +135,12 @@ outer_allequal <- function(target, current, tolerance = sqrt(.Machine$double.eps
 #' 
 #' @return 
 #' 
-#' \link{duplicated_allequal} returns a \link[base]{logical} vector of the same length as the input vector,
+#' \link{duplicated_allequal} returns a \link[base]{logical} \link[base]{vector} of the same length as the input vector,
 #' indicating whether each element is nearly-equal to any of the previous elements.  
 #' 
 #' \link{unique_allequal} returns the non-nearly-equal elements in the input vector.
 #' 
-#' @seealso \link[base]{duplicated.default} \link[base]{unique.default}
+#' @seealso \link{outer_allequal} \link[base]{duplicated.default} \link[base]{unique.default}
 #' 
 #' @examples 
 #' x = c(.3, 1-.7, 0, .Machine$double.eps)
@@ -149,6 +153,7 @@ unique_allequal <- function(x, ...) x[!duplicated_allequal(x, ...)]
 #' @rdname ud_allequal
 #' @export
 duplicated_allequal <- function(x, ...) {
+  x <- unclass(x)
   if (!is.vector(x, mode = 'double')) stop('input must be double vector')
   nx <- length(x)
   id <- outer_allequal(target = x, current = x, ...)

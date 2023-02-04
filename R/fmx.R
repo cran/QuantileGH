@@ -1,47 +1,107 @@
 
 
-#' @title The Finite Mixture Distribution
+#' @title Create Finite Mixture Distribution
+#' 
+#' @description ..
+#' 
+#' @param distname \link[base]{character} scalar
+#' 
+#' @param w (optional) \link[base]{numeric} \link[base]{vector}.  
+#' Does not need to sum up to 1; \code{w/sum(w)} will be used internally.
+#' 
+#' @param ... mixture distribution parameters.
+#' See \link{dGH} for the names and default values of Tukey's \eqn{g}-&-\eqn{h} distribution parameters, 
+#' or \link[stats]{dnorm} for the names and default values of normal distribution parameters.
+#' 
+#' @return 
+#' 
+#' \link{fmx} returns an \linkS4class{fmx} object which specifies the parameters of a finite mixture distribution.
+#' 
+#' @import methods
+#' 
+#' @examples 
+#' 
+#' (e1 = fmx('norm', mean = c(0,3), sd = c(1,1.3), w = c(1, 1)))
+#' isS4(e1) # TRUE
+#' slotNames(e1)
+#' 
+#' (e2 = fmx('GH', A = c(0,3), g = c(.2, .3), h = c(.2, .1), w = c(2, 3)))
+#' 
+#' (e3 = fmx('GH', A = 0, g = .2, h = .2)) # one-component Tukey
+#' 
+#' @export
+fmx <- function(distname, w = 1, ...) {
+  if (!is.character(distname) || (length(distname) != 1L) || anyNA(distname) || !nzchar(distname)) stop('distname must be len-1 char')
+  anm <- distArgs(distname)
+  ddist <- paste0('d', distname)
+  farg <- formals(ddist)[anm] # if `farg` has empty element, `do.call(cbind, farg)` will err
+  
+  K <- length(w)
+  if (!is.numeric(w) || !K || anyNA(w) || any(w <= 0)) stop('illegal mixing proportions `w`')
+  
+  arg <- list(...)[anm]
+  names(arg) <- anm
+  if (!any(la <- lengths(arg, use.names = FALSE))) {
+    message('Using default arguments of ', sQuote(ddist))
+    if (K != 1L) stop('must specify at least one non-equal parameter for K>2 mixture')
+    return(new(Class = 'fmx', pars = do.call(cbind, args = farg), w = 1, distname = distname))
+  }
+  
+  for (id in which(la == 0L)) arg[id] <- farg[id]
+  if (!all(vapply(arg, FUN = is.numeric, FUN.VALUE = NA))) stop('distribution parameters must be numeric')
+  if (anyNA(arg, recursive = TRUE)) stop('do not allow NA in `arg`')
+  pars <- do.call(cbind, args = arg) # vector recycling
+  if (dim(pars)[1L] != K) stop('parameter (formal args and `w`) lengths not match')
+  if (is.unsorted(loc <- pars[,1L], strictly = FALSE)) {
+    message('Re-ordered by location parameter')
+    pars <- pars[order(loc, decreasing = FALSE), , drop = FALSE]
+  }
+  new(Class = 'fmx', pars = pars, w = unname(w/sum(w)), distname = distname)
+}
+
+
+
+
+
+#' @title Density, Distribution and Quantile of Finite Mixture Distribution
 #' 
 #' @description 
 #' 
 #' Density function, distribution function, quantile function and random generation for a finite mixture distribution 
 #' with normal or Tukey's \eqn{g}-&-\eqn{h} components.
 #' 
-#' @param x,q vector of quantiles, \code{NA_real_} value(s) allowed.
+#' @param x,q \link[base]{numeric} \link[base]{vector}, quantiles, \code{NA_real_} value(s) allowed.
 #' 
-#' @param p vector of probabilities.
+#' @param p \link[base]{numeric} \link[base]{vector}, probabilities.
 #' 
-#' @param n number of observations.
+#' @param n \link[base]{integer} scalar, number of observations.
 #' 
-#' @param dist \linkS4class{fmx} object, representing a finite mixture distribution
+#' @param dist \linkS4class{fmx} object, a finite mixture distribution
 #' 
 #' @param log,log.p \link[base]{logical} scalar. 
-#' If \code{TRUE}, probabilities \eqn{p} are given as \eqn{\log(p)}.
+#' If \code{TRUE}, probabilities are given as \eqn{\log(p)}.
 #' 
 #' @param lower.tail \link[base]{logical} scalar. 
 #' If \code{TRUE} (default), probabilities are \eqn{Pr(X\le x)}, otherwise, \eqn{Pr(X>x)}.
 #' 
-#' @param interval interval for root finding, see \link[rstpm2]{vuniroot}
+#' @param interval length two \link[base]{numeric} \link[base]{vector}, interval for root finding, see \link[rstpm2]{vuniroot}
 #' 
-#' @param distname,K,parM,w auxiliary parameters, whose default values are determined by
-#' the \linkS4class{fmx} object provided in argument \code{dist}.
-#' The user-specified vector of \code{w} does not need to sum up to 1; \code{w/sum(w)} will be used internally.
+#' @param distname,K,pars,w auxiliary parameters, whose default values are determined by argument \code{dist}.
+#' The user-specified \link[base]{vector} of \code{w} does not need to sum up to 1; \code{w/sum(w)} will be used internally.
 #' 
-#' @param ... mixture distribution parameters in \link{fmx} function.
-#' See \link{dGH} for the names and default values of Tukey's \eqn{g}-&-\eqn{h} distribution parameters, 
-#' or \link[stats]{dnorm} for the names and default values of normal distribution parameters.
+#' @param ... additional parameters
 #' 
 #' @details 
 #' 
 #' A computational challenge in \link{dfmx} is when mixture density is very close to 0,
 #' which happens when the per-component log densities are negative with big absolute values.  
 #' In such case, we cannot compute the log mixture densities (i.e., \code{-Inf}), 
-#' for the log-likelihood using \link{logLik.fmx} function.
+#' for the log-likelihood using \link{logLik.fmx}.
 #' Our solution is to replace these \code{-Inf} log mixture densities by 
 #' the weighted average (using the mixing proportions of \code{dist}) 
 #' of the per-component log densities.
 #' 
-#' \link{qfmx} gives the quantile function, by numerically solving the \link{pfmx} function.
+#' \link{qfmx} gives the quantile function, by numerically solving \link{pfmx}.
 #' One major challenge when dealing with the finite mixture of Tukey's \eqn{g}-&-\eqn{h} family distribution
 #' is that Brent–Dekker's method needs to be performed in both \link{pGH} and \link{qfmx} functions, 
 #' i.e. \emph{two layers} of root-finding algorithm.
@@ -49,22 +109,21 @@
 #' 
 #' @return 
 #' 
-#' \link{fmx} returns an \linkS4class{fmx} object which specifies the parameters of a finite mixture distribution.
+#' \link{dfmx} returns a \link[base]{numeric} \link[base]{vector} of probability density values of an \linkS4class{fmx} object at specified quantiles \code{x}.
 #' 
-#' \link{dfmx} returns a vector of probability density values of an \linkS4class{fmx} object at specified quantiles \code{x}.
+#' \link{pfmx} returns a \link[base]{numeric} \link[base]{vector} of cumulative probability values of an \linkS4class{fmx} object at specified quantiles \code{q}.
 #' 
-#' \link{pfmx} returns a vector of cumulative probability values of an \linkS4class{fmx} object at specified quantiles \code{q}.
-#' 
-#' \link{qfmx} returns an unnamed vector of quantiles of an \linkS4class{fmx} object, based on specified cumulative probabilities \code{p}.
-#' Note that \link[stats]{qnorm} returns an unnamed vector of quantiles, 
-#' although \link[stats]{quantile} returns a named vector of quantiles.
+#' \link{qfmx} returns an unnamed \link[base]{numeric} \link[base]{vector} of quantiles of an \linkS4class{fmx} object, based on specified cumulative probabilities \code{p}.
+#' Note that \link[stats]{qnorm} returns an unnamed \link[base]{vector} of quantiles, 
+#' although \link[stats]{quantile} returns a named \link[base]{vector} of quantiles.
 #' 
 #' \link{rfmx} generates random deviates of an \linkS4class{fmx} object.
 #' 
-#' @examples 
+#' @import stats
+#' @importFrom sn dsn psn qsn rsn dst pst qst rst
+#' @importFrom VGAM dgenpois1 pgenpois1 qgenpois1 rgenpois1
 #' 
-#' # paramter is recycled
-#' fmx('norm', mean = c(4, 1, 14, 11), w = c(1, 2))
+#' @examples 
 #' 
 #' x = (-3):7
 #' 
@@ -98,63 +157,46 @@
 #'   curve(dfmx(x, dist = e4, log = TRUE), xlim = c(-50, 50))
 #' }
 #' 
-#' @name fmx
+#' @name dfmx
 #' @export
-fmx <- function(distname, w = 1, ...) {
-  if (!is.character(distname) || (length(distname) != 1L) || anyNA(distname) || !nzchar(distname)) stop('distname must be len-1 char')
-  if (any(w <= 0)) stop('mixing proportion do not match number of components')
-  
-  anm <- dist_anm(distname)
-  arg <- list(...)[anm]
-  if (!any(la <- lengths(arg, use.names = FALSE))) {
-    cat('no user-provided args, use default arguments of', sQuote(paste0('d', distname)), '\n')
-  }
-  if (length(la_m <- la[la > 1L])) { # multiple component
-    if (!all(duplicated.default(la_m)[-1L])) stop('user-provided args must be of same length')
-    if (any(id_la1 <- (la == 1L))) arg[id_la1] <- lapply(arg[id_la1], FUN = rep, times = la_m[1L])
-  }
-  if (any(id_fa <- !la)) {
-    farg <- formals(paste0('d', distname))[anm[id_fa]]
-    if (any(id_fa0 <- !vapply(farg, FUN = nzchar, FUN.VALUE = NA))) stop('formal density argument not available: ', sQuote(anm[id_fa0]))
-    arg[id_fa] <- if (!length(la_m)) farg else lapply(farg, FUN = rep, times = la_m[1L])
-    names(arg)[id_fa] <- anm[id_fa]
-  }
-  
-  if (anyNA(arg, recursive = TRUE)) stop('do not allow NA in `arg`')
-  y <- do.call(cbind, args = c(arg, list(w))) # let warn/err (long is not a multiple of short, etc.)
-  if (is.unsorted(loc <- y[,1L], strictly = FALSE)) {
-    message('Re-ordered by location parameter\n')
-    y <- y[order(loc), , drop = FALSE]
-  }
-  dy <- dim(y)
-  n <- dy[2L]
-  new(Class = 'fmx', parM = y[, -n, drop = FALSE], w = unname(y[,n]/sum(y[,n])), distname = distname)
-}
-
-
-# parameter names of distributions ('norm' and 'GH' supported)
-dist_anm <- function(distname) {
-  switch(distname, norm = c('mean', 'sd'), GH = c('A', 'B', 'g', 'h'), stop(sQuote(distname), ' not supported yet'))
-}
-
-
-
-#' @rdname fmx
-#' @export
-dfmx <- function(x, dist, distname = dist@distname, K = dim(parM)[1L], parM = dist@parM, w = dist@w, ..., log = FALSE) {
+dfmx <- function(x, dist, distname = dist@distname, K = dim(pars)[1L], pars = dist@pars, w = dist@w, ..., log = FALSE) {
   if (K == 1L) { # no mixture required!!
     switch(distname, 
-           norm = return(dnorm(x = x, mean = parM[,1L], sd = parM[,2L], log = log)), 
-           GH = return(.dGH(x = x, A = parM[,1L], B = parM[,2L], g = parM[,3L], h = parM[,4L], log = log, ...)),
-           stop('distribution ', sQuote(distname), ' not ready yet'))
+           gamma = return(dgamma(x = x, shape = pars[,1L], scale = pars[,2L], log = log)),
+           genpois1 = return(dgenpois1(x = x, meanpar = pars[,1L], dispind = pars[,2L], log = log)),
+           nbinom = return(dnbinom(x = x, size = pars[,1L], prob = pars[,2L], log = log)),
+           norm = return(dnorm(x = x, mean = pars[,1L], sd = pars[,2L], log = log)), 
+           GH = return(.dGH(x = x, A = pars[,1L], B = pars[,2L], g = pars[,3L], h = pars[,4L], log = log, ...)),
+           sn = return(dsn(x = x, xi = pars[,1L], omega = pars[,2L], alpha = pars[,3L], log = log)),
+           SN = return(dSN(x = x, mean = pars[,1L], sd = pars[,2L], shape = pars[,3L], log = log)),
+           st = return(dst(x = x, xi = pars[,1L], omega = pars[,2L], alpha = pars[,3L], nu = pars[,4L], log = log)),
+           ST = return(dST(x = x, mean = pars[,1L], sd = pars[,2L], shape = pars[,3L], nu = pars[,4L], log = log)),
+           stop('I do not have `d', distname, '` function'))
   }
   
   xm <- tcrossprod(rep(1, times = K), x)
   
   lds <- switch(distname, # `lds` is per-component log-densities
-                norm = dnorm(x = xm, mean = parM[,1L], sd = parM[,2L], log = TRUE), 
-                GH = .dGH(x = xm, A = parM[,1L], B = parM[,2L], g = parM[,3L], h = parM[,4L], log = TRUE, ...),
-                stop('distribution ', sQuote(distname), ' not ready yet'))
+                gamma = dgamma(x = xm, shape = pars[,1L], scale = pars[,2L], log = TRUE),
+                genpois1 = dgenpois1(x = xm, meanpar = pars[,1L], dispind = pars[,2L], log = TRUE),
+                nbinom = dnbinom(x = xm, size = pars[,1L], prob = pars[,2L], log = TRUE),
+                norm = dnorm(x = xm, mean = pars[,1L], sd = pars[,2L], log = TRUE), 
+                GH = .dGH(x = xm, A = pars[,1L], B = pars[,2L], g = pars[,3L], h = pars[,4L], log = TRUE, ...),
+                sn = {
+                  # ?sn::dsn does not respect `attr(x, 'dim')`
+                  # to make things worse, ?sn::dsn does not even handle \link[base]{matrix} `x` correctly!!
+                  # array(dsn(x = xm, xi = pars[,1L], omega = pars[,2L], alpha = pars[,3L], log = TRUE), dim = dim(xm), dimnames = dimnames(xm))
+                  # this is wrong!!
+                  # have to go the stupid way!!
+                  do.call(rbind, args = lapply(seq_len(K), FUN = function(i) dsn(x = x, xi = pars[i,1L], omega = pars[i,2L], alpha = pars[i,3L], log = TRUE)))
+                }, 
+                SN = dSN(x = xm, mean = pars[,1L], sd = pars[,2L], shape = pars[,3L], log = TRUE),
+                st = {
+                  # ?sn::dst gives error on vector `nu`
+                  do.call(rbind, args = lapply(seq_len(K), FUN = function(i) dst(x = x, xi = pars[i,1L], omega = pars[i,2L], alpha = pars[i,3L], nu = pars[i,4L], log = TRUE)))
+                },
+                ST = dST(x = xm, mean = pars[,1L], sd = pars[,2L], shape = pars[,3L], nu = pars[,4L], log = TRUE),
+                stop('I do not have `d', distname, '` function'))
   if (any(is.infinite(lds))) {
     #tmp <<- dist; x <<- x;
     #stop('per-component log-density should not be -Inf (unless `sd` or `B` is 0)') # is.infinite(NA) is \code{FALSE}
@@ -162,7 +204,12 @@ dfmx <- function(x, dist, distname = dist@distname, K = dim(parM)[1L], parM = di
   }
   
   d <- c(crossprod(w, exp(lds)))
-  if (!log) return(d)
+  
+  if (!log) {
+    attr(d, which = 'posterior') <- w * exp(lds)
+    # range(colSums(attr(d, which = 'posterior')) - d) # super small
+    return(d)
+  }
   #any(is.infinite(log(d))) # could happen
   
   nx <- length(x)
@@ -180,35 +227,76 @@ dfmx <- function(x, dist, distname = dist@distname, K = dim(parM)[1L], parM = di
 
 
 # not compute intensive
-#' @rdname fmx
+#' @rdname dfmx
 #' @export
-pfmx <- function(q, dist, distname = dist@distname, K = dim(parM)[1L], parM = dist@parM, w = dist@w, ..., lower.tail = TRUE, log.p = FALSE) { # not compute-intensive
+pfmx <- function(q, dist, distname = dist@distname, K = dim(pars)[1L], pars = dist@pars, w = dist@w, ..., lower.tail = TRUE, log.p = FALSE) { # not compute-intensive
   if (K == 1L) {
     switch(distname, 
-           norm = return(pnorm(q = q, mean = parM[,1L], sd = parM[,2L], lower.tail = lower.tail, log.p = log.p)),
-           GH = return(pGH(q = q, A = parM[,1L], B = parM[,2L], g = parM[,3L], h = parM[,4L], lower.tail = lower.tail, log.p = log.p, ...)),
-           stop('distribution ', sQuote(distname), ' not ready yet'))
+           gamma = return(pgamma(q = q, shape = pars[,1L], scale = pars[,2L], lower.tail = lower.tail, log.p = log.p)),
+           genpois1 = {
+             # ?VGAM::pgenpois1 do not have `log.p` argument
+             p <- pgenpois1(q = q, meanpar = pars[,1L], dispind = pars[,2L], lower.tail = lower.tail)
+             if (!log.p) return(p)
+             return(log(p))
+           },
+           nbinom = return(pnbinom(q = q, size = pars[,1L], prob = pars[,2L], lower.tail = lower.tail, log.p = log.p)),
+           norm = return(pnorm(q = q, mean = pars[,1L], sd = pars[,2L], lower.tail = lower.tail, log.p = log.p)),
+           GH = return(pGH(q = q, A = pars[,1L], B = pars[,2L], g = pars[,3L], h = pars[,4L], lower.tail = lower.tail, log.p = log.p, ...)),
+           sn = {
+             p <- psn(x = q, xi = pars[,1L], omega = pars[,2L], alpha = pars[,3L]) # first parameter is `x`, not `q`
+             if (!lower.tail) p <- 1 - p
+             if (log.p) return(log(p))
+             return(p)
+           },
+           st = {
+             p <- pst(x = q, xi = pars[,1L], omega = pars[,2L], alpha = pars[,3L], nu = pars[,4L]) # first parameter is `x`, not `q`
+             if (!lower.tail) p <- 1 - p
+             if (log.p) return(log(p))
+             return(p)
+           },
+           stop('I do not have `p', distname, '` function'))
   }
   
-  switch(distname, norm = {
-    zM <- tcrossprod(1/parM[,2L], q) - parM[,1L]/parM[,2L]
+  qM_naive <- tcrossprod(rep(1, times = K), q)
+  ps <- switch(distname, gamma = {
+    pgamma(qM_naive, shape = pars[,1L], scale = pars[,2L], lower.tail = lower.tail)
+  }, genpois1 = {
+    pgenpois1(qM_naive, meanpar = pars[,1L], dispind = pars[,2L], lower.tail = lower.tail)
+  }, nbinom = {
+    pnbinom(qM_naive, size = pars[,1L], prob = pars[,2L], lower.tail = lower.tail)
+  }, sn = {
+    # ?sn::psn does not respect `attr(x, 'dim')`, but do handle \link[base]{matrix} `x` correctly
+    tmp <- array(psn(qM_naive, xi = pars[,1L], omega = pars[,2L], alpha = pars[,3L]), dim = dim(qM_naive))
+    # tmp2 = do.call(rbind, args = lapply(seq_len(K), FUN = function(i) psn(q, xi = pars[i,1L], omega = pars[i,2L], alpha = pars[i,3L])))
+    # range(tmp - tmp2)
+    if (!lower.tail) 1 - tmp else tmp
+  }, st = {
+    # ?sn::pst does not respect `attr(x, 'dim')`, and do not handle \link[base]{matrix} `x` correctly!!
+    tmp <- do.call(rbind, args = lapply(seq_len(K), FUN = function(i) pst(q, xi = pars[i,1L], omega = pars[i,2L], alpha = pars[i,3L], nu = pars[i,4L])))
+    # tmp2 <- array(psn(qM_naive, xi = pars[,1L], omega = pars[,2L], alpha = pars[,3L], nu = pars[,4L]), dim = dim(qM_naive))
+    # range(tmp - tmp2) # not the same!!
+    if (!lower.tail) 1 - tmp else tmp
+  }, norm = {
+    zM <- tcrossprod(1/pars[,2L], q) - pars[,1L]/pars[,2L]
+    pnorm(q = zM, lower.tail = lower.tail)
   }, GH = {
-    zM <- tcrossprod(1/parM[,2L], q) - parM[,1L]/parM[,2L]
-    gs <- parM[,3L]
-    hs <- parM[,4L]
+    zM <- tcrossprod(1/pars[,2L], q) - pars[,1L]/pars[,2L]
+    gs <- pars[,3L]
+    hs <- pars[,4L]
     for (i in seq_len(K)) zM[i,] <- qGH2z(q0 = zM[i,], g = gs[i], h = hs[i], ...)
-  }, stop('distribution ', sQuote(distname), ' not ready yet'))
+    pnorm(q = zM, lower.tail = lower.tail)
+  }, stop('I do not have `p', distname, '` function'))
   
-  ps <- pnorm(q = zM, lower.tail = lower.tail)
   p <- c(crossprod(w, ps))
-  if (log.p) return(log(p)) else return(p)
+  if (log.p) return(log(p)) 
+  return(p)
 }
 
 
 # obtain the `interval` for ?rstpm2::vuniroot
 # @rdname fmx
 # @export
-qfmx_interval <- function(dist, p = c(1e-6, 1-1e-6), distname = dist@distname, K = dim(parM)[1L], parM = dist@parM, w = dist@w, ...) {
+qfmx_interval <- function(dist, p = c(1e-6, 1-1e-6), distname = dist@distname, K = dim(pars)[1L], pars = dist@pars, w = dist@w, ...) {
   qfun <- paste0('q', distname)
   y_ls <- lapply(seq_len(K), FUN = function(i) {# single component
     iw <- w[i]
@@ -217,53 +305,109 @@ qfmx_interval <- function(dist, p = c(1e-6, 1-1e-6), distname = dist@distname, K
     ip[2L] <- max(1-(1-p[2L])/iw, .95)
     #ip[1L] <- max(p[1L]/iw, .001)
     #ip[2L] <- min(1-(1-p[2L])/iw, .999)
-    out <- do.call(qfun, args = c(list(p = ip), as.list.default(parM[i,])))
+    out <- do.call(qfun, args = c(list(p = ip), as.list.default(pars[i,])))
     if (any(is.infinite(out))) return(invisible()) # very likely to be a malformed estimate
     return(out)
   })
   y <- unlist(y_ls, use.names = FALSE)
   if (anyNA(y)) stop(sQuote(qfun), ' returns NA_real_')
-  c(min(y), max(y))
+  switch(distname, gamma = {
+    c(0, max(y)) # important!  for distribution with lower bound 0
+  }, c(min(y), max(y)))
 }
 
 
 
-#' @rdname fmx
+#' @rdname dfmx
 #' @export
-qfmx <- function(p, dist, distname = dist@distname, K = dim(parM)[1L], parM = dist@parM, w = dist@w, interval = qfmx_interval(dist = dist), ..., lower.tail = TRUE, log.p = FALSE) {
+qfmx <- function(p, dist, distname = dist@distname, K = dim(pars)[1L], pars = dist@pars, w = dist@w, interval = qfmx_interval(dist = dist), ..., lower.tail = TRUE, log.p = FALSE) {
   # if (!is.numeric(interval) || length(interval) != 2L || anyNA(interval)) stop('masked to save time')
   if (log.p) p <- exp(p)
   
   if (K == 1L) {
     switch(distname, 
-           norm = return(qnorm(p, mean = parM[,1L], sd = parM[,2L], lower.tail = lower.tail, log.p = FALSE)),
-           GH = return(qGH(p, A = parM[,1L], B = parM[,2L], g = parM[,3L], h = parM[,4L], lower.tail = lower.tail, log.p = FALSE)),
-           stop('distribution ', sQuote(distname), ' not ready yet'))
+           gamma = return(qgamma(p, shape = pars[,1L], scale = pars[,1L], lower.tail = lower.tail, log.p = FALSE)),
+           genpois1 = {
+             # VGAM::qgenpois1 do not have arguments `lower.tail` and `log.p`
+             if (log.p) p <- exp(p)
+             if (!lower.tail) p <- 1 - p
+             return(qgenpois1(p, meanpar = pars[,1L], dispind = pars[,1L]))
+           },
+           nbinom = return(qnbinom(p, size = pars[,1L], prob = pars[,2L], lower.tail = lower.tail, log.p = FALSE)),
+           norm = return(qnorm(p, mean = pars[,1L], sd = pars[,2L], lower.tail = lower.tail, log.p = FALSE)),
+           GH = return(qGH(p, A = pars[,1L], B = pars[,2L], g = pars[,3L], h = pars[,4L], lower.tail = lower.tail, log.p = FALSE)),
+           sn = {
+             if (lower.tail) p <- 1 - p
+             return(qsn(p, xi = pars[,1L], omega = pars[,2L], alpha = pars[,3L]))
+           },
+           st = {
+             if (lower.tail) p <- 1 - p
+             return(qst(p, xi = pars[,1L], omega = pars[,2L], alpha = pars[,3L], nu = pars[,4L]))
+           },
+           stop('I do not have `q', distname, '` function'))
   }
   
   t_w <- t.default(w)
+  seqid <- seq_len(K) # 'GH' and 'gamma' will use this
   switch(distname, norm =, GH = {
-    sdinv <- 1 / parM[,2L] # constant, save time in vuniroot algorithm
-    eff <- parM[,1L] * sdinv # effect size
+    sdinv <- 1 / pars[,2L] # constant, save time in vuniroot algorithm
+    eff <- pars[,1L] * sdinv # effect size
   })
   
-  switch(distname, norm = {
-    return(vuniroot2(y = p, f = function(q) { # essentially \code{\link{pfmx}}
+  ones <- rep(1, times = K)
+  # `f` in \link{vuniroot2} is essentially \link{pfmx} !!
+  f <- switch(distname, gamma = {
+    shape <- pars[,1L]
+    scale <- pars[,2L]
+    function(q) c(t_w %*% pgamma(tcrossprod(ones, q), shape = shape, scale = scale, lower.tail = lower.tail))
+    # R does not have a function for https://en.wikipedia.org/wiki/Incomplete_gamma_function
+    # thus this calculation cannot be speed up, as for now..
+    # see ?stats::pgamma for more details
+  }, genpois1 = {
+    meanpar <- pars[,1L]
+    dispind <- pars[,2L]
+    function(q) c(t_w %*% pgenpois1(tcrossprod(ones, q), meanpar = meanpar, dispind = dispind, lower.tail = lower.tail))
+  }, nbinom = {
+    size <- pars[,1L]
+    prob <- pars[,2L]
+    function(q) c(t_w %*% pnbinom(tcrossprod(ones, q), size = size, prob = prob, lower.tail = lower.tail))
+  }, sn = {
+    xi <- pars[,1L]
+    omega <- pars[,2L]
+    alpha <- pars[,3L]
+    function(q) {
+      # ?sn::psn does not respect `attr(q, 'dim')`, but do handle \link[base]{matrix} `x` correctly
+      ps <- array(psn(tcrossprod(ones, q), xi = xi, omega = omega, alpha = alpha), dim = c(K, length(q)))
+      if (!lower.tail) ps <- 1 - ps
+      c(t_w %*% ps)
+    }
+  }, st = {
+    xi <- pars[,1L]
+    omega <- pars[,2L]
+    alpha <- pars[,3L]
+    nu <- pars[,4L]
+    function(q) {
+      # ?sn::psn does not respect `attr(q, 'dim')`, and do not handle \link[base]{matrix} `x` correctly !!
+      ps <- do.call(rbind, args = lapply(seq_len(K), FUN = function(i) pst(q, xi = xi[i], omega = omega[i], alpha = alpha[i], nu = nu[i])))
+      if (!lower.tail) ps <- 1 - ps
+      c(t_w %*% ps)
+    }
+  }, norm = {
+    function(q) {
       zM <- tcrossprod(sdinv, q) - eff
       c(t_w %*% pnorm(q = zM, lower.tail = lower.tail))
-    }, interval = interval))
+    }
   }, GH = {
-    gs <- parM[,3L]
-    hs <- parM[,4L]
-    seqid <- seq_len(K)
-    return(vuniroot2(y = p, f = function(q) { # essentially \code{\link{pfmx}}
+    gs <- pars[,3L]
+    hs <- pars[,4L]
+    function(q) {
       z <- q0 <- tcrossprod(sdinv, q) - eff
       for (i in seqid) z[i,] <- qGH2z(q0 = q0[i,], g = gs[i], h = hs[i], ...)
       c(t_w %*% pnorm(q = z, lower.tail = lower.tail))
-    }, interval = interval))
-    
-  }, stop('distribution ', sQuote(distname), ' not ready yet'))
+    }
+  }, stop('I do not have `q', distname, '` function'))
   
+  return(vuniroot2(y = p, f = f, interval = interval))
 }
 
 
@@ -271,13 +415,15 @@ qfmx <- function(p, dist, distname = dist@distname, K = dim(parM)[1L], parM = di
 
 
 
-#' @rdname fmx
+#' @rdname dfmx
 #' @export
-rfmx <- function(n, dist, distname = dist@distname, K = dim(parM)[1L], parM = dist@parM, w = dist@w) {
+rfmx <- function(n, dist, distname = dist@distname, K = dim(pars)[1L], pars = dist@pars, w = dist@w) {
   if (!is.integer(n) || anyNA(n) || length(n) != 1L || n <= 0L) stop('sample size must be len-1 positive integer (e.g., use 100L instead of 100)')
   id <- sample.int(n = K, size = n, replace = TRUE, prob = w)
-  d2 <- cbind(parM, n = tabulate(id)) # 'matrix'
-  r_fn <- paste0('r', distname)
+  d2 <- cbind(pars, n = tabulate(id, nbins = K)) # 'matrix'
+  r_fn <- switch(distname, SN =, ST = {
+    stop('I do not have `r', distname, '` function')
+  }, paste0('r', distname))
   xs <- lapply(seq_len(K), FUN = function(i) {
     do.call(what = r_fn, args = as.list.default(d2[i, ]))
   })
@@ -289,117 +435,6 @@ rfmx <- function(n, dist, distname = dist@distname, K = dim(parM)[1L], parM = di
 
 
 
-
-#' @title Number of Components in \linkS4class{fmx} and \linkS4class{fmx_QLMDe} Object
-#' 
-#' @description
-#' 
-#' Obtain the number of components in \linkS4class{fmx} and \linkS4class{fmx_QLMDe} object.
-#' 
-#' @param x \linkS4class{fmx} and \linkS4class{fmx_QLMDe} object.
-#' 
-#' @details 
-#' 
-#' For user convenience
-#' 
-#' @return 
-#' 
-#' An \link[base]{integer} value indicating the number of components in 
-#' an \linkS4class{fmx} and.or \linkS4class{fmx_QLMDe} object.
-#' 
-#' @examples 
-#' 
-#' (d2 = fmx('GH', A = c(1,6), B = 2, g = c(0,.3), h = c(.2,0), w = c(1,2)))
-#' K.fmx(d2)
-#' 
-#' @export
-K.fmx <- function(x) dim(x@parM)[1L] # only used in high level user-interface
-
-
-
-
-#' @title Subset of Components in \linkS4class{fmx} and/or \linkS4class{fmx_QLMDe} Object
-#' 
-#' @description 
-#' 
-#' Taking subset of components in \linkS4class{fmx} and/or \linkS4class{fmx_QLMDe} object
-#' 
-#' @param x \linkS4class{fmx} and/or \linkS4class{fmx_QLMDe} object
-#' 
-#' @param i \link[base]{integer} or \link[base]{logical} vector, 
-#' the row index(es) of the subset of components to be chosen, see \code{\link[base]{[}}
-#' 
-#' @param j ignored (always \code{TRUE}, i.e., all parameters of such give distribution must be selected), see \code{\link[base]{[}}
-#' 
-#' @param drop ignored (always \code{FALSE}), see \code{\link[base]{[}}
-#' 
-#' @details 
-#' 
-#' Note that using definitions as S3 method dispatch \code{`[.fmx`} or \code{`[.fmx_QLMDe`} won't work 
-#' for \linkS4class{fmx} and/or \linkS4class{fmx_QLMDe} objects.
-#' 
-#' @return 
-#' 
-#' An \linkS4class{fmx} object consisting of a subset of components.
-#' Note that subsetting \linkS4class{fmx_QLMDe} object will return an \linkS4class{fmx} object, 
-#' which contains only the mixture parameters, i.e., information about the observations (e.g. slots \code{@@data} and \code{@@data.name}),
-#' as well as other estimation related slots (e.g., \code{@@init}) will be lost.
-#' 
-#' @examples 
-#' 
-#' (d = fmx('norm', mean = c(1, 5, 9)))
-#' d[1:2, ]
-#' 
-#' @export
-setMethod(`[`, signature(x = 'fmx', i = 'ANY', j = 'ANY', drop = 'ANY'), definition = function(x, i, j, drop) {
-  if (inherits(x, what = 'fmx_QLMDe')) message('Subsetting `fmx_QLMDe` will subset the estimates and drop `@data` etc.')
-  parM <- x@parM[i, , drop = FALSE]
-  w <- x@w[i]
-  w <- unname(w / sum(w)) # adjust mixing proportions
-  o <- order(parM[, 1L])
-  new(Class = 'fmx', parM = parM[o, , drop = FALSE], w = w[o], distname = x@distname)
-})
-
-
-
-
-
-
-# ?base::print
-#' @export
-print.fmx <- function(x, ...) {
-  parM <- x@parM
-  K <- dim(parM)[1L]
-  parM[] <- sprintf(fmt = '%.2f', parM)
-  dimnames(parM)[[1L]] <- paste0(seq_len(K), '-comp.')
-  if (length(id_constr <- fmx_constraint(x))) parM[id_constr] <- '.'
-  obj <- if (K == 1L) parM else cbind(parM, w = sprintf(fmt = '%.1f%%', x@w*1e2))
-  heading <- paste0(K, '-Component Mixture of ', switch(x@distname, norm = 'Normal', GH = 'Tukey\'s G-&-H'), ' Distribution')
-  cat('\n ', heading, '\n\n', sep = '')
-  print.default(obj, quote = FALSE)
-  if (length(id_constr)) cat('\nwhere ', sQuote('.'), ' denotes an enforced constraint\n', sep = '')
-  cat('\n')
-  print(autoplot.fmx(x))
-  return(invisible(x))
-}
-
-
-#' @title Show \linkS4class{fmx} and/or \linkS4class{fmx_QLMDe} Object
-#' 
-#' @description
-#' Print the parameters of an \linkS4class{fmx} object and plot its density curves.
-#' 
-#' @param object an \linkS4class{fmx} or \linkS4class{fmx_QLMDe} object
-#' 
-#' @return 
-#' The \link[methods]{show} method for \linkS4class{fmx} and/or \linkS4class{fmx_QLMDe} object 
-#' does not have a returned value.
-#' 
-#' @export
-setMethod(f = show, signature = signature(object = 'fmx'), definition = function(object) {
-  print(object) # \link{print.fmx_QLMDe} or \link{print.fmx}
-  return(invisible())
-})
 
 
 

@@ -2,150 +2,34 @@
 % Please edit documentation in R/fmx.R
 \name{fmx}
 \alias{fmx}
-\alias{dfmx}
-\alias{pfmx}
-\alias{qfmx}
-\alias{rfmx}
-\title{The Finite Mixture Distribution}
+\title{Create Finite Mixture Distribution}
 \usage{
 fmx(distname, w = 1, ...)
-
-dfmx(
-  x,
-  dist,
-  distname = dist@distname,
-  K = dim(parM)[1L],
-  parM = dist@parM,
-  w = dist@w,
-  ...,
-  log = FALSE
-)
-
-pfmx(
-  q,
-  dist,
-  distname = dist@distname,
-  K = dim(parM)[1L],
-  parM = dist@parM,
-  w = dist@w,
-  ...,
-  lower.tail = TRUE,
-  log.p = FALSE
-)
-
-qfmx(
-  p,
-  dist,
-  distname = dist@distname,
-  K = dim(parM)[1L],
-  parM = dist@parM,
-  w = dist@w,
-  interval = qfmx_interval(dist = dist),
-  ...,
-  lower.tail = TRUE,
-  log.p = FALSE
-)
-
-rfmx(
-  n,
-  dist,
-  distname = dist@distname,
-  K = dim(parM)[1L],
-  parM = dist@parM,
-  w = dist@w
-)
 }
 \arguments{
-\item{distname, K, parM, w}{auxiliary parameters, whose default values are determined by
-the \linkS4class{fmx} object provided in argument \code{dist}.
-The user-specified vector of \code{w} does not need to sum up to 1; \code{w/sum(w)} will be used internally.}
+\item{distname}{\link[base]{character} scalar}
 
-\item{...}{mixture distribution parameters in \link{fmx} function.
-See \link{dGH} for the names and default values of Tukey's \eqn{g}-&-\eqn{h} distribution parameters, 
+\item{w}{(optional) \link[base]{numeric} \link[base]{vector}.
+Does not need to sum up to 1; \code{w/sum(w)} will be used internally.}
+
+\item{...}{mixture distribution parameters.
+See \link{dGH} for the names and default values of Tukey's \eqn{g}-&-\eqn{h} distribution parameters,
 or \link[stats]{dnorm} for the names and default values of normal distribution parameters.}
-
-\item{x, q}{vector of quantiles, \code{NA_real_} value(s) allowed.}
-
-\item{dist}{\linkS4class{fmx} object, representing a finite mixture distribution}
-
-\item{log, log.p}{\link[base]{logical} scalar. 
-If \code{TRUE}, probabilities \eqn{p} are given as \eqn{\log(p)}.}
-
-\item{lower.tail}{\link[base]{logical} scalar. 
-If \code{TRUE} (default), probabilities are \eqn{Pr(X\le x)}, otherwise, \eqn{Pr(X>x)}.}
-
-\item{p}{vector of probabilities.}
-
-\item{interval}{interval for root finding, see \link[rstpm2]{vuniroot}}
-
-\item{n}{number of observations.}
 }
 \value{
 \link{fmx} returns an \linkS4class{fmx} object which specifies the parameters of a finite mixture distribution.
-
-\link{dfmx} returns a vector of probability density values of an \linkS4class{fmx} object at specified quantiles \code{x}.
-
-\link{pfmx} returns a vector of cumulative probability values of an \linkS4class{fmx} object at specified quantiles \code{q}.
-
-\link{qfmx} returns an unnamed vector of quantiles of an \linkS4class{fmx} object, based on specified cumulative probabilities \code{p}.
-Note that \link[stats]{qnorm} returns an unnamed vector of quantiles, 
-although \link[stats]{quantile} returns a named vector of quantiles.
-
-\link{rfmx} generates random deviates of an \linkS4class{fmx} object.
 }
 \description{
-Density function, distribution function, quantile function and random generation for a finite mixture distribution 
-with normal or Tukey's \eqn{g}-&-\eqn{h} components.
-}
-\details{
-A computational challenge in \link{dfmx} is when mixture density is very close to 0,
-which happens when the per-component log densities are negative with big absolute values.  
-In such case, we cannot compute the log mixture densities (i.e., \code{-Inf}), 
-for the log-likelihood using \link{logLik.fmx} function.
-Our solution is to replace these \code{-Inf} log mixture densities by 
-the weighted average (using the mixing proportions of \code{dist}) 
-of the per-component log densities.
-
-\link{qfmx} gives the quantile function, by numerically solving the \link{pfmx} function.
-One major challenge when dealing with the finite mixture of Tukey's \eqn{g}-&-\eqn{h} family distribution
-is that Brent–Dekker's method needs to be performed in both \link{pGH} and \link{qfmx} functions, 
-i.e. \emph{two layers} of root-finding algorithm.
+..
 }
 \examples{
-
-# paramter is recycled
-fmx('norm', mean = c(4, 1, 14, 11), w = c(1, 2))
-
-x = (-3):7
 
 (e1 = fmx('norm', mean = c(0,3), sd = c(1,1.3), w = c(1, 1)))
 isS4(e1) # TRUE
 slotNames(e1)
-autoplot(e1)
-hist(rfmx(n = 1e3L, dist = e1), main = '1000 obs from e1')
-# generate a sample of size 1e3L from mixture distribution `e1`
-round(dfmx(x, dist = e1), digits = 3L)
-round(p1 <- pfmx(x, dist = e1), digits = 3L)
-stopifnot(all.equal.numeric(qfmx(p1, dist = e1), x, tol = 1e-4))
 
 (e2 = fmx('GH', A = c(0,3), g = c(.2, .3), h = c(.2, .1), w = c(2, 3)))
-hist(rfmx(n = 1e3L, dist = e2), main = '1000 obs from e2') 
-round(dfmx(x, dist = e2), digits = 3L)
-round(p2 <- pfmx(x, dist = e2), digits = 3L)
-stopifnot(all.equal.numeric(qfmx(p2, dist = e2), x, tol = 1e-4))
 
 (e3 = fmx('GH', A = 0, g = .2, h = .2)) # one-component Tukey
-hist(rfmx(1e3L, dist = e3))
-hist(rGH(n = 1e3L, A = 0, g = .2, h = .2))
-# identical (up to random seed); but ?rfmx has much cleaner code
-round(dfmx(x, dist = e3), digits = 3L)
-round(p3 <- pfmx(x, dist = e3), digits = 3L)
-stopifnot(all.equal.numeric(qfmx(p3, dist = e3), x, tol = 1e-4))
-
-if (FALSE) {
-  # log-mixture-density smoothing, for developers
-  (e4 = fmx('norm', mean = c(0,3), w = c(2, 3)))
-  curve(dfmx(x, dist = e4, log = TRUE), xlim = c(-50, 50))
-}
 
 }

@@ -21,24 +21,24 @@ QLMDp(
 \item{length.out}{non-negative \link[base]{integer} scalar, the number of the equidistant (in probability or quantile) probabilities.}
 
 \item{equidistant}{\link[base]{character} scalar.
-If \code{'prob'} (default), then the probabilities are equidistant.  
+If \code{'prob'} (default), then the probabilities are equidistant.
 If \code{'quantile'}, then the quantiles (of the observations \code{x}) corresponding to the probabilities are equidistant.}
 
-\item{extra}{\link[base]{numeric} vector of \emph{additional} probabilities, default \code{c(.005, .01, .02, .03, .97, .98, .99, .995)}.}
+\item{extra}{\link[base]{numeric} \link[base]{vector} of \emph{additional} probabilities, default \code{c(.005, .01, .02, .03, .97, .98, .99, .995)}.}
 
-\item{x}{\link[base]{numeric} vector of observations, only used when \code{equidistant = 'quantile'}.}
+\item{x}{\link[base]{numeric} \link[base]{vector} of observations, only used when \code{equidistant = 'quantile'}.}
 }
 \value{
-A \link[base]{numeric} vector of probabilities to be supplied to parameter \code{p} of 
+A \link[base]{numeric} \link[base]{vector} of probabilities to be supplied to parameter \code{p} of
 Quantile Least Mahalanobis Distance \link{QLMDe} estimation).
-In practice, the length of this probability vector \code{p} 
+In practice, the length of this probability \link[base]{vector} \code{p}
 must be equal or larger than the number of parameters in the distribution model to be estimated.
 }
 \description{
-A vector of probabilities to be used in Quantile Least Mahalanobis Distance estimation (\code{\link{QLMDe}}).
+A vector of probabilities to be used in Quantile Least Mahalanobis Distance estimation (\link{QLMDe}).
 }
 \details{
-The default arguments of \link{QLMDp} returns the probabilities of 
+The default arguments of \link{QLMDp} returns the probabilities of
 \code{c(.005, .01, .02, .03, seq.int(.05, .95, length.out = 15L), .97, .98, .99, .995)}.
 }
 \examples{
@@ -46,15 +46,13 @@ The default arguments of \link{QLMDp} returns the probabilities of
 (d2 = fmx('GH', A = c(1,6), B = 2, g = c(0,.3), h = c(.2,0), w = c(1,2)))
 set.seed(100); hist(x2 <- rfmx(n = 1e3L, dist = d2))
 p_hist = geom_histogram(
-  mapping = aes(x = x2, y = ..density..), bins = 30L, colour = 'white', alpha = .1
-)
+  mapping = aes(x = x2, y = after_stat(density)), bins = 30L, colour = 'white', alpha = .1)
 
 (p1 = QLMDp()) # equidistant in probabilities
-autoplot(d2, v = setNames(qfmx(p1, dist = d2), nm = sprintf('\%.1f\%\%', 1e2*p1)))
-autoplot(d2, v = quantile(x2, probs = p1, digits = 3L)) + p_hist
+autoplot(d2, probs = p1) + p_hist
 
 (p2 = QLMDp(equidistant = 'quantile', x = x2)) # equidistnat in quantiles
-autoplot(d2, v = quantile(x2, probs = p2, digits = 3L)) + p_hist
+autoplot(d2, probs = p2) + p_hist
 
 
 }

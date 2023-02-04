@@ -1,20 +1,20 @@
 
 
-# Note that we do not have parameter \code{...} in \code{\link{vuniroot2}}, otherwise it will cause warning message 
-# `The \code{\link{dGH}}/\code{\link{pGH}} function should raise an error when names are incorrectly named' in \code{fitdistrplus:::test1fun}.
+# Note that we do not have parameter \code{...} in \link{vuniroot2}, otherwise it will cause warning message 
+# `The \link{dGH}/\link{pGH} function should raise an error when names are incorrectly named' in \code{fitdistrplus:::test1fun}.
 
 
 #' @title Vectorised One Dimensional Root (Zero) Finding
 #' 
 #' @description 
 #' 
-#' To solve a monotone function \eqn{y = f(x)} for a given vector of \eqn{y} values.
+#' To solve a monotone function \eqn{y = f(x)} for a given \link[base]{vector} of \eqn{y} values.
 #' 
-#' @param y \link[base]{numeric} vector of \eqn{y} values
+#' @param y \link[base]{numeric} \link[base]{vector} of \eqn{y} values
 #' 
 #' @param f monotone \link[base]{function} \eqn{f(x)} whose roots are to be solved
 #' 
-#' @param interval length two \link[base]{numeric} vector
+#' @param interval length two \link[base]{numeric} \link[base]{vector}
 #' 
 #' @param tol \link[base]{double} scalar, desired accuracy (convergence tolerance), 
 
@@ -22,7 +22,7 @@
 #' 
 #' @details
 #' 
-#' \link{vuniroot2} function, different from \link[rstpm2]{vuniroot} function, does
+#' \link{vuniroot2}, different from \link[rstpm2]{vuniroot}, does
 #' \itemize{
 #' \item{accept \code{NA_real_} as element(s) of \eqn{y}}
 #' \item{handle the case when the analytical root is at \code{lower} and/or \code{upper}}
@@ -33,9 +33,11 @@
 #' 
 #' @return 
 #' 
-#' \link{vuniroot2} returns a \link[base]{numeric} vector \eqn{x} as the solution of \eqn{y = f(x)} with given vector \eqn{y}.
+#' \link{vuniroot2} returns a \link[base]{numeric} \link[base]{vector} \eqn{x} as the solution of \eqn{y = f(x)} with given vector \eqn{y}.
 #' 
 #' @seealso \link[rstpm2]{vuniroot}
+#' 
+#' @importFrom rstpm2 vuniroot
 #' 
 #' @examples 
 #' library(rstpm2)

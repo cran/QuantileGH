@@ -1,3 +1,8 @@
+# QuantileGH 0.1.3
+Hybrid starting values using \code{?fmx_cluster}, \code{?fmx_normix} and \code{?fmx_hybrid}.
+
+Default of parameter and/or number of components selection is now 'forward', instead of 'backward'.
+
 # QuantileGH 0.1.2
 New starting values provided in \code{?QLMDinit}.
 

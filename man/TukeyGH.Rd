@@ -23,7 +23,7 @@ z2qGH(z, A = 0, B = 1, g = 0, h = 0)
 qGH2z(q, q0 = (q - A)/B, A = 0, B = 1, ...)
 }
 \arguments{
-\item{x, q}{\link[base]{double} vector, quantiles}
+\item{x, q}{\link[base]{double} \link[base]{vector}, quantiles}
 
 \item{A}{\link[base]{double} scalar, location parameter \eqn{A}, default \eqn{A=0} (as parameter \code{mean} of \link[stats]{dnorm} function)}
 
@@ -39,23 +39,23 @@ qGH2z(q, q0 = (q - A)/B, A = 0, B = 1, ...)
 
 \item{n}{\link[base]{integer} scalar, number of observations}
 
-\item{p}{\link[base]{double} vector, probabilities}
+\item{p}{\link[base]{double} \link[base]{vector}, probabilities}
 
 \item{lower.tail}{\link[base]{logical} scalar, if \code{TRUE} (default), probabilities are \eqn{Pr(X\le x)} otherwise, \eqn{Pr(X>x)}.}
 
-\item{z}{\link[base]{double} vector, standard normal quantiles.}
+\item{z}{\link[base]{double} \link[base]{vector}, standard normal quantiles.}
 
-\item{q0}{\link[base]{double} vector of \eqn{(q-A)/B}, for internal use to increase compute speed}
+\item{q0}{\link[base]{double} \link[base]{vector} of \eqn{(q-A)/B}, for internal use to increase compute speed}
 }
 \value{
-\link{dGH} gives the density and accommodates vector arguments \code{A}, \code{B}, \code{g} and \code{h}.
-The quantiles \code{x} can be either vector or matrix.
-This function takes about 1/5 time of \link[gk]{dgh} function.
+\link{dGH} gives the density and accommodates \link[base]{vector} arguments \code{A}, \code{B}, \code{g} and \code{h}.
+The quantiles \code{x} can be either \link[base]{vector} or matrix.
+This function takes about 1/5 time of \link[gk]{dgh}.
 
-\link{pGH} gives the distribution function, only taking scalar arguments and vector quantiles \code{q}.
+\link{pGH} gives the distribution function, only taking scalar arguments and \link[base]{vector} quantiles \code{q}.
 This function takes about 1/10 time of \link[gk]{pgh} and \link[OpVaR]{pgh} functions.
 
-\link{qGH} gives the quantile function, only taking scalar arguments and vector probabilities \code{p}.
+\link{qGH} gives the quantile function, only taking scalar arguments and \link[base]{vector} probabilities \code{p}.
 This function takes about 1/2 time of \link[gk]{qgh} and 1/10 time of \link[OpVaR]{qgh} functions.
 
 \link{rGH} generates random deviates, only taking scalar arguments.
@@ -63,15 +63,15 @@ This function takes about 1/2 time of \link[gk]{qgh} and 1/10 time of \link[OpVa
 \link{z2qGH} is the Tukey's \eqn{g}-&-\eqn{h} transformation.
 Note that \code{gk:::z2gh} is only an \strong{approximation} to Tukey's \eqn{g}-&-\eqn{h} transformation.
 
-Unfortunately, \link{qGH2z} function, the inverse of Tukey's \eqn{g}-&-\eqn{h} transformation, 
+Unfortunately, \link{qGH2z}, the inverse of Tukey's \eqn{g}-&-\eqn{h} transformation,
 does not have a closed form and needs to be solved numerically.
 }
 \description{
-Density, distribution function, quantile function and random generation 
-for the Tukey's \eqn{g}-&-\eqn{h} distribution with 
+Density, distribution function, quantile function and random generation
+for the Tukey's \eqn{g}-&-\eqn{h} distribution with
 location parameter \eqn{A},
 scale parameter \eqn{B},
-skewness \eqn{g} and 
+skewness \eqn{g} and
 kurtosis \eqn{h}.
 }
 \details{

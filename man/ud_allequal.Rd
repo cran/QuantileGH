@@ -16,13 +16,13 @@ duplicated_allequal(x, ...)
 \item{...}{additional parameters of \link{outer_allequal}}
 }
 \value{
-\link{duplicated_allequal} returns a \link[base]{logical} vector of the same length as the input vector,
-indicating whether each element is nearly-equal to any of the previous elements.  
+\link{duplicated_allequal} returns a \link[base]{logical} \link[base]{vector} of the same length as the input vector,
+indicating whether each element is nearly-equal to any of the previous elements.
 
 \link{unique_allequal} returns the non-nearly-equal elements in the input vector.
 }
 \description{
-Determine nearly-equal elements and extract non-nearly-equal elements in a \link[base]{double} vector.
+Determine nearly-equal elements and extract non-nearly-equal elements in a \link[base]{double} \link[base]{vector}.
 }
 \examples{
 x = c(.3, 1-.7, 0, .Machine$double.eps)
@@ -31,5 +31,5 @@ unique_allequal(x) # desired
 
 }
 \seealso{
-\link[base]{duplicated.default} \link[base]{unique.default}
+\link{outer_allequal} \link[base]{duplicated.default} \link[base]{unique.default}
 }

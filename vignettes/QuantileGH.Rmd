@@ -1,0 +1,44 @@
+---
+title: "QuantileGH package vignette"
+author: tingtingzhan@gmail.com; 610-888-5188
+date: today
+abstract: "This is my abstract."
+keywords: "keywordA, keywordB"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{QuantileGH package vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Introduction
+
+# Models and Software
+
+## Stat Theory One and the code to go with it
+
+## Stat Theory Two and the code to go with it
+
+# Application and Illustrations
+
+## Example 1
+```{r setup}
+#library(tzh)
+1+1
+```
+
+## Example 2
+
+# Summary
+
+# Computational details
+
+# References
+
