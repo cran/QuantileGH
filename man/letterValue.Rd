@@ -81,10 +81,5 @@ plot(fit) # fitdistrplus:::plot.fitdist
 }
 \references{
 Hoaglin, D.C. (2006). Summarizing Shape Numerically: The \eqn{g}-and-\eqn{h} Distributions.
-In \emph{Exploring Data Tables, Trends, and Shapes} (eds D.C. Hoaglin, F. Mosteller and J.W. Tukey),
-Wiley Series in Probability and Statistics.
 \doi{10.1002/9781118150702.ch11}
-}
-\seealso{
-\link[fitdistrplus]{fitdist}
 }

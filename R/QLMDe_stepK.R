@@ -6,33 +6,32 @@
 #' @description
 #' 
 #' To compare \eqn{gh}-parsimonious models of Tukey's \eqn{g}-&-\eqn{h} mixtures with different number of components \eqn{K} 
-#' (up to a user-specified \eqn{K_\text{max}})
+#' (up to a user-specified \eqn{K_{max}})
 #' and select the optimal number of components.
 #' 
 #' @param x \link[base]{numeric} \link[base]{vector}, observations
 #' 
-#' @param distname \link[base]{character} scalar, see \link{QLMDe}
+#' @param distname,data.name \link[base]{character} scalars, 
+#' see parameters of the same names in function [QLMDe()]
 #' 
-#' @param data.name \link[base]{character} scalar, see \link{QLMDe}
-#' 
-#' @param direction \link[base]{character} scalar, direct of selection in \link{step_fmx}, 
-#' either \code{'forward'} (default) or \code{'backward'}
+#' @param direction \link[base]{character} scalar, direct of selection in function [step_fmx()], 
+#' either `'forward'` (default) or `'backward'`
 #' 
 #' @param test \link[base]{character} scalar, criterion to be used, either 
 #' Akaike's information criterion \link[stats]{AIC}, or 
 #' Bayesian information criterion \link[stats]{BIC} (default).
 #' 
-#' @param Kmax \link[base]{integer} scalar \eqn{K_\text{max}}, 
-#' maximum number of components to be considered. Default \code{3L}
+#' @param Kmax \link[base]{integer} scalar \eqn{K_{max}}, 
+#' maximum number of components to be considered. Default `3L`
 #' 
 #' @param ... additional parameters
 #' 
 #' @details 
 #' 
-#' \link{QLMDe_stepK} compares the \eqn{gh}-parsimonious models with different number of components \eqn{K},
+#' Function [QLMDe_stepK()] compares the \eqn{gh}-parsimonious models with different number of components \eqn{K},
 #' and selects the optimal number of components using BIC (default) or AIC.
 #' 
-#' The forward selection starts with finding the \eqn{gh}-parsimonious model (via \link{step_fmx})
+#' The forward selection starts with finding the \eqn{gh}-parsimonious model (via function [step_fmx()])
 #' at \eqn{K = 1}.   
 #' Let the current number of component be \eqn{K^c}.  
 #' We compare the \eqn{gh}-parsimonious models of \eqn{K^c+1} and \eqn{K^c} component, respectively,
@@ -40,16 +39,16 @@
 #' If \eqn{K^c} is preferred, then the forward selection is stopped, and \eqn{K^c} is considered the 
 #' optimal number of components.
 #' If \eqn{K^c+1} is preferred, then
-#' the forward selection is stopped if \eqn{K^c+1=K_\text{max}},
+#' the forward selection is stopped if \eqn{K^c+1=K_{max}},
 #' otherwise update \eqn{K^c} with \eqn{K_c+1} and repeat the previous steps.
 #' 
 #' 
-#' @return 
+#' @returns 
 #' 
-#' \link{QLMDe_stepK} returns an object of S3 class \code{'stepK'}, 
+#' Function [QLMDe_stepK()] returns an object of S3 class `'stepK'`, 
 #' which is a \link[base]{list} of selected models (in reversed order) with attribute(s)
-#' \code{'direction'} and
-#' \code{'test'}.
+#' `'direction'` and
+#' `'test'`.
 #' 
 #' @examples 
 #' 
@@ -85,7 +84,7 @@ QLMDe_stepK <- function(
     if (tval[[2]] <= tval[[1L]] + 1e-07) break # smaller K is selected 
 
     K <- K + 1L
-    mods <- c(new_, mods)
+    mods <- c(new_, mods) # newest fit *in the first element* 
   }
   
   attr(mods, which = 'direction') <- direction 
@@ -100,10 +99,10 @@ print.stepK <- function(x, ...) {
   print.fmx(x[[1L]])
   
   test <- attr(x, which = 'test', exact = TRUE)
-  tb <- data.frame( # this is \strong{not} an 'anova' table!!
+  tb <- data.frame( # this is *not* an 'anova' table!!
     '# Parameter' = vapply(x, FUN = npar.fmx, FUN.VALUE = 0L), 
     test = vapply(x, FUN = match.fun(test), FUN.VALUE = 0), 
-    row.names = vapply(x, FUN = constraint_TeX, FUN.VALUE = ''), 
+    row.names = vapply(x, FUN = getTeX, FUN.VALUE = ''), 
     check.names = FALSE)
   names(tb)[2L] <- test
   print.data.frame(tb)

@@ -25,9 +25,9 @@ qGH2z(q, q0 = (q - A)/B, A = 0, B = 1, ...)
 \arguments{
 \item{x, q}{\link[base]{double} \link[base]{vector}, quantiles}
 
-\item{A}{\link[base]{double} scalar, location parameter \eqn{A}, default \eqn{A=0} (as parameter \code{mean} of \link[stats]{dnorm} function)}
+\item{A}{\link[base]{double} scalar, location parameter \eqn{A}, default \eqn{A=0} (as parameter \code{mean} of \link[stats]{dnorm})}
 
-\item{B}{\link[base]{double} scalar, scale parameter \eqn{B>0}, default \eqn{B=1} (as parameter \code{sd} of \link[stats]{dnorm} function)}
+\item{B}{\link[base]{double} scalar, scale parameter \eqn{B>0}, default \eqn{B=1} (as parameter \code{sd} of \link[stats]{dnorm})}
 
 \item{g}{\link[base]{double} scalar, skewness parameter \eqn{g}, default \eqn{g=0} indicating no skewness}
 
@@ -35,7 +35,7 @@ qGH2z(q, q0 = (q - A)/B, A = 0, B = 1, ...)
 
 \item{log, log.p}{\link[base]{logical} scalar, if \code{TRUE}, probabilities \eqn{p} are given as \eqn{\log(p)}.}
 
-\item{...}{other parameters of \link{vuniroot2}}
+\item{...}{other parameters of function \code{\link[=vuniroot2]{vuniroot2()}}}
 
 \item{n}{\link[base]{integer} scalar, number of observations}
 
@@ -48,22 +48,22 @@ qGH2z(q, q0 = (q - A)/B, A = 0, B = 1, ...)
 \item{q0}{\link[base]{double} \link[base]{vector} of \eqn{(q-A)/B}, for internal use to increase compute speed}
 }
 \value{
-\link{dGH} gives the density and accommodates \link[base]{vector} arguments \code{A}, \code{B}, \code{g} and \code{h}.
+Function \code{\link[=dGH]{dGH()}} gives the density and accommodates \link[base]{vector} arguments \code{A}, \code{B}, \code{g} and \code{h}.
 The quantiles \code{x} can be either \link[base]{vector} or matrix.
-This function takes about 1/5 time of \link[gk]{dgh}.
+This function takes about 1/5 time of \code{gk::dgh}.
 
-\link{pGH} gives the distribution function, only taking scalar arguments and \link[base]{vector} quantiles \code{q}.
-This function takes about 1/10 time of \link[gk]{pgh} and \link[OpVaR]{pgh} functions.
+Function \code{\link[=pGH]{pGH()}} gives the distribution function, only taking scalar arguments and \link[base]{vector} quantiles \code{q}.
+This function takes about 1/10 time of \code{gk::pgh} and \code{OpVaR::pgh} functions.
 
-\link{qGH} gives the quantile function, only taking scalar arguments and \link[base]{vector} probabilities \code{p}.
-This function takes about 1/2 time of \link[gk]{qgh} and 1/10 time of \link[OpVaR]{qgh} functions.
+Function \code{\link[=qGH]{qGH()}} gives the quantile function, only taking scalar arguments and \link[base]{vector} probabilities \code{p}.
+This function takes about 1/2 time of \code{gk::qgh} and 1/10 time of \code{OpVaR::qgh} functions.
 
-\link{rGH} generates random deviates, only taking scalar arguments.
+Function \code{\link[=rGH]{rGH()}} generates random deviates, only taking scalar arguments.
 
-\link{z2qGH} is the Tukey's \eqn{g}-&-\eqn{h} transformation.
-Note that \code{gk:::z2gh} is only an \strong{approximation} to Tukey's \eqn{g}-&-\eqn{h} transformation.
+Function \code{\link[=z2qGH]{z2qGH()}} is the Tukey's \eqn{g}-&-\eqn{h} transformation.
+Note that \code{gk:::z2gh} is only an \emph{approximation} to Tukey's \eqn{g}-&-\eqn{h} transformation.
 
-Unfortunately, \link{qGH2z}, the inverse of Tukey's \eqn{g}-&-\eqn{h} transformation,
+Unfortunately, function \code{\link[=qGH2z]{qGH2z()}}, the inverse of Tukey's \eqn{g}-&-\eqn{h} transformation,
 does not have a closed form and needs to be solved numerically.
 }
 \description{
@@ -96,5 +96,5 @@ curve(dGH(x, g = .3, h = .1), from = -2.5, to = 3.5)
 
 }
 \seealso{
-\link[OpVaR]{dgh} \link[gk]{dgh}
+\code{OpVaR::dgh} \code{gk::dgh}
 }

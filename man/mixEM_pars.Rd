@@ -2,7 +2,7 @@
 % Please edit documentation in R/mixtools_ext.R
 \name{mixEM_pars}
 \alias{mixEM_pars}
-\title{Names of Distribution Parameters of \code{mixEM} Object}
+\title{Names of Distribution Parameters of \code{'mixEM'} Object}
 \usage{
 mixEM_pars(object)
 }
@@ -11,7 +11,7 @@ mixEM_pars(object)
 \link[mixtools]{normalmixEM} and \link[mixtools]{gammamixEM} are supported}
 }
 \value{
-\link{mixEM_pars} returns a \link[base]{character} vector
+Function \code{\link[=mixEM_pars]{mixEM_pars()}} returns a \link[base]{character} \link[base]{vector}
 }
 \description{
 Names of distribution parameters of \code{'mixEM'} object, based on \CRANpkg{mixtools} 2020-02-05.

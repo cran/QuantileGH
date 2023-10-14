@@ -3,32 +3,33 @@
 #' 
 #' @description 
 #' 
-#' A vector of probabilities to be used in Quantile Least Mahalanobis Distance estimation (\link{QLMDe}). 
+#' A vector of probabilities to be used in Quantile Least Mahalanobis Distance estimation ([QLMDe]). 
 #' 
-#' @param from \link[base]{numeric} scalar, minimum of the equidistant (in probability or quantile) probabilities.  Default \code{.05}.
+#' @param from,to \link[base]{numeric} scalar, 
+#' minimum and maximum of the equidistant (in probability or quantile) probabilities.  
+#' Default `.05` and `.95`, respectively
 #' 
-#' @param to \link[base]{numeric} scalar, maximum of the equidistant (in probability or quantile) probabilities.  Default \code{.95}.
-#' 
-#' @param length.out non-negative \link[base]{integer} scalar, the number of the equidistant (in probability or quantile) probabilities. 
+#' @param length.out non-negative \link[base]{integer} scalar, 
+#' the number of the equidistant (in probability or quantile) probabilities. 
 #' 
 #' @param equidistant \link[base]{character} scalar.
-#' If \code{'prob'} (default), then the probabilities are equidistant.  
-#' If \code{'quantile'}, then the quantiles (of the observations \code{x}) corresponding to the probabilities are equidistant.
+#' If `'prob'` (default), then the probabilities are equidistant.  
+#' If `'quantile'`, then the quantiles (of the observations `x`) corresponding to the probabilities are equidistant.
 #' 
-#' @param extra \link[base]{numeric} \link[base]{vector} of \emph{additional} probabilities, default \code{c(.005, .01, .02, .03, .97, .98, .99, .995)}.
+#' @param extra \link[base]{numeric} \link[base]{vector} of *additional* probabilities, default `c(.005, .01, .02, .03, .97, .98, .99, .995)`.
 #' 
-#' @param x \link[base]{numeric} \link[base]{vector} of observations, only used when \code{equidistant = 'quantile'}.
+#' @param x \link[base]{numeric} \link[base]{vector} of observations, only used when `equidistant = 'quantile'`.
 #' 
 #' @details
 #' 
-#' The default arguments of \link{QLMDp} returns the probabilities of 
-#' \code{c(.005, .01, .02, .03, seq.int(.05, .95, length.out = 15L), .97, .98, .99, .995)}.
+#' The default arguments of function [QLMDp()] returns the probabilities of 
+#' `c(.005, .01, .02, .03, seq.int(.05, .95, length.out = 15L), .97, .98, .99, .995)`.
 #' 
-#' @return 
+#' @returns 
 #' 
-#' A \link[base]{numeric} \link[base]{vector} of probabilities to be supplied to parameter \code{p} of 
-#' Quantile Least Mahalanobis Distance \link{QLMDe} estimation).
-#' In practice, the length of this probability \link[base]{vector} \code{p} 
+#' A \link[base]{numeric} \link[base]{vector} of probabilities to be supplied to parameter `p` of 
+#' Quantile Least Mahalanobis Distance [QLMDe()] estimation).
+#' In practice, the length of this probability \link[base]{vector} `p` 
 #' must be equal or larger than the number of parameters in the distribution model to be estimated.
 #' 
 #' @examples 

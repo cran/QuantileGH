@@ -13,17 +13,16 @@
 #' 
 #' @details 
 #' 
-#' The end user should make sure no density too close to 0 is included in argument \code{d}.
+#' The end user should make sure no density too close to 0 is included in argument `d`.
 #' 
-#' \link{quantile_vcov} must not be used in a compute-intensive way.
+#' Function [quantile_vcov()] must not be used in a compute-intensive way.
 #' 
-#' @return 
+#' @returns 
 #' 
-#' \link{quantile_vcov} returns the variance-covariance \link[base]{matrix} of quantiles based on Mosteller (1946).
+#' Function [quantile_vcov()] returns the variance-covariance \link[base]{matrix} of quantiles based on Mosteller (1946).
 #' 
 #' @references 
-#' Frederick Mosteller. On Some Useful "Inefficient" Statistics. 
-#' \emph{The Annals of Mathematical Statistics}, 17 (4) 377-408, December, 1946. 
+#' Frederick Mosteller. On Some Useful "Inefficient" Statistics (1946).
 #' \doi{10.1214/aoms/1177730881}
 #' 
 #' @export

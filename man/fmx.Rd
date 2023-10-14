@@ -13,11 +13,11 @@ fmx(distname, w = 1, ...)
 Does not need to sum up to 1; \code{w/sum(w)} will be used internally.}
 
 \item{...}{mixture distribution parameters.
-See \link{dGH} for the names and default values of Tukey's \eqn{g}-&-\eqn{h} distribution parameters,
+See function \code{\link[=dGH]{dGH()}} for the names and default values of Tukey's \eqn{g}-&-\eqn{h} distribution parameters,
 or \link[stats]{dnorm} for the names and default values of normal distribution parameters.}
 }
 \value{
-\link{fmx} returns an \linkS4class{fmx} object which specifies the parameters of a finite mixture distribution.
+Function \code{\link[=fmx]{fmx()}} returns an \linkS4class{fmx} object which specifies the parameters of a finite mixture distribution.
 }
 \description{
 ..

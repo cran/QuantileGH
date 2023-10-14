@@ -7,15 +7,15 @@
 #' @param distname \link[base]{character} scalar
 #' 
 #' @param w (optional) \link[base]{numeric} \link[base]{vector}.  
-#' Does not need to sum up to 1; \code{w/sum(w)} will be used internally.
+#' Does not need to sum up to 1; `w/sum(w)` will be used internally.
 #' 
 #' @param ... mixture distribution parameters.
-#' See \link{dGH} for the names and default values of Tukey's \eqn{g}-&-\eqn{h} distribution parameters, 
+#' See function [dGH()] for the names and default values of Tukey's \eqn{g}-&-\eqn{h} distribution parameters, 
 #' or \link[stats]{dnorm} for the names and default values of normal distribution parameters.
 #' 
-#' @return 
+#' @returns 
 #' 
-#' \link{fmx} returns an \linkS4class{fmx} object which specifies the parameters of a finite mixture distribution.
+#' Function [fmx()] returns an \linkS4class{fmx} object which specifies the parameters of a finite mixture distribution.
 #' 
 #' @import methods
 #' 
@@ -70,7 +70,7 @@ fmx <- function(distname, w = 1, ...) {
 #' Density function, distribution function, quantile function and random generation for a finite mixture distribution 
 #' with normal or Tukey's \eqn{g}-&-\eqn{h} components.
 #' 
-#' @param x,q \link[base]{numeric} \link[base]{vector}, quantiles, \code{NA_real_} value(s) allowed.
+#' @param x,q \link[base]{numeric} \link[base]{vector}, quantiles, `NA_real_` value(s) allowed.
 #' 
 #' @param p \link[base]{numeric} \link[base]{vector}, probabilities.
 #' 
@@ -79,45 +79,45 @@ fmx <- function(distname, w = 1, ...) {
 #' @param dist \linkS4class{fmx} object, a finite mixture distribution
 #' 
 #' @param log,log.p \link[base]{logical} scalar. 
-#' If \code{TRUE}, probabilities are given as \eqn{\log(p)}.
+#' If `TRUE`, probabilities are given as \eqn{\log(p)}.
 #' 
 #' @param lower.tail \link[base]{logical} scalar. 
-#' If \code{TRUE} (default), probabilities are \eqn{Pr(X\le x)}, otherwise, \eqn{Pr(X>x)}.
+#' If `TRUE` (default), probabilities are \eqn{Pr(X\le x)}, otherwise, \eqn{Pr(X>x)}.
 #' 
 #' @param interval length two \link[base]{numeric} \link[base]{vector}, interval for root finding, see \link[rstpm2]{vuniroot}
 #' 
-#' @param distname,K,pars,w auxiliary parameters, whose default values are determined by argument \code{dist}.
-#' The user-specified \link[base]{vector} of \code{w} does not need to sum up to 1; \code{w/sum(w)} will be used internally.
+#' @param distname,K,pars,w auxiliary parameters, whose default values are determined by argument `dist`.
+#' The user-specified \link[base]{vector} of `w` does not need to sum up to 1; `w/sum(w)` will be used internally.
 #' 
 #' @param ... additional parameters
 #' 
 #' @details 
 #' 
-#' A computational challenge in \link{dfmx} is when mixture density is very close to 0,
+#' A computational challenge in function [dfmx()] is when mixture density is very close to 0,
 #' which happens when the per-component log densities are negative with big absolute values.  
-#' In such case, we cannot compute the log mixture densities (i.e., \code{-Inf}), 
-#' for the log-likelihood using \link{logLik.fmx}.
-#' Our solution is to replace these \code{-Inf} log mixture densities by 
-#' the weighted average (using the mixing proportions of \code{dist}) 
+#' In such case, we cannot compute the log mixture densities (i.e., `-Inf`), 
+#' for the log-likelihood using function [logLik.fmx()].
+#' Our solution is to replace these `-Inf` log mixture densities by 
+#' the weighted average (using the mixing proportions of `dist`) 
 #' of the per-component log densities.
 #' 
-#' \link{qfmx} gives the quantile function, by numerically solving \link{pfmx}.
+#' Function [qfmx()] gives the quantile function, by numerically solving [pfmx].
 #' One major challenge when dealing with the finite mixture of Tukey's \eqn{g}-&-\eqn{h} family distribution
-#' is that Brent–Dekker's method needs to be performed in both \link{pGH} and \link{qfmx} functions, 
-#' i.e. \emph{two layers} of root-finding algorithm.
+#' is that Brent–Dekker's method needs to be performed in both [pGH] and [qfmx] functions, 
+#' i.e. *two layers* of root-finding algorithm.
 #' 
 #' 
-#' @return 
+#' @returns 
 #' 
-#' \link{dfmx} returns a \link[base]{numeric} \link[base]{vector} of probability density values of an \linkS4class{fmx} object at specified quantiles \code{x}.
+#' Function [dfmx()] returns a \link[base]{numeric} \link[base]{vector} of probability density values of an \linkS4class{fmx} object at specified quantiles `x`.
 #' 
-#' \link{pfmx} returns a \link[base]{numeric} \link[base]{vector} of cumulative probability values of an \linkS4class{fmx} object at specified quantiles \code{q}.
+#' Function [pfmx()] returns a \link[base]{numeric} \link[base]{vector} of cumulative probability values of an \linkS4class{fmx} object at specified quantiles `q`.
 #' 
-#' \link{qfmx} returns an unnamed \link[base]{numeric} \link[base]{vector} of quantiles of an \linkS4class{fmx} object, based on specified cumulative probabilities \code{p}.
+#' Function [qfmx()] returns an unnamed \link[base]{numeric} \link[base]{vector} of quantiles of an \linkS4class{fmx} object, based on specified cumulative probabilities `p`.
 #' Note that \link[stats]{qnorm} returns an unnamed \link[base]{vector} of quantiles, 
 #' although \link[stats]{quantile} returns a named \link[base]{vector} of quantiles.
 #' 
-#' \link{rfmx} generates random deviates of an \linkS4class{fmx} object.
+#' Function [rfmx()] generates random deviates of an \linkS4class{fmx} object.
 #' 
 #' @import stats
 #' @importFrom sn dsn psn qsn rsn dst pst qst rst
@@ -168,9 +168,7 @@ dfmx <- function(x, dist, distname = dist@distname, K = dim(pars)[1L], pars = di
            norm = return(dnorm(x = x, mean = pars[,1L], sd = pars[,2L], log = log)), 
            GH = return(.dGH(x = x, A = pars[,1L], B = pars[,2L], g = pars[,3L], h = pars[,4L], log = log, ...)),
            sn = return(dsn(x = x, xi = pars[,1L], omega = pars[,2L], alpha = pars[,3L], log = log)),
-           SN = return(dSN(x = x, mean = pars[,1L], sd = pars[,2L], shape = pars[,3L], log = log)),
            st = return(dst(x = x, xi = pars[,1L], omega = pars[,2L], alpha = pars[,3L], nu = pars[,4L], log = log)),
-           ST = return(dST(x = x, mean = pars[,1L], sd = pars[,2L], shape = pars[,3L], nu = pars[,4L], log = log)),
            stop('I do not have `d', distname, '` function'))
   }
   
@@ -190,16 +188,14 @@ dfmx <- function(x, dist, distname = dist@distname, K = dim(pars)[1L], pars = di
                   # have to go the stupid way!!
                   do.call(rbind, args = lapply(seq_len(K), FUN = function(i) dsn(x = x, xi = pars[i,1L], omega = pars[i,2L], alpha = pars[i,3L], log = TRUE)))
                 }, 
-                SN = dSN(x = xm, mean = pars[,1L], sd = pars[,2L], shape = pars[,3L], log = TRUE),
                 st = {
                   # ?sn::dst gives error on vector `nu`
                   do.call(rbind, args = lapply(seq_len(K), FUN = function(i) dst(x = x, xi = pars[i,1L], omega = pars[i,2L], alpha = pars[i,3L], nu = pars[i,4L], log = TRUE)))
                 },
-                ST = dST(x = xm, mean = pars[,1L], sd = pars[,2L], shape = pars[,3L], nu = pars[,4L], log = TRUE),
                 stop('I do not have `d', distname, '` function'))
   if (any(is.infinite(lds))) {
     #tmp <<- dist; x <<- x;
-    #stop('per-component log-density should not be -Inf (unless `sd` or `B` is 0)') # is.infinite(NA) is \code{FALSE}
+    #stop('per-component log-density should not be -Inf (unless `sd` or `B` is 0)') # is.infinite(NA) is `FALSE`
     # `sd = 0` or `B = 0` may happen 
   }
   
@@ -266,9 +262,9 @@ pfmx <- function(q, dist, distname = dist@distname, K = dim(pars)[1L], pars = di
     pnbinom(qM_naive, size = pars[,1L], prob = pars[,2L], lower.tail = lower.tail)
   }, sn = {
     # ?sn::psn does not respect `attr(x, 'dim')`, but do handle \link[base]{matrix} `x` correctly
-    tmp <- array(psn(qM_naive, xi = pars[,1L], omega = pars[,2L], alpha = pars[,3L]), dim = dim(qM_naive))
-    # tmp2 = do.call(rbind, args = lapply(seq_len(K), FUN = function(i) psn(q, xi = pars[i,1L], omega = pars[i,2L], alpha = pars[i,3L])))
-    # range(tmp - tmp2)
+    # packageDate('sn') 2023-04-04: *sometimes* get error by using matrix `x`, dont know why
+    # tmp2 <- array(psn(qM_naive, xi = pars[,1L], omega = pars[,2L], alpha = pars[,3L]), dim = dim(qM_naive))
+    tmp <- do.call(rbind, args = lapply(seq_len(K), FUN = function(i) psn(q, xi = pars[i,1L], omega = pars[i,2L], alpha = pars[i,3L])))
     if (!lower.tail) 1 - tmp else tmp
   }, st = {
     # ?sn::pst does not respect `attr(x, 'dim')`, and do not handle \link[base]{matrix} `x` correctly!!
@@ -377,7 +373,8 @@ qfmx <- function(p, dist, distname = dist@distname, K = dim(pars)[1L], pars = di
     alpha <- pars[,3L]
     function(q) {
       # ?sn::psn does not respect `attr(q, 'dim')`, but do handle \link[base]{matrix} `x` correctly
-      ps <- array(psn(tcrossprod(ones, q), xi = xi, omega = omega, alpha = alpha), dim = c(K, length(q)))
+      #ps <- array(psn(tcrossprod(ones, q), xi = xi, omega = omega, alpha = alpha), dim = c(K, length(q)))
+      ps <- do.call(rbind, args = lapply(seq_len(K), FUN = function(i) psn(q, xi = xi[i], omega = omega[i], alpha = alpha[i])))
       if (!lower.tail) ps <- 1 - ps
       c(t_w %*% ps)
     }
@@ -416,14 +413,13 @@ qfmx <- function(p, dist, distname = dist@distname, K = dim(pars)[1L], pars = di
 
 
 #' @rdname dfmx
+#' @importFrom sn rsn rst
 #' @export
 rfmx <- function(n, dist, distname = dist@distname, K = dim(pars)[1L], pars = dist@pars, w = dist@w) {
   if (!is.integer(n) || anyNA(n) || length(n) != 1L || n <= 0L) stop('sample size must be len-1 positive integer (e.g., use 100L instead of 100)')
   id <- sample.int(n = K, size = n, replace = TRUE, prob = w)
   d2 <- cbind(pars, n = tabulate(id, nbins = K)) # 'matrix'
-  r_fn <- switch(distname, SN =, ST = {
-    stop('I do not have `r', distname, '` function')
-  }, paste0('r', distname))
+  r_fn <- paste0('r', distname)
   xs <- lapply(seq_len(K), FUN = function(i) {
     do.call(what = r_fn, args = as.list.default(d2[i, ]))
   })

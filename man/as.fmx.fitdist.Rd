@@ -14,7 +14,7 @@
 \item{...}{..}
 }
 \value{
-\link{as.fmx.fitdist} returns an \linkS4class{fmx} object.
+Function \code{\link[=as.fmx.fitdist]{as.fmx.fitdist()}} returns an \linkS4class{fmx} object.
 }
 \description{
 ..

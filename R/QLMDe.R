@@ -7,7 +7,7 @@
 #' The quantile least Mahalanobis distance algorithm estimates the parameters of 
 #' single-component or finite mixture distributions   
 #' by minimizing the Mahalanobis distance between the vectors of sample and theoretical quantiles.
-#' See \link{QLMDp} for the default selection of probabilities at which the sample and theoretical quantiles are compared.
+#' See [QLMDp] for the default selection of probabilities at which the sample and theoretical quantiles are compared.
 #' 
 #' The default initial values are estimated based on trimmed \eqn{k}-means 
 #' clustering with re-assignment.
@@ -16,21 +16,21 @@
 #' 
 #' @param data.name \link[base]{character} scalar, name for the observations for user-friendly print out.
 #' 
-#' @param distname \link[base]{character} scalar, name of mixture distribution to be fitted.  Currently supports \code{'norm'} and \code{'GH'}.
+#' @param distname \link[base]{character} scalar, name of mixture distribution to be fitted.  Currently supports `'norm'` and `'GH'`.
 #' 
-#' @param K \link[base]{integer} scalar, number of components (e.g., must use \code{2L} instead of \code{2}).
+#' @param K \link[base]{integer} scalar, number of components (e.g., must use `2L` instead of `2`).
 #' 
 #' @param probs \link[base]{numeric} \link[base]{vector}, percentiles at where the sample and theoretical quantiles are to be matched.
-#' See \link{QLMDp} for details.
+#' See function [QLMDp()] for details.
 #' 
 #' @param init \link[base]{character} scalar for the method of initial values selection, 
 #' or an \linkS4class{fmx} object of the initial values. 
-#' See \link{fmx_hybrid} for more details.
+#' See function [fmx_hybrid()] for more details.
 #' 
 #' @param constraint \link[base]{character} \link[base]{vector}, parameters (\eqn{g} and/or \eqn{h} for Tukey's \eqn{g}-&-\eqn{h} mixture) to be set at 0.  
-#' See \link{fmx_constraint} for details.
+#' See function [fmx_constraint()] for details.
 #' 
-#' @param tol,maxiter see \link{vuniroot2}
+#' @param tol,maxiter see function [vuniroot2()]
 #' 
 #' @param ... additional parameters of \link[stats]{optim}
 #' 
@@ -39,19 +39,21 @@
 #' Quantile Least Mahalanobis Distance estimator fits a single-component or finite mixture distribution 
 #' by minimizing the Mahalanobis distance between
 #' the theoretical and observed quantiles,
-#' using the empirical quantile variance-covariance matrix \link{quantile_vcov}.
+#' using the empirical quantile variance-covariance matrix [quantile_vcov()].
 #' 
-#' @return 
+#' @returns 
 #' 
-#' \link{QLMDe} returns an \linkS4class{fmx} object.
+#' Function [QLMDe()] returns an \linkS4class{fmx} object.
 #' 
-#' @seealso \link[stats]{optim} \link{fmx_hybrid}
+#' 
 #' 
 #' @examples 
 #' 
 #' hist(x1 <- CK5[[1L]])
 #' \donttest{QLMDe(x1, distname = 'GH', K = 2L)}
 #' 
+#' @seealso [fmx_hybrid()]
+#' @importFrom stats optim
 #' @export
 QLMDe <- function(
   x, distname = c('GH', 'norm', 'sn'), K, data.name = deparse1(substitute(x)),
@@ -95,7 +97,7 @@ QLMDe <- function(
   q_obs <- quantile(x, probs = probs) # observed quantiles, constant in ?stats::optim
   
   x_epdf <- approxdens(x)
-  # Tingting is not sure whether ?stats::approx \strong{and} ?stats::approxfun will make `x_epdf(q_obs) = 0` more likely
+  # Tingting is not sure whether ?stats::approx *and* ?stats::approxfun will make `x_epdf(q_obs) = 0` more likely
   d_obs <- x_epdf(q_obs) # observed density evaluated at `q_obs`
   if (anyNA(d_obs)) stop('do not allow NA_real_ empirical density')
   tol <- sqrt(sqrt(.Machine$double.eps))
@@ -160,7 +162,7 @@ QLMDe <- function(
         t_w <- t.default(pmlogis_first(x[id_w]))
         sdinv <- 1 / exp(.pM[,2L])
         eff <- cumsum(c(.pM[1L,1L], exp(.pM[2:K,1L]))) * sdinv
-        q <- vuniroot2(y = probs, f = function(q) { # essentially \link{pfmx}
+        q <- vuniroot2(y = probs, f = function(q) { # essentially [pfmx]
           z <- tcrossprod(sdinv, q) - eff
           c(t_w %*% pnorm(z))
         }, interval = interval)
@@ -178,7 +180,7 @@ QLMDe <- function(
         h <- exp(.pM[,4L])
         sdinv <- 1 / exp(.pM[,2L])
         eff <- cumsum(c(.pM[1L,1L], exp(.pM[2:K,1L]))) * sdinv
-        q <- vuniroot2(y = probs, f = function(q) { # essentially \link{pfmx}
+        q <- vuniroot2(y = probs, f = function(q) { # essentially [pfmx]
           z <- q0 <- tcrossprod(sdinv, q) - eff
           for (i in Kseq) z[i,] <- .qGH2z(q0 = q0[i,], g = g[i], h = h[i], tol = tol, maxiter = maxiter)
           c(t_w %*% pnorm(z))
@@ -245,7 +247,7 @@ QLMDe <- function(
   .meat <- quantile_vcov(probs = p1, d = d1) # V_(\hat{theta})
   # in theary, we should use V_{true theta}, but no one knows true theta in practice
   # so I am using V_{\hat_theta}
-  # now I want to use V_{empirical} (`@quantile_vv` is \strong{no longer} a slot of \linkS4class{fmx}), can I?
+  # now I want to use V_{empirical} (`@quantile_vv` is no longer a slot of \linkS4class{fmx}), can I?
   q_gr <- qfmx_gr(probs = p1, distname = distname, K = K, pars = tmp$pars, w = tmp$w)
   if (!length(q_gr)) {
     int_vv <- array(NA_real_, dim = c(0L, 0L)) # exception handling
@@ -275,6 +277,10 @@ QLMDe <- function(
     # optim = y
   )
   
+  ret@Kolmogorov <- Kolmogorov_fmx(object = ret)
+  ret@CramerVonMises <- CramerVonMises_fmx(object = ret)
+  ret@KullbackLeibler <- KullbackLeibler_fmx(object = ret)
+  
   if (!setequal(attr(fmx_constraint(ret), which = 'user', exact = TRUE), constraint)) {
     #message('not handling constrants correctly')
     # indicates ?stats::optim did not move
@@ -301,7 +307,7 @@ QLMDe_interval <- function(x, extend_interval = 10, ...) {
 
 
 
-# gradient of ?qfmx with respect to the \strong{unconstraint} parameters.
+# gradient of ?qfmx with respect to the *unconstraint* parameters.
 qfmx_gr <- function(
   dist, # can be missing
   probs = stop('must provide `probs`'), 

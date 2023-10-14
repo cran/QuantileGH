@@ -18,9 +18,9 @@ and the \eqn{h}-parameter for the second component (with larger mean value) are 
 \item{K}{\link[base]{integer} scalar, number of components}
 }
 \value{
-\link{user_constraint} returns the indexes of internal parameters
+\link{user_constraint} returns the indices of internal parameters
 (only applicable to Tukey's \eqn{g}-&-\eqn{h} mixture distribution, yet) to be constrained,
-based on the type of distribution (\code{distname}), number of components (\code{K})
+based on the type of distribution \code{distname}, number of components \code{K}
 and a user-specified string (e.g., \code{c('g2', 'h1')}).
 }
 \description{

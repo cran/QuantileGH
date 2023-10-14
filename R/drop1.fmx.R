@@ -14,17 +14,17 @@
 #' @details ..
 #' 
 #' @note 
-#' Note that \link{drop1.fmx} and \link{add1.fmx} do \strong{not} return an \link[stats]{anova} table, like other
-#' \code{stats:::drop.*} or \code{stats:::add1.*} functions do.
+#' Note that [drop1.fmx] and [add1.fmx] do *not* return an \link[stats]{anova} table, like other
+#' `stats:::drop.*` or `stats:::add1.*` functions do.
 #' 
-#' @return
+#' @returns
 #' 
-#' \link{drop1.fmx} and \link{add1.fmx} return a \link[base]{list} of \linkS4class{fmx} objects,
+#' [drop1.fmx] and [add1.fmx] return a \link[base]{list} of \linkS4class{fmx} objects,
 #' in the reverse order of model selection.
 #' 
-#' @seealso \link[stats]{step} \link[stats]{drop1} \link[stats]{add1}
+#' @seealso 
+#' \link[stats]{step}
 #' 
-#' @importFrom stats drop1 add1
 #' 
 #' @examples 
 #' 
@@ -41,16 +41,18 @@
 #' d1 = drop1(m1)
 #' d1 # NULL
 #' d2 = drop1(m2)
-#' vapply(d2, FUN = constraint_TeX, FUN.VALUE = '')
+#' vapply(d2, FUN = getTeX, FUN.VALUE = '')
 #' 
 #' a0 = add1(m0)
-#' vapply(a0, FUN = constraint_TeX, FUN.VALUE = '')
+#' vapply(a0, FUN = getTeX, FUN.VALUE = '')
 #' a1 = add1(m1)
-#' vapply(a1, FUN = constraint_TeX, FUN.VALUE = '')
+#' vapply(a1, FUN = getTeX, FUN.VALUE = '')
 #' 
 #' }
 #' 
+#' @importFrom stats drop1
 #' @name drop1_fmx
+#' @export drop1.fmx
 #' @export
 drop1.fmx <- function(object, ...) {
   if (!length(object@data)) return(invisible())
@@ -82,7 +84,9 @@ drop1.fmx <- function(object, ...) {
 
 
 # need to re-use the examples, to save time!
+#' @importFrom stats add1
 #' @rdname drop1_fmx
+#' @export add1.fmx
 #' @export
 add1.fmx <- function(object, ...) {
   if (!length(object@data)) return(invisible())

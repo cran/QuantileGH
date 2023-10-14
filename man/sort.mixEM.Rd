@@ -2,12 +2,12 @@
 % Please edit documentation in R/mixtools_ext.R
 \name{sort.mixEM}
 \alias{sort.mixEM}
-\title{Sort \code{mixEM} Object by First Parameters}
+\title{Sort \code{'mixEM'} Object by First Parameters}
 \usage{
 \method{sort}{mixEM}(x, decreasing = FALSE, ...)
 }
 \arguments{
-\item{x}{\code{mixEM} object}
+\item{x}{\code{'mixEM'} object}
 
 \item{decreasing}{\link[base]{logical} scalar. Should the sort by \eqn{mu}'s
 be increasing (\code{FALSE}, default) or decreasing (\code{TRUE})?}
@@ -15,14 +15,14 @@ be increasing (\code{FALSE}, default) or decreasing (\code{TRUE})?}
 \item{...}{additional parameters, currently not in use}
 }
 \value{
-\link{sort.mixEM} returns a \code{mixEM} object.
+\link{sort.mixEM} returns a \code{'mixEM'} object.
 }
 \description{
-To sort a \code{mixEM} object by its first parameters, i.e.,
+To sort a \code{'mixEM'} object by its first parameters, i.e.,
 \eqn{\mu}'s for normal mixture, \eqn{\alpha}'s for \eqn{\gamma}-mixture, etc.
 }
 \details{
-\link[mixtools]{normalmixEM} does \strong{not} order the location parameter
+\link[mixtools]{normalmixEM} does \emph{not} order the location parameter
 }
 \seealso{
 \link[base]{sort}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/fmx_repar.R
 \name{dbl2fmx}
 \alias{dbl2fmx}
-\title{Inverse of \link{fmx2dbl}, for internal use}
+\title{Inverse of \code{\link[=fmx2dbl]{fmx2dbl()}}, for internal use}
 \usage{
 dbl2fmx(x, K, distname, ...)
 }
@@ -16,11 +16,11 @@ dbl2fmx(x, K, distname, ...)
 \item{...}{additional parameters, not currently used}
 }
 \value{
-\link{dbl2fmx} returns a \link[base]{list} with two elements \code{'pars'} and \code{'w'}
+Function \code{\link[=dbl2fmx]{dbl2fmx()}} returns a \link[base]{list} with two elements \verb{$pars} and \verb{$w}
 }
 \description{
 ..
 }
 \details{
-Only used in \link{QLMDe} and unexported function \code{qfmx_gr}, not compute intensive
+Only used in function \code{\link[=QLMDe]{QLMDe()}} and unexported function \code{qfmx_gr()}, not compute intensive
 }

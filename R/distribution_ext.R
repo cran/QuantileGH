@@ -13,14 +13,15 @@
 #' 
 #' another 'layer' of \link[stats]{approxfun}
 #' 
-#' @return 
-#' \link{approxdens} returns a \link[base]{function}.
+#' @returns 
+#' [approxdens] returns a \link[base]{function}.
 #' 
 #' @examples 
 #' x = rnorm(1e3L)
 #' f = approxdens(x)
 #' f(x[1:3])
 #' 
+#' @importFrom stats density.default
 #' @export
 approxdens <- function(x, ...) {
   if (anyNA(x)) stop('input must not contain missing value')
@@ -36,8 +37,8 @@ approxdens <- function(x, ...) {
 #' 
 #' @param type \link[base]{character} scalar
 #' 
-#' @return 
-#' \link{distType} returns a \link[base]{character} \link[base]{vector}. 
+#' @returns 
+#' [distType] returns a \link[base]{character} \link[base]{vector}. 
 #' 
 #' @export
 distType <- function(type = c('discrete', 'nonNegContinuous', 'continuous')) {
@@ -61,8 +62,7 @@ distType <- function(type = c('discrete', 'nonNegContinuous', 'continuous')) {
     'RevGumbel', 'RevWeibull', # ?DescTools::dRevGumbel, ?DescTools::dRevWeibull
     'gumbel', 'lgamma', # ?ordinal::dgumbel, ?ordinal::dlgamma.  Name clash ?VGAM::dgumbel, ?VGAM::dlgamma
     # 'lnorm3', # needs rethink
-    'sn', 'st', # skew-normal, skew-t from \pkg{sn}
-    'SN', 'ST', # skew-normal, skew-t inspired by \pkg{mixsmsn}
+    'sn', 'st', # skew-normal, skew-t from \CRANpkg{sn}
     'GH', # my \link{dGH}
     # MCMCpack::dinvgamma # do not have p* and q* function
     NULL
@@ -82,10 +82,11 @@ distType <- function(type = c('discrete', 'nonNegContinuous', 'continuous')) {
 #' 
 #' @param distname \link[base]{character} scalar, name of distribution
 #' 
-#' @return 
-#' \link{distArgs} returns a \link[base]{character} \link[base]{vector}.
+#' @returns 
+#' Function [distArgs()] returns a \link[base]{character} \link[base]{vector}.
 #' 
-#' @seealso \link[methods]{formalArgs}
+#' @seealso 
+#' \link[methods]{formalArgs}
 #' 
 #' @export
 distArgs <- function(distname) {
@@ -102,7 +103,6 @@ distArgs <- function(distname) {
          GH = c('A', 'B', 'g', 'h'), # tzh::dGH
          sn = c('xi', 'omega', 'alpha'), # ?sn::dsn # I do not understand 'tau'
          st = c('xi', 'omega', 'alpha', 'nu'), # ?sn::dst
-         SN = c('mean', 'sd', 'shape'), # my ?dSN from ?mixsmsn:::dSN
          stop(sQuote(distname), ' not supported yet'))
 }
 
@@ -113,7 +113,7 @@ distArgs <- function(distname) {
 #' 
 #' @param distname \link[base]{character} scalar, name of distribution
 #' 
-#' @return 
+#' @returns 
 #' \link{dist_logtrans} returns an \link[base]{integer} scalar
 #' 
 #' @export

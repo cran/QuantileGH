@@ -14,21 +14,22 @@
 #' 
 #' @details 
 #' 
-#' \link{pmlogis_first} and \link{pmlogis_last} take a length \eqn{k-1} \link[base]{numeric} \link[base]{vector} of 
+#' Functions [pmlogis_first()] and [pmlogis_last()] take a length \eqn{k-1} \link[base]{numeric} \link[base]{vector} of 
 #' multinomial logits \eqn{q} and convert them into length \eqn{k} multinomial probabilities \eqn{p}, 
 #' regarding the first or last category as reference, respectively.
 #' 
-#' \link{qmlogis_first} and \link{qmlogis_last} take a length \eqn{k} \link[base]{numeric} \link[base]{vector} of 
+#' Functions [qmlogis_first()] and [qmlogis_last()] take a length \eqn{k} \link[base]{numeric} \link[base]{vector} of 
 #' multinomial probabilities \eqn{p} and convert them into length \eqn{k-1} multinomial logits \eqn{q}, 
 #' regarding the first or last category as reference, respectively.
 #' 
-#' @return 
+#' @returns 
 #' 
-#' \link{pmlogis_first} and \link{pmlogis_last} return a \link[base]{vector} of multinomial probabilities \eqn{p}.
+#' Functions [pmlogis_first()] and [pmlogis_last()] return a \link[base]{vector} of multinomial probabilities \eqn{p}.
 #' 
-#' \link{qmlogis_first} and \link{qmlogis_last} returns a \link[base]{vector} of multinomial logits \eqn{q}.
+#' Functions [qmlogis_first()] and [qmlogis_last()] return a \link[base]{vector} of multinomial logits \eqn{q}.
 #'
-#' @seealso \link[stats]{plogis} \link[stats]{qlogis}
+#' @seealso 
+#' \link[stats]{plogis} \link[stats]{qlogis}
 #'   
 #' @examples
 #' (a = qmlogis_last(c(2,5,3)))

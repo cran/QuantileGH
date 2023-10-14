@@ -11,20 +11,20 @@
 #' @param dist (optional) \linkS4class{fmx} object
 #' 
 #' @param distname \link[base]{character} scalar, name of distribution (see \linkS4class{fmx}),
-#' default value determined by \code{dist}
+#' default value determined by `dist`
 #' 
 #' @param K \link[base]{integer} scalar, number of components,
-#' default value determined by \code{dist}
+#' default value determined by `dist`
 #' 
 #' @param pars \link[base]{double} \link[base]{matrix}, 
 #' distribution parameters of a finite mixture distribution (see \linkS4class{fmx}),
-#' default value determined by \code{dist}
+#' default value determined by `dist`
 #' 
-#' @return 
+#' @returns 
 #' 
-#' \link{fmx_constraint} returns the indexes of internal parameters 
+#' \link{fmx_constraint} returns the indices of internal parameters 
 #' (only applicable to Tukey's \eqn{g}-&-\eqn{h} mixture distribution, yet) to be constrained, 
-#' based on the input \linkS4class{fmx} object \code{dist}.
+#' based on the input \linkS4class{fmx} object `dist`.
 #' 
 #' @examples 
 #' (d0 = fmx('GH', A = c(1,4), g = c(.2,.1), h = c(.05,.1), w = c(1,1)))
@@ -70,7 +70,7 @@ fmx_constraint <- function(dist, distname = dist@distname, K = dim(dist@pars)[1L
 #' 
 #' @param x \link[base]{character} \link[base]{vector}, constraint(s) to be imposed.  
 #' For example, for a two-component Tukey's \eqn{g}-&-\eqn{h}
-#' mixture, \code{c('g1', 'h2')} indicates \eqn{g_1=h_2=0} given \eqn{A_1 < A_2}, i.e., the 
+#' mixture, `c('g1', 'h2')` indicates \eqn{g_1=h_2=0} given \eqn{A_1 < A_2}, i.e., the 
 #' \eqn{g}-parameter for the first component (with smaller location value)
 #' and the \eqn{h}-parameter for the second component (with larger mean value) are to be constrained as 0.
 #' 
@@ -78,12 +78,12 @@ fmx_constraint <- function(dist, distname = dist@distname, K = dim(dist@pars)[1L
 #' 
 #' @param K \link[base]{integer} scalar, number of components
 #' 
-#' @return 
+#' @returns 
 #' 
-#' \link{user_constraint} returns the indexes of internal parameters 
+#' \link{user_constraint} returns the indices of internal parameters 
 #' (only applicable to Tukey's \eqn{g}-&-\eqn{h} mixture distribution, yet) to be constrained, 
-#' based on the type of distribution (\code{distname}), number of components (\code{K}) 
-#' and a user-specified string (e.g., \code{c('g2', 'h1')}).
+#' based on the type of distribution `distname`, number of components `K`
+#' and a user-specified string (e.g., `c('g2', 'h1')`).
 #' 
 #' @examples 
 #' (d0 = fmx('GH', A = c(1,4), g = c(.2,.1), h = c(.05,.1), w = c(1,1)))
@@ -121,33 +121,37 @@ user_constraint <- function(x, distname, K) {
 
 
 
-#' @title TeX Label of Parameter Constraint(s) of \linkS4class{fmx} Object
+#' @title TeX Label (of Parameter Constraint(s)) of \linkS4class{fmx} Object
 #' 
 #' @description 
 #' 
-#' Create TeX label of parameter constraint(s) of \linkS4class{fmx} object
+#' Create TeX label of (parameter constraint(s)) of \linkS4class{fmx} object
 #' 
 #' @param dist \linkS4class{fmx} object
 #' 
-#' @return 
+#' @param print_K \link[base]{logical} scalar, whether to print the number of components \eqn{K}.
+#' Default `FALSE`.
 #' 
-#' \link{constraint_TeX} returns a \link[base]{character} scalar 
+#' @returns 
+#' 
+#' Function [getTeX()] returns a \link[base]{character} scalar 
 #' (of TeX expression) of the constraint, 
 #' primarily intended for end-users in plots.
 #' 
 #' 
 #' @examples 
 #' (d0 = fmx('GH', A = c(1,4), g = c(.2,.1), h = c(.05,.1), w = c(1,1)))
-#' constraint_TeX(d0)
+#' getTeX(d0)
 #' 
 #' (d1 = fmx('GH', A = c(1,4), g = c(.2,0), h = c(0,.1), w = c(1,1)))
-#' constraint_TeX(d1)
+#' getTeX(d1)
 #' 
 #' (d2 = fmx('GH', A = c(1,4), g = c(.2,0), h = c(.15,.1), w = c(1,1)))
-#' constraint_TeX(d2)
+#' getTeX(d2)
 #' 
 #' @export
-constraint_TeX <- function(dist) {
+getTeX <- function(dist, print_K = FALSE) {
+  if (!inherits(dist, what = 'fmx')) stop('do not allow')
   distname <- dist@distname
   K <- dim(dist@pars)[1L]
   distK <- paste0(distname, K)
@@ -157,9 +161,19 @@ constraint_TeX <- function(dist) {
     if (!length(usr)) return(paste0('Full ', distK))
     if (identical(usr, c(t.default(outer(c('g', 'h'), seq_len(K), FUN = paste0))))) return(paste0('norm', K))
     latex <- attr(constr, which = 'tex', exact = TRUE)
-    #return(paste0(distK, ': $', paste(c(latex, '0'), collapse = '='), '$'))
-    return(paste0('$', paste(c(latex, '0'), collapse = '='), ', K=', K, '$'))
-  }, return(distK))
+    ret <- paste(c(latex, '0'), collapse = '=')
+    if (print_K) return(paste0(distK, ': $', ret, '$')) #return(paste0('$', ret, ', K=', K, '$'))
+    return(paste0('$', ret, '$'))
+  }, { # all else
+    nm <- switch(distname, 
+                 norm = 'Normal',
+                 sn = 'Skew Normal',
+                 st = 'Skew $t$', 
+                 genpois1 = 'Generalized Poisson', # ?SIBERG::fitGP
+                 nbinom = 'Negative Binomial', # SIBERG::fitNB
+                 stop())
+    if (print_K) sprintf('%d-comp. %s', K, nm) else nm
+  })
 }
 
 
@@ -175,7 +189,7 @@ constraint_TeX <- function(dist) {
 #' Also the degree-of-freedom in \link[stats]{logLik},
 #' as well as \code{stats:::AIC.logLik} and \code{stats:::BIC.logLik}
 #' 
-#' @return 
+#' @returns 
 #' \link{npar.fmx} returns an \link[base]{integer} scalar.
 #' 
 #' @export
@@ -186,7 +200,13 @@ npar.fmx <- function(dist) {
   # attr(, 'df') is the number of (estimated) parameters in the model.
   # I write this function so that I do not have to do \link{dfmx} if not needed
   dm <- dim(dist@pars)
-  (dm[2L] + 1L) * dm[1L] - 1L - length(attr(fmx_constraint(dist), which = 'user', exact = TRUE))
+  ret <- (dm[2L] + 1L) * dm[1L] - 1L - length(attr(fmx_constraint(dist), which = 'user', exact = TRUE))
+  if (dist@distname == 'st') {
+    nu <- dist@pars[,'nu']
+    if (length(unique.default(nu)) != 1L) stop('\\pkg{mixsmsn} update to enable multiple `nu`?')
+    ret <- ret - (length(nu) - 1L)
+  }
+  return(ret)
 }
 
 

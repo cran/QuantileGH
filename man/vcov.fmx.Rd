@@ -10,7 +10,7 @@
 \item{object}{\linkS4class{fmx} object}
 
 \item{internal}{\link[base]{logical} scalar, either for the user-friendly parameters (\code{FALSE}, default)
-(e.g., \code{mean,sd} for normal mixture, and \code{A,B,g,h} for Tukey's \eqn{g}-and-\eqn{h} mixture), or
+(e.g., \verb{mean,sd} for normal mixture, and \verb{A,B,g,h} for Tukey's \eqn{g}-and-\eqn{h} mixture), or
 for the internal/unconstrained parameters (\code{TRUE}).}
 
 \item{...}{place holder for S3 naming convention}
@@ -27,7 +27,4 @@ the approximate asymptotic variance-covariance \link[base]{matrix} of the user-f
 or the asymptotic variance-covariance matrix of the internal/unconstrained parameters (\code{parm = 'internal'}).
 When the distribution has constraints on one or more parameters,
 \link{vcov.fmx} does not return the variance/covariance involving the constrained parameters.
-}
-\seealso{
-\link[stats]{vcov}
 }

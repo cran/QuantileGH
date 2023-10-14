@@ -15,7 +15,8 @@ reAssign(x, ...)
 \item{...}{potential parameters, currently not in use.}
 }
 \value{
-An \code{'reAssign_tkmeans'} object, which inherits from \link[tclust]{tkmeans} class.
+Function \code{\link[=reAssign.tkmeans]{reAssign.tkmeans()}} returns an \code{'reAssign_tkmeans'} object,
+which inherits from \link[tclust]{tkmeans} class.
 }
 \description{
 Re-assign the observations,
@@ -25,7 +26,7 @@ Mahalanobis distance.
 }
 \details{
 Given the \link[tclust]{tkmeans} input,
-the \link[stats:mahalanobis]{Mahalanobis} distance is computed between each trimmed observation
+the \link[stats]{mahalanobis} distance is computed between each trimmed observation
 and each cluster.
 Each trimmed observation is assigned to the closest cluster (i.e., with the smallest Mahalanobis distance).
 }
@@ -39,7 +40,4 @@ clus = tkmeans(geyser2, k = 3L, alpha = .03)
 plot(clus, main = 'Before Re-Assigning')
 plot(reAssign(clus), main = 'After Re-Assigning')
 
-}
-\seealso{
-\link[tclust]{tkmeans}
 }

@@ -26,7 +26,7 @@ the Tukey's \eqn{g}-&-\eqn{h} mixture estimate provided by \link{fmx_cluster}
 and the normal mixture estimate by \link{fmx_normix},
 and select the one either with maximum likelihood (\code{test = 'logLik'}, default),
 with minimum Cramer-von Mises distance (\code{test = 'CvM'}) or
-with minimum Kolmogorov distance (\code{test = 'Kolmogorov'}).
+with minimum Kolmogorov distance (\code{\link[=Kolmogorov_fmx]{Kolmogorov_fmx()}}).
 }
 \examples{
 d1 = fmx('norm', mean = c(1, 2), sd = .5, w = c(.4, .6))

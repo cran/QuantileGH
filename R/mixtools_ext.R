@@ -1,17 +1,18 @@
 
 
-#' @title Names of Distribution Parameters of \code{mixEM} Object
+#' @title Names of Distribution Parameters of `'mixEM'` Object
 #' 
 #' @description 
-#' Names of distribution parameters of \code{'mixEM'} object, based on \CRANpkg{mixtools} 2020-02-05.
+#' Names of distribution parameters of `'mixEM'` object, based on \CRANpkg{mixtools} 2020-02-05.
 #' 
-#' @param object \code{'mixEM'} object, currently only the returned value of 
+#' @param object `'mixEM'` object, currently only the returned value of 
 #' \link[mixtools]{normalmixEM} and \link[mixtools]{gammamixEM} are supported
 #' 
-#' @return 
-#' \link{mixEM_pars} returns a \link[base]{character} vector
+#' @returns 
+#' Function [mixEM_pars()] returns a \link[base]{character} \link[base]{vector}
 #' 
-#' @seealso \link[mixtools]{normalmixEM} \link[mixtools]{gammamixEM}
+#' @seealso 
+#' \link[mixtools]{normalmixEM} \link[mixtools]{gammamixEM}
 #' 
 #' @export
 mixEM_pars <- function(object) {
@@ -24,21 +25,20 @@ mixEM_pars <- function(object) {
 
 
 
-#' @title Log-Likelihood of \code{'mixEM'} Object
+#' @title Log-Likelihood of `'mixEM'` Object
 #' 
 #' @description 
-#' To obtain the log-Likelihood of \code{'mixEM'} object, based on \CRANpkg{mixtools} 2020-02-05.
+#' To obtain the log-Likelihood of `'mixEM'` object, based on \CRANpkg{mixtools} 2020-02-05.
 #' 
-#' @param object \code{'mixEM'} object, currently only the returned value of 
+#' @param object `'mixEM'` object, currently only the returned value of 
 #' \link[mixtools]{normalmixEM} and \link[mixtools]{gammamixEM} are supported
 #' 
 #' @param ... additional parameters, currently not in use
 #' 
-#' @return 
-#' \link{logLik.mixEM} returns a \link[stats]{logLik} object.
+#' @returns 
+#' Function [logLik.mixEM()] returns a \link[stats]{logLik} object.
 #' 
-#' @seealso \link[stats]{logLik} 
-#' 
+#' @importFrom stats logLik 
 #' @export
 logLik.mixEM <- function(object, ...) {
   val <- object[['loglik']]
@@ -60,27 +60,28 @@ logLik.mixEM <- function(object, ...) {
 
 
 
-#' @title Sort \code{mixEM} Object by First Parameters
+#' @title Sort `'mixEM'` Object by First Parameters
 #' 
 #' @description 
-#' To sort a \code{mixEM} object by its first parameters, i.e.,
+#' To sort a `'mixEM'` object by its first parameters, i.e.,
 #' \eqn{\mu}'s for normal mixture, \eqn{\alpha}'s for \eqn{\gamma}-mixture, etc.
 #' 
-#' @param x \code{mixEM} object
+#' @param x `'mixEM'` object
 #' 
 #' @param decreasing \link[base]{logical} scalar. Should the sort by \eqn{mu}'s 
-#' be increasing (\code{FALSE}, default) or decreasing (\code{TRUE})?
+#' be increasing (`FALSE`, default) or decreasing (`TRUE`)?
 #' 
 #' @param ... additional parameters, currently not in use
 #' 
 #' @details 
-#' \link[mixtools]{normalmixEM} does \strong{not} order the location parameter
+#' \link[mixtools]{normalmixEM} does *not* order the location parameter
 #' 
-#' @return 
+#' @returns 
 #' 
-#' \link{sort.mixEM} returns a \code{mixEM} object.
+#' [sort.mixEM] returns a `'mixEM'` object.
 #' 
-#' @seealso \link[base]{sort}
+#' @seealso 
+#' \link[base]{sort}
 #' 
 #' @export
 sort.mixEM <- function(x, decreasing = FALSE, ...) {

@@ -13,11 +13,8 @@
 \item{...}{additional parameters, currently not in use}
 }
 \value{
-\link{logLik.mixEM} returns a \link[stats]{logLik} object.
+Function \code{\link[=logLik.mixEM]{logLik.mixEM()}} returns a \link[stats]{logLik} object.
 }
 \description{
 To obtain the log-Likelihood of \code{'mixEM'} object, based on \CRANpkg{mixtools} 2020-02-05.
-}
-\seealso{
-\link[stats]{logLik}
 }

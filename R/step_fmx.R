@@ -13,8 +13,8 @@
 #' Akaike's information criterion \link[stats]{AIC}, or 
 #' Bayesian information criterion \link[stats]{BIC} (default).
 #' 
-#' @param direction \link[base]{character} scalar, \code{'forward'} (default) or
-#' \code{'backward'}
+#' @param direction \link[base]{character} scalar, `'forward'` (default) or
+#' `'backward'`
 #' 
 #' @param ... additional parameters, currently not in use
 #' 
@@ -32,14 +32,15 @@
 #' The algorithm iterates until only significantly-different-from-zero \eqn{g} and \eqn{h} parameters 
 #' are retained, which corresponds to \eqn{gh}-parsimonious Tukey's \eqn{g}-&-\eqn{h} mixture model.
 #' 
-#' @return 
+#' @returns 
 #' 
-#' \link{step_fmx} returns an object of S3 class \code{'step_fmx'}, 
+#' \link{step_fmx} returns an object of S3 class `'step_fmx'`, 
 #' which is a \link[base]{list} of selected models (in reversed order) with attribute(s)
-#' \code{'direction'} and
-#' \code{'test'}.
+#' `'direction'` and
+#' `'test'`.
 #' 
-#' @seealso \link[stats]{step}
+#' @seealso 
+#' \link[stats]{step}
 #' 
 #' @export
 step_fmx <- function(object, test = c('BIC', 'AIC'), direction = c('forward', 'backward'), ...) {
@@ -70,10 +71,10 @@ print.step_fmx <- function(x, ...) {
   print.fmx(x[[1L]])
   
   test <- attr(x, which = 'test', exact = TRUE)
-  tb <- data.frame( # this is \strong{not} an 'anova' table!!
+  tb <- data.frame( # this is *not* an 'anova' table!!
     '# Parameter' = vapply(x, FUN = npar.fmx, FUN.VALUE = 0L), 
     test = vapply(x, FUN = match.fun(test), FUN.VALUE = 0), 
-    row.names = vapply(x, FUN = constraint_TeX, FUN.VALUE = ''), 
+    row.names = vapply(x, FUN = getTeX, FUN.VALUE = ''), 
     check.names = FALSE)
   names(tb)[2L] <- test
   print.data.frame(tb)

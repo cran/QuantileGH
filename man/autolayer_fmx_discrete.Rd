@@ -38,5 +38,5 @@ Default is the slot \code{object@data}.}
 ..
 }
 \seealso{
-\link[ggplot2]{autolayer} \link[ggplot2]{geom_histogram}
+\link[ggplot2]{autolayer}
 }

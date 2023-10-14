@@ -27,21 +27,21 @@ QLMDe(
 \item{data.name}{\link[base]{character} scalar, name for the observations for user-friendly print out.}
 
 \item{constraint}{\link[base]{character} \link[base]{vector}, parameters (\eqn{g} and/or \eqn{h} for Tukey's \eqn{g}-&-\eqn{h} mixture) to be set at 0.
-See \link{fmx_constraint} for details.}
+See function \code{\link[=fmx_constraint]{fmx_constraint()}} for details.}
 
 \item{probs}{\link[base]{numeric} \link[base]{vector}, percentiles at where the sample and theoretical quantiles are to be matched.
-See \link{QLMDp} for details.}
+See function \code{\link[=QLMDp]{QLMDp()}} for details.}
 
 \item{init}{\link[base]{character} scalar for the method of initial values selection,
 or an \linkS4class{fmx} object of the initial values.
-See \link{fmx_hybrid} for more details.}
+See function \code{\link[=fmx_hybrid]{fmx_hybrid()}} for more details.}
 
-\item{tol, maxiter}{see \link{vuniroot2}}
+\item{tol, maxiter}{see function \code{\link[=vuniroot2]{vuniroot2()}}}
 
 \item{...}{additional parameters of \link[stats]{optim}}
 }
 \value{
-\link{QLMDe} returns an \linkS4class{fmx} object.
+Function \code{\link[=QLMDe]{QLMDe()}} returns an \linkS4class{fmx} object.
 }
 \description{
 The quantile least Mahalanobis distance algorithm estimates the parameters of
@@ -56,7 +56,7 @@ clustering with re-assignment.
 Quantile Least Mahalanobis Distance estimator fits a single-component or finite mixture distribution
 by minimizing the Mahalanobis distance between
 the theoretical and observed quantiles,
-using the empirical quantile variance-covariance matrix \link{quantile_vcov}.
+using the empirical quantile variance-covariance matrix \code{\link[=quantile_vcov]{quantile_vcov()}}.
 }
 \examples{
 
@@ -65,5 +65,5 @@ hist(x1 <- CK5[[1L]])
 
 }
 \seealso{
-\link[stats]{optim} \link{fmx_hybrid}
+\code{\link[=fmx_hybrid]{fmx_hybrid()}}
 }

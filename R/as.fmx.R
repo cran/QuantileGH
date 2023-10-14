@@ -16,11 +16,10 @@
 #' @details 
 #' In order to take advantage of all methods for \linkS4class{fmx} objects
 #' 
-#' @return
-#' \link{as.fmx} returns an \linkS4class{fmx} object.
+#' @returns
+#' S3 generic function [as.fmx()] returns an \linkS4class{fmx} object.
 #' 
-#' @seealso \link{as.fmx.fitdist} \link{as.fmx.mixEM}
-#' 
+#' @seealso [as.fmx.fitdist()] [as.fmx.mixEM()]
 #' @export
 as.fmx <- function(x, data, ...) UseMethod('as.fmx')
 
@@ -39,9 +38,10 @@ as.fmx.fmx <- function(x, data, ...) x
 #' 
 #' @param ... ..
 #' 
-#' @return 
-#' \link{as.fmx.fitdist} returns an \linkS4class{fmx} object.
+#' @returns 
+#' Function [as.fmx.fitdist()] returns an \linkS4class{fmx} object.
 #' 
+#' @export as.fmx.fitdist
 #' @export
 as.fmx.fitdist <- function(x, data = x[['data']], ...) {
   if (!length(data)) stop('Rerun ?fitdistrplus::fitdist with `keepdata = TRUE')
@@ -54,11 +54,11 @@ as.fmx.fitdist <- function(x, data = x[['data']], ...) {
 
 
 
-#' @title Convert \code{mixEM} Objects to \linkS4class{fmx} Objects
+#' @title Convert `mixEM` Objects to \linkS4class{fmx} Objects
 #' 
 #' @description ..
 #' 
-#' @param x \code{mixEM} object
+#' @param x `mixEM` object
 #' 
 #' @param data \link[base]{numeric} \link[base]{vector}
 #' 
@@ -67,13 +67,14 @@ as.fmx.fitdist <- function(x, data = x[['data']], ...) {
 #' @note 
 #' \link[mixtools]{plot.mixEM} not plot \link[mixtools]{gammamixEM} returns, as of 2022-09-19.
 #' 
-#' @return 
-#' \link{as.fmx.mixEM} returns an \linkS4class{fmx} object.
+#' @returns 
+#' Function [as.fmx.mixEM()] returns an \linkS4class{fmx} object.
 #' 
 #' @examples 
 #' library(mixtools)
 #' (x = as.fmx(normalmixEM(faithful$waiting, k = 2)))
 #' 
+#' @export as.fmx.mixEM
 #' @export
 as.fmx.mixEM <- function(x, data = x[['x']], ...) {
   if (!length(data)) stop('wont happen')
@@ -101,37 +102,25 @@ as.fmx.mixEM <- function(x, data = x[['x']], ...) {
 
 
 
-#' @title Convert Objects from \pkg{mixsmsn} to \linkS4class{fmx} Objects
+#' @title Convert `Skew.normal` fit from \CRANpkg{mixsmsn} to \linkS4class{fmx}
 #' 
 #' @description ..
 #' 
-#' @param x \code{Normal}, \code{Skew.normal}, \code{t}, \code{Skew.t} object, returned from \link[mixsmsn]{smsn.mix} with option \code{family = 'Skew.normal'}
+#' @param x `'Skew.normal'` object, 
+#' returned from \link[mixsmsn]{smsn.mix} with parameter 
+#' `family = 'Skew.normal'`
 #' 
 #' @param data \link[base]{numeric} \link[base]{vector}
 #' 
-#' @param engine \link[base]{character} scalar for \code{Skew.normal} and \code{Skew.t} method dispatch, 
-#' either \CRANpkg{sn} 
-#' (default, using \link[sn]{dsn}, \link[sn]{psn}, \link[sn]{dst} or \link[sn]{pst}),
-#' or \CRANpkg{mixsmsn} (using my re-written \link{dSN} and \link{dST}, but I do not have function \code{pSN} or \code{pST}).
-#'  
-#' @param ... ..
-#' 
-#' @seealso \link[mixsmsn]{smsn.mix}
+#' @param ... additional parameters, currently not in use
 #' 
 #' @note
 #' \link[mixsmsn]{smsn.mix} does not offer a parameter to keep the input data, as of 2021-10-06.
 #' 
-#' @return 
-#' 
-#' \link{as.fmx.Skew.normal}, \code{as.fmx.Normal} and \link{as.fmx.Skew.t} return an \linkS4class{fmx} object.
-#' 
-#' \link{as.fmx.t} has not been completed yet
+#' @returns 
+#' Function [as.fmx.Skew.normal()] returns an \linkS4class{fmx} object.
 #' 
 #' @examples 
-#' 
-#' if (FALSE) {
-#' # all examples work
-#' # disabled as they are slow
 #' 
 #' library(mixsmsn)
 #' # ?smsn.mix
@@ -140,158 +129,225 @@ as.fmx.mixEM <- function(x, data = x[['x']], ...) {
 #' arg3 = c(mu = 35, sigma2 = 9, lambda = -6, nu = 5)
 #' set.seed(120); x = rmix(n = 1e3L, p=c(.5, .2, .3), family = 'Skew.t', 
 #'   arg = list(unname(arg1), unname(arg2), unname(arg3)))
-#'   
-#' # Skew Normal
-#' class(m <- smsn.mix(x, nu = 3, g = 3, family = 'Skew.normal', calc.im = FALSE))
-#' mix.hist(y = x, model = m)
-#' 
-#' m2 = as.fmx(m, data = x, engine = 'mixsmsn')
-#' autoplot(m2)
-#' (l2 = logLik(m2))
-#' stopifnot(identical(AIC(m2), m$aic), identical(BIC(m2), m$bic))
-#' tryCatch(fmx_diagnosis(m2, type = 'Kolmogorov'), error = identity)
-#' tryCatch(fmx_diagnosis(m2, type = 'CramerVonMises'), error = identity)
-#' 
-#' m3 = as.fmx(m, data = x, engine = 'sn')
-#' autoplot(m3)
-#' (l3 = logLik(m3))
-#' stopifnot(identical(AIC(m3), m$aic), identical(BIC(m3), m$bic))
-#' autoplot(m3, type = 'distribution')
-#' fmx_diagnosis(m3, type = 'Kolmogorov')
-#' fmx_diagnosis(m3, type = 'CramerVonMises')
-#' 
-#' fmx_diagnosis(m2, type = 'KullbackLeibler') - fmx_diagnosis(m3, type = 'KullbackLeibler')
-#' 
-#' identical(l2, l3)
-#' range(attr(l2, 'logl') - attr(l3, 'logl'))
-#' 
-#' if (FALSE) {
-#' (x0 = x[729]) # only wrong
-#' #range(qfmx(pfmx(x[-729], dist = m3), dist = m3) - x[-729])
-#' #range(qfmx(pfmx(x[-729], dist = m3, lower.tail = F), dist = m3, lower.tail = F) - x[-729])
-#' qfmx(pfmx(x0, dist = m3), dist = m3)
-#' qfmx(pfmx(x0, dist = m3, lower.tail = FALSE), dist = m3, lower.tail = FALSE)
-#' qfmx_interval(m3) # using interval end.   I have no plan to fix this error.
-#' }
-#' 
-#' # Normal
-#' class(m <- smsn.mix(x, nu = 3, g = 3, family = 'Normal', calc.im = FALSE))
-#' mix.hist(y = x, model = m)
-#' autoplot(as.fmx(m, data = x))
-#' 
-#' 
-#' # skew t
-#' set.seed(131534); x = rmix(n = 1e3L, p = c(.5, .2, .3), family = 'Skew.t', 
-#'   arg = list(unname(arg1), unname(arg2), unname(arg3)))
 #'
-#' g = 3
-#' class(m <- smsn.mix(x, nu = 3, g = g, family = 'Skew.t', calc.im = FALSE))
-#' mix.hist(y = x, model = m)
-#' 
-#' m2 = as.fmx(m, data = x, engine = 'mixsmsn')
-#' autoplot(m2)
-#' (l2 = logLik(m2))
-#' attr(l2, 'df') = g*3 + 1 + (g-1) # ?mixsmsn::smsn.mix gives same `nu` for all components
-#' stopifnot(all.equal.numeric(AIC(l2), m$aic), all.equal.numeric(BIC(l2), m$bic))
-#' tryCatch(fmx_diagnosis(m2, type = 'Kolmogorov'), error = identity)
-#' tryCatch(fmx_diagnosis(m2, type = 'CramerVonMises'), error = identity)
-#' 
-#' m3 = as.fmx(m, data = x, engine = 'sn')
-#' autoplot(m3)
-#' (l3 = logLik(m3))
-#' attr(l3, 'df') = g*3 + 1 + (g-1) # same reason
-#' stopifnot(all.equal.numeric(AIC(l3), m$aic), all.equal.numeric(BIC(l3), m$bic))
-#' autoplot(m3, type = 'distribution')
-#' fmx_diagnosis(m3, type = 'Kolmogorov')
-#' fmx_diagnosis(m3, type = 'CramerVonMises')
-#' 
-#' fmx_diagnosis(m2, type = 'KullbackLeibler') - fmx_diagnosis(m3, type = 'KullbackLeibler')
-#' 
-#' identical(l2, l3)
-#' range(attr(l2, 'logl') - attr(l3, 'logl'))
-#' 
-#' # t
-#' class(m <- smsn.mix(x, nu = 3, g = 3, family = 't', calc.im = FALSE))
-#' mix.hist(y = x, model = m)
-#' # autoplot(as.fmx(m, data = x)) # not ready yet!!
+#' # Skew Normal
+#' class(m1 <- smsn.mix(x, nu = 3, g = 3, family = 'Skew.normal', calc.im = FALSE))
+#' mix.hist(y = x, model = m1)
+#' m1a = as.fmx(m1, data = x)
+#' autoplot(m1a)
+#' (l1a = logLik(m1a))
+#' stopifnot(identical(AIC(m1a), m1$aic), identical(BIC(m1a), m1$bic))
+#' autoplot(m1a, type = 'distribution')
+#' if (FALSE) {
+#' range(qfmx(pfmx(x, dist = m1a), dist = m1a) - x) # need to think why
+#' # may have to do with ?qfmx_interval
 #' }
 #' 
 #' 
-#' 
-#' @name as_fmx_mixsmsn
 #' @method as.fmx Skew.normal
+#' @export as.fmx.Skew.normal
 #' @export
-as.fmx.Skew.normal <- function(x, data, engine = c('sn', 'mixsmsn'), ...) {
-  if (!length(data) || !is.numeric(data) || anyNA(data)) stop('illegal `data`')
+as.fmx.Skew.normal <- function(x, data, ...) {
   x <- sort.Skew.normal(x, decreasing = FALSE)
-  engine <- match.arg(engine)
   
-  new(Class = 'fmx', pars = switch(engine, sn = cbind(
+  ret <- new(Class = 'fmx', pars = cbind(
     xi = x[['mu']],
     omega = sqrt(x[['sigma2']]),
     alpha = x[['shape']]
-  ), mixsmsn = cbind(
-    mean = x[['mu']],
-    sd = sqrt(x[['sigma2']]),
-    shape = x[['shape']]
-  )), 
+  ), 
   w = x[['pii']],
-  distname = switch(engine, sn = 'sn', mixsmsn = 'SN'), 
-  data = data, epdf = approxdens(data))
+  distname = 'sn')
+  
+  if (!missing(data)) {
+    if (!length(data) || !is.numeric(data) || anyNA(data)) stop('illegal `data`')
+    ret@data <- data
+    ret@epdf <- approxdens(data)
+    ret@Kolmogorov <- Kolmogorov_fmx(ret)
+    ret@CramerVonMises <- CramerVonMises_fmx(ret)
+    ret@KullbackLeibler <- KullbackLeibler_fmx(ret)
+  }
+  
+  return(ret)
 }
 
 
 
 
-#' @rdname as_fmx_mixsmsn
+
+#' @title Convert `Normal` fit from \CRANpkg{mixsmsn} to \linkS4class{fmx}
+#' 
+#' @description ..
+#' 
+#' @param x `'Normal'` object, 
+#' returned from \link[mixsmsn]{smsn.mix} with parameter 
+#' `family = 'Normal'`
+#' 
+#' @param data \link[base]{numeric} \link[base]{vector}
+#' 
+#' @param ... additional parameters, currently not in use
+#' 
+#' @note
+#' \link[mixsmsn]{smsn.mix} does not offer a parameter to keep the input data, as of 2021-10-06.
+#' 
+#' @returns 
+#' Function [as.fmx.Normal()] returns an \linkS4class{fmx} object.
+#' 
+#' @examples 
+#' 
+#' library(mixsmsn)
+#' # ?smsn.mix
+#' arg1 = c(mu = 5, sigma2 = 9, lambda = 5, nu = 5)
+#' arg2 = c(mu = 20, sigma2 = 16, lambda = -3, nu = 5)
+#' arg3 = c(mu = 35, sigma2 = 9, lambda = -6, nu = 5)
+#' set.seed(120); x = rmix(n = 1e3L, p=c(.5, .2, .3), family = 'Skew.t', 
+#'   arg = list(unname(arg1), unname(arg2), unname(arg3)))
+#'
+#' # Normal
+#' class(m2 <- smsn.mix(x, nu = 3, g = 3, family = 'Normal', calc.im = FALSE))
+#' mix.hist(y = x, model = m2)
+#' m2a = as.fmx(m2, data = x)
+#' autoplot(m2a)
+#' 
 #' @method as.fmx Normal
+#' @export as.fmx.Normal
 #' @export
 as.fmx.Normal <- function(x, data, ...) {
-  if (!length(data) || !is.numeric(data) || anyNA(data)) stop('illegal `data`')
   x <- sort.Normal(x, decreasing = FALSE)
   
-  new(Class = 'fmx', pars = cbind(
+  ret <- new(Class = 'fmx', pars = cbind(
     mean = x[['mu']],
     sd = sqrt(x[['sigma2']])
   ), 
   w = x[['pii']],
-  distname = 'norm', 
-  data = data, epdf = approxdens(data))
+  distname = 'norm')
+  
+  if (!missing(data)) {
+    if (!length(data) || !is.numeric(data) || anyNA(data)) stop('illegal `data`')
+    ret@data <- data
+    ret@epdf <- approxdens(data)
+    ret@Kolmogorov <- Kolmogorov_fmx(ret)
+    ret@CramerVonMises <- CramerVonMises_fmx(ret)
+    ret@KullbackLeibler <- KullbackLeibler_fmx(ret)
+  }
+  
+  return(ret)
+  
 }
 
 
 
 
 
-#' @rdname as_fmx_mixsmsn
+
+#' @title Convert `Skew.t` fit from \CRANpkg{mixsmsn} to \linkS4class{fmx}
+#' 
+#' @description ..
+#' 
+#' @param x `'Skew.t'` object, 
+#' returned from \link[mixsmsn]{smsn.mix} with parameter 
+#' `family = 'Skew.t'` 
+#' 
+#' @param data \link[base]{numeric} \link[base]{vector}
+#' 
+#' @param ... additional parameters, currently not in use
+#' 
+#' @note
+#' \link[mixsmsn]{smsn.mix} does not offer a parameter to keep the input data, as of 2021-10-06.
+#' 
+#' @returns 
+#' Function [as.fmx.Skew.t()] returns an \linkS4class{fmx} object.
+#' 
+#' @examples 
+#' \donttest{
+#' # mixsmsn::smsn.mix with option `family = 'Skew.t'` is slow
+#' 
+#' library(mixsmsn)
+#' # ?smsn.mix
+#' arg1 = c(mu = 5, sigma2 = 9, lambda = 5, nu = 5)
+#' arg2 = c(mu = 20, sigma2 = 16, lambda = -3, nu = 5)
+#' arg3 = c(mu = 35, sigma2 = 9, lambda = -6, nu = 5)
+#' set.seed(120); x = rmix(n = 1e3L, p=c(.5, .2, .3), family = 'Skew.t', 
+#'   arg = list(unname(arg1), unname(arg2), unname(arg3)))
+#'
+#' # Skew t
+#' class(m3 <- smsn.mix(x, nu = 3, g = 3, family = 'Skew.t', calc.im = FALSE))
+#' mix.hist(y = x, model = m3)
+#' m3a = as.fmx(m3, data = x)
+#' autoplot(m3a)
+#' (l3a = logLik(m3a))
+#' stopifnot(all.equal.numeric(AIC(l3a), m3$aic), all.equal.numeric(BIC(l3a), m3$bic))
+#' autoplot(m3a, type = 'distribution')
+#' }
+#' 
 #' @method as.fmx Skew.t
+#' @export as.fmx.Skew.t
 #' @export
-as.fmx.Skew.t <- function(x, data, engine = c('sn', 'mixsmsn'), ...) {
-  if (!length(data) || !is.numeric(data) || anyNA(data)) stop('illegal `data`')
+as.fmx.Skew.t <- function(x, data, ...) {
   x <- sort.Skew.t(x, decreasing = FALSE)
-  engine <- match.arg(engine)
   
-  new(Class = 'fmx', pars = switch(engine, sn = cbind(
+  K <- length(x[['mu']]) # number of components
+  if (length(x[['nu']]) != 1L) stop('\\pkg{mixsmsn} update to enable multiple `nu`? Modify ?npar.fmx') 
+  
+  ret <- new(Class = 'fmx', pars = cbind(
     xi = x[['mu']],
     omega = sqrt(x[['sigma2']]),
     alpha = x[['shape']],
     nu = x[['nu']]
-  ), mixsmsn = cbind(
-    mean = x[['mu']],
-    sd = sqrt(x[['sigma2']]),
-    shape = x[['shape']],
-    nu = x[['nu']]
-  )), 
+  ), 
   w = x[['pii']],
-  distname = switch(engine, sn = 'st', mixsmsn = 'ST'), 
-  data = data, epdf = approxdens(data))
+  distname = 'st')
+  
+  if (!missing(data)) {
+    if (!length(data) || !is.numeric(data) || anyNA(data)) stop('illegal `data`')
+    ret@data <- data
+    ret@epdf <- approxdens(data)
+    ret@Kolmogorov <- Kolmogorov_fmx(ret)
+    ret@CramerVonMises <- CramerVonMises_fmx(ret)
+    ret@KullbackLeibler <- KullbackLeibler_fmx(ret)
+  }
+  
+  return(ret)
 }
 
 
 
 
 
-#' @rdname as_fmx_mixsmsn
+
+#' @title Convert `Normal` fit from \CRANpkg{mixsmsn} to \linkS4class{fmx}
+#' 
+#' @description ..
+#' 
+#' @param x `'t'` object, 
+#' returned from \link[mixsmsn]{smsn.mix} with parameter 
+#' `family = 't'`
+#' 
+#' @param data \link[base]{numeric} \link[base]{vector}
+#' 
+#' @param ... additional parameters, currently not in use
+#' 
+#' @note
+#' \link[mixsmsn]{smsn.mix} does not offer a parameter to keep the input data, as of 2021-10-06.
+#' 
+#' @returns 
+#' Function [as.fmx.t()] has not been completed yet
+#' 
+#' @examples 
+#' 
+#' library(mixsmsn)
+#' # ?smsn.mix
+#' arg1 = c(mu = 5, sigma2 = 9, lambda = 5, nu = 5)
+#' arg2 = c(mu = 20, sigma2 = 16, lambda = -3, nu = 5)
+#' arg3 = c(mu = 35, sigma2 = 9, lambda = -6, nu = 5)
+#' set.seed(120); x = rmix(n = 1e3L, p=c(.5, .2, .3), family = 'Skew.t', 
+#'   arg = list(unname(arg1), unname(arg2), unname(arg3)))
+#'
+#' # t
+#' class(m4 <- smsn.mix(x, nu = 3, g = 3, family = 't', calc.im = FALSE))
+#' mix.hist(y = x, model = m4)
+#' # autoplot(as.fmx(m4, data = x)) # not ready yet!!
+#' 
+#' 
 #' @method as.fmx t
 #' @export
 as.fmx.t <- function(x, data, ...) {

@@ -14,18 +14,17 @@
 #' @details 
 #' 
 #' Given the \link[tclust]{tkmeans} input, 
-#' the \link[stats:mahalanobis]{Mahalanobis} distance is computed between each trimmed observation 
+#' the \link[stats]{mahalanobis} distance is computed between each trimmed observation 
 #' and each cluster.
 #' Each trimmed observation is assigned to the closest cluster (i.e., with the smallest Mahalanobis distance). 
 #'
-#' @return An \code{'reAssign_tkmeans'} object, which inherits from \link[tclust]{tkmeans} class. 
+#' @returns 
+#' Function [reAssign.tkmeans()] returns an `'reAssign_tkmeans'` object, 
+#' which inherits from \link[tclust]{tkmeans} class. 
 #' 
 #' @note 
-#' Either \link[stats]{kmeans} or \link[tclust]{tkmeans} is slow for big \code{x}.
+#' Either \link[stats]{kmeans} or \link[tclust]{tkmeans} is slow for big `x`.
 #' 
-#' @seealso \link[tclust]{tkmeans}
-#' 
-#' @importFrom tclust tkmeans
 #' 
 #' @examples 
 #' library(tclust)
@@ -39,6 +38,7 @@
 reAssign <- function(x, ...) UseMethod('reAssign')
 
 #' @rdname reAssign
+#' @export reAssign.tkmeans
 #' @export
 reAssign.tkmeans <- function(x, ...) {
   obs <- x$par$x

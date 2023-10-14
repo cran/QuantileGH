@@ -32,6 +32,3 @@ the univariate normal mixture by EM \link[mixtools:normalmixEM]{algorithm}.
 \code{R} replicates of normal mixture estimates are obtained, and
 the one with maximum likelihood will be selected
 }
-\seealso{
-\link[tclust]{tkmeans} \link[mixtools]{normalmixEM}
-}

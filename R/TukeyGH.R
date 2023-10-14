@@ -19,13 +19,13 @@
 #' 
 #' @param z \link[base]{double} \link[base]{vector}, standard normal quantiles.
 #' 
-#' @param log,log.p \link[base]{logical} scalar, if \code{TRUE}, probabilities \eqn{p} are given as \eqn{\log(p)}.
+#' @param log,log.p \link[base]{logical} scalar, if `TRUE`, probabilities \eqn{p} are given as \eqn{\log(p)}.
 #' 
-#' @param lower.tail \link[base]{logical} scalar, if \code{TRUE} (default), probabilities are \eqn{Pr(X\le x)} otherwise, \eqn{Pr(X>x)}.
+#' @param lower.tail \link[base]{logical} scalar, if `TRUE` (default), probabilities are \eqn{Pr(X\le x)} otherwise, \eqn{Pr(X>x)}.
 #' 
-#' @param A \link[base]{double} scalar, location parameter \eqn{A}, default \eqn{A=0} (as parameter \code{mean} of \link[stats]{dnorm} function)
+#' @param A \link[base]{double} scalar, location parameter \eqn{A}, default \eqn{A=0} (as parameter `mean` of \link[stats]{dnorm})
 #' 
-#' @param B \link[base]{double} scalar, scale parameter \eqn{B>0}, default \eqn{B=1} (as parameter \code{sd} of \link[stats]{dnorm} function)
+#' @param B \link[base]{double} scalar, scale parameter \eqn{B>0}, default \eqn{B=1} (as parameter `sd` of \link[stats]{dnorm})
 #' 
 #' @param g \link[base]{double} scalar, skewness parameter \eqn{g}, default \eqn{g=0} indicating no skewness
 #' 
@@ -35,33 +35,34 @@
 #' 
 # @param interval interval of standard normal quantiles, when solving from Tukey \eqn{g}-&-\eqn{h} quantiles using the vuniroot algorithm 
 #' 
-#' @param ... other parameters of \link{vuniroot2}
+#' @param ... other parameters of function [vuniroot2()]
 #' 
 #' @details
 #' 
-#' Argument \code{A}, \code{B}, \code{g} and \code{h} will be recycled to the maximum length of the four.
+#' Argument `A`, `B`, `g` and `h` will be recycled to the maximum length of the four.
 #' 
-#' @return 
+#' @returns 
 #' 
-#' \link{dGH} gives the density and accommodates \link[base]{vector} arguments \code{A}, \code{B}, \code{g} and \code{h}.
-#' The quantiles \code{x} can be either \link[base]{vector} or matrix.
-#' This function takes about 1/5 time of \link[gk]{dgh}.
+#' Function [dGH()] gives the density and accommodates \link[base]{vector} arguments `A`, `B`, `g` and `h`.
+#' The quantiles `x` can be either \link[base]{vector} or matrix.
+#' This function takes about 1/5 time of `gk::dgh`.
 #' 
-#' \link{pGH} gives the distribution function, only taking scalar arguments and \link[base]{vector} quantiles \code{q}.
-#' This function takes about 1/10 time of \link[gk]{pgh} and \link[OpVaR]{pgh} functions.
+#' Function [pGH()] gives the distribution function, only taking scalar arguments and \link[base]{vector} quantiles `q`.
+#' This function takes about 1/10 time of `gk::pgh` and `OpVaR::pgh` functions.
 #' 
-#' \link{qGH} gives the quantile function, only taking scalar arguments and \link[base]{vector} probabilities \code{p}.
-#' This function takes about 1/2 time of \link[gk]{qgh} and 1/10 time of \link[OpVaR]{qgh} functions.
+#' Function [qGH()] gives the quantile function, only taking scalar arguments and \link[base]{vector} probabilities `p`.
+#' This function takes about 1/2 time of `gk::qgh` and 1/10 time of `OpVaR::qgh` functions.
 #' 
-#' \link{rGH} generates random deviates, only taking scalar arguments.
+#' Function [rGH()] generates random deviates, only taking scalar arguments.
 #' 
-#' \link{z2qGH} is the Tukey's \eqn{g}-&-\eqn{h} transformation.
-#' Note that \code{gk:::z2gh} is only an \strong{approximation} to Tukey's \eqn{g}-&-\eqn{h} transformation.
+#' Function [z2qGH()] is the Tukey's \eqn{g}-&-\eqn{h} transformation.
+#' Note that `gk:::z2gh` is only an *approximation* to Tukey's \eqn{g}-&-\eqn{h} transformation.
 #' 
-#' Unfortunately, \link{qGH2z}, the inverse of Tukey's \eqn{g}-&-\eqn{h} transformation, 
+#' Unfortunately, function [qGH2z()], the inverse of Tukey's \eqn{g}-&-\eqn{h} transformation, 
 #' does not have a closed form and needs to be solved numerically.
 #' 
-#' @seealso \link[OpVaR]{dgh} \link[gk]{dgh}
+#' @seealso 
+#' `OpVaR::dgh` `gk::dgh`
 #' 
 #' 
 #' @examples
@@ -137,7 +138,7 @@ dGH <- function(x, A = 0, B = 1, g = 0, h = 0, log = FALSE, ...) {
 
 # Derivative of \link{z2qGH} against `z`, on the log-scale
 # inspired by ?OpVaR:::deriv_gh
-# Inf in `z` \strong{will} cause trouble
+# Inf in `z` *will* cause trouble
 # not sure of the usage of ?base::tanh and ?base::cosh in ?gk:::Qgh_deriv
 Deriv_z2qGH <- function(z, B, g, h) {
   hz2 <- h * z^2
@@ -208,7 +209,7 @@ z2qGH <- function(z, A = 0, B = 1, g = 0, h = 0) {
   g0 <- (g == 0) # vector
   h0 <- (h == 0)
   q <- exp(tcrossprod(h, z^2/2))
-  q[g0,] <- tcrossprod(g0[g0], z) * q[g0, , drop = FALSE] # \strong{not} \code{g[g0]}
+  q[g0,] <- tcrossprod(g0[g0], z) * q[g0, , drop = FALSE] # *not* `g[g0]`
   q[!g0,] <- expm1(tcrossprod(g[!g0], z)) / g[!g0] * q[!g0, , drop = FALSE]
   return(A + q * B)
 }

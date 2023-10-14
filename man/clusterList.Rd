@@ -14,16 +14,17 @@ clusterList(x, K, method = c("reassign_tkmeans"), alpha = 0.05, ...)
 \item{method}{\link[base]{character} scalar, only \code{'reassign_tkmeans'} supported yet}
 
 \item{alpha}{\link[base]{numeric} scalar, proportion of observations to be trimmed in
-trimmed k-means algorithm \link[tclust]{tkmeans}}
+trimmed \eqn{k}-means algorithm \link[tclust]{tkmeans}}
 
 \item{...}{additional parameters, currently not in use}
 }
 \value{
-\link{clusterList} returns a \link[base]{list} of \link[base]{numeric} \link[base]{vector}s.
+Function \code{\link[=clusterList]{clusterList()}} returns a \link[base]{list} of \link[base]{numeric} \link[base]{vector}s.
 }
 \description{
 ..
 }
 \seealso{
-\link[stats]{kmeans} \link[tclust]{tkmeans} \link{reAssign}
+\code{\link[=reAssign.tkmeans]{reAssign.tkmeans()}}
+\link[stats]{kmeans}
 }

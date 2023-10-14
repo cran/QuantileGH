@@ -1,3 +1,5 @@
+# QuantileGH 0.1.4
+Bug fix.
 # QuantileGH 0.1.3
 Hybrid starting values using \code{?fmx_cluster}, \code{?fmx_normix} and \code{?fmx_hybrid}.
 

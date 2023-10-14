@@ -1,7 +1,7 @@
 
 
-# Note that we do not have parameter \code{...} in \link{vuniroot2}, otherwise it will cause warning message 
-# `The \link{dGH}/\link{pGH} function should raise an error when names are incorrectly named' in \code{fitdistrplus:::test1fun}.
+# Note that we do not have parameter `...` in [vuniroot2], otherwise it will cause warning message 
+# `The [dGH]/[pGH] function should raise an error when names are incorrectly named' in `fitdistrplus:::test1fun`.
 
 
 #' @title Vectorised One Dimensional Root (Zero) Finding
@@ -22,22 +22,19 @@
 #' 
 #' @details
 #' 
-#' \link{vuniroot2}, different from \link[rstpm2]{vuniroot}, does
+#' Function [vuniroot2()], different from \link[rstpm2]{vuniroot}, does
 #' \itemize{
-#' \item{accept \code{NA_real_} as element(s) of \eqn{y}}
-#' \item{handle the case when the analytical root is at \code{lower} and/or \code{upper}}
-#' \item{return a root of \code{Inf} (if \code{abs(f(lower)) >= abs(f(upper))}) or 
-#' \code{-Inf} (if \code{abs(f(lower)) < abs(f(upper))}), 
-#' when the function value \code{f(lower)} and \code{f(upper)} are not of opposite sign.}
+#' \item{accept `NA_real_` as element(s) of \eqn{y}}
+#' \item{handle the case when the analytic root is at `lower` and/or `upper`}
+#' \item{return a root of 
+#' `Inf` (if `abs(f(lower)) >= abs(f(upper))`) or 
+#' `-Inf` (if `abs(f(lower)) < abs(f(upper))`), 
+#' when the function value `f(lower)` and `f(upper)` are not of opposite sign.}
 #' }
 #' 
-#' @return 
+#' @returns 
 #' 
-#' \link{vuniroot2} returns a \link[base]{numeric} \link[base]{vector} \eqn{x} as the solution of \eqn{y = f(x)} with given vector \eqn{y}.
-#' 
-#' @seealso \link[rstpm2]{vuniroot}
-#' 
-#' @importFrom rstpm2 vuniroot
+#' Function [vuniroot2()] returns a \link[base]{numeric} \link[base]{vector} \eqn{x} as the solution of \eqn{y = f(x)} with given vector \eqn{y}.
 #' 
 #' @examples 
 #' library(rstpm2)
@@ -55,6 +52,7 @@
 #' 
 #' vuniroot2(c(NA, 1:9), f = function(x) x^2, interval = c(1, 3)) # all good
 #' 
+#' @importFrom rstpm2 vuniroot
 #' @export
 vuniroot2 <- function(
   y, f, interval = stop('must provide a length-2 `interval`'), 
@@ -104,12 +102,12 @@ vuniroot2 <- function(
 
   if (any(sign_same <- (f.lower * f.upper > 0))) {
     # smart!  used in ?base::uniroot and ?rstpm2::vuniroot
-    # `sign_same` are the indexes of `y` where {f(interval[1L]) - y} and {f(interval[2L]) - y} are of the same signs
+    # `sign_same` are the indices of `y` where {f(interval[1L]) - y} and {f(interval[2L]) - y} are of the same signs
     # they will cause error in ?rstpm2::vuniroot and/or ?base::uniroot
-    # therefore I will let the solution at these indexes to be either -Inf or Inf
+    # therefore I will let the solution at these indices to be either -Inf or Inf
     out[yok][sign_same & (abs(f.lower) < abs(f.upper))] <- -Inf # otherwise Inf (as defined as default)
     sign_change <- which(!sign_same)
-    # `sign_change` are the indexes of `y` where {f(interval[1L]) - y} and {f(interval[2L]) - y} are of opposite signs
+    # `sign_change` are the indices of `y` where {f(interval[1L]) - y} and {f(interval[2L]) - y} are of opposite signs
   } else sign_change <- seq_along(yok_)
   
   if (nn <- length(sign_change)) { 
@@ -122,7 +120,7 @@ vuniroot2 <- function(
       lower = rep(interval[1L], times = nn), upper = rep(interval[2L], times = nn), 
       f.lower = f.lower[sign_change], f.upper = f.upper[sign_change], 
       extendInt = 'no', check.conv = TRUE,
-      tol = tol, maxiter = maxiter, trace = 0L)[[1L]] # do \strong{not} ?base::suppressWarnings
+      tol = tol, maxiter = maxiter, trace = 0L)[[1L]] # do *not* ?base::suppressWarnings
   }
   
   return(out)

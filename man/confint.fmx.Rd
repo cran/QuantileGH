@@ -25,6 +25,3 @@ or the internal/unconstrained parameters (\code{parm = 'internal'}).
 When the distribution has constraints on one or more parameters,
 \link{confint.fmx} does not return the confident intervals of for the constrained parameters.
 }
-\seealso{
-\link[stats]{confint}
-}

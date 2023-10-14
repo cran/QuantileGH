@@ -8,18 +8,20 @@
 #' 
 #' @param K \link[base]{integer} scalar, number of mixture components
 #' 
-#' @param method \link[base]{character} scalar, only \code{'reassign_tkmeans'} supported yet
+#' @param method \link[base]{character} scalar, only `'reassign_tkmeans'` supported yet
 #' 
 #' @param alpha \link[base]{numeric} scalar, proportion of observations to be trimmed in 
-#' trimmed k-means algorithm \link[tclust]{tkmeans}
+#' trimmed \eqn{k}-means algorithm \link[tclust]{tkmeans}
 #' 
 #' @param ... additional parameters, currently not in use
 #' 
-#' @return
-#' \link{clusterList} returns a \link[base]{list} of \link[base]{numeric} \link[base]{vector}s.
+#' @returns
+#' Function [clusterList()] returns a \link[base]{list} of \link[base]{numeric} \link[base]{vector}s.
 #' 
-#' @seealso \link[stats]{kmeans} \link[tclust]{tkmeans} \link{reAssign}
+#' @seealso [reAssign.tkmeans()]
+#' \link[stats]{kmeans} 
 #' 
+#' @importFrom tclust tkmeans
 #' @export
 clusterList <- function(x, K, method = c('reassign_tkmeans'), alpha = .05, ...) {
   if (anyNA(x)) stop('input must be free of missing data')
@@ -49,7 +51,7 @@ clusterList <- function(x, K, method = c('reassign_tkmeans'), alpha = .05, ...) 
 #' 
 #' @param constraint \link[base]{character} \link[base]{vector}, 
 #' parameters (\eqn{g} and/or \eqn{h} for Tukey's \eqn{g}-&-\eqn{h} mixture) to be set at 0.  
-#' See \link{fmx_constraint} for details.
+#' See function [fmx_constraint()] for details.
 #' 
 #' @param ... additional parameters, currently not in use
 #' 
@@ -66,20 +68,20 @@ clusterList <- function(x, K, method = c('reassign_tkmeans'), alpha = .05, ...) 
 #' \item{The letter-value based estimates of Tukey's \eqn{g}-&-\eqn{h} distribution (Hoaglin, 2006)
 #' are calculated, for any \eqn{K\geq 1}, serving as the starting values for 
 #' QLMD algorithm.   
-#' These estimates are provided by \link{fmx_cluster}.}
+#' These estimates are provided by function [fmx_cluster()].}
 #' 
-#' \item{the \link[stats]{median} and \link[stats:mad]{MAD} will serve as 
+#' \item{the \link[stats]{median} and \link[stats]{mad} will serve as 
 #' the starting values for \eqn{\mu} and \eqn{\sigma} 
 #' (or \eqn{A} and \eqn{B} for Tukey's \eqn{g}-&-\eqn{h} distribution, with \eqn{g = h = 0}),
 #' for QLMD algorithm
 #' when \eqn{K = 1}.}
 #' }
 #' 
-#' @return 
+#' @returns 
 #' 
-#' \link{fmx_cluster} returns an \linkS4class{fmx} object.
+#' Function [fmx_cluster()] returns an \linkS4class{fmx} object.
 #' 
-#' @seealso \link{letterValue}
+#' @seealso [letterValue()]
 #' 
 #' @export
 fmx_cluster <- function(
@@ -143,22 +145,19 @@ fmx_cluster <- function(
 #' 
 #' @details
 #' 
-#' \link{fmx_normix} ... the cluster centers are provided as the starting values of \eqn{\mu}'s for 
+#' [fmx_normix] ... the cluster centers are provided as the starting values of \eqn{\mu}'s for 
 #' the univariate normal mixture by EM \link[mixtools:normalmixEM]{algorithm}.
-#' \code{R} replicates of normal mixture estimates are obtained, and 
+#' `R` replicates of normal mixture estimates are obtained, and 
 #' the one with maximum likelihood will be selected
 #' 
-#' @return 
+#' @returns 
 #' 
-#' \link{fmx_normix} returns an \linkS4class{fmx} object.
-#' 
-#' @seealso \link[tclust]{tkmeans} \link[mixtools]{normalmixEM}
+#' [fmx_normix] returns an \linkS4class{fmx} object.
 #' 
 #' @importFrom tclust tkmeans
 #' @importFrom mixtools normalmixEM
 #' @importFrom utils capture.output
 #' @importFrom stats median.default
-#' 
 #' @export
 fmx_normix <- function(x, K, distname = c('GH', 'norm', 'sn'), alpha = .05, R = 10L, ...) {
   
@@ -216,7 +215,7 @@ fmx_normix <- function(x, K, distname = c('GH', 'norm', 'sn'), alpha = .05, R = 
 #' @param x \link[base]{numeric} \link[base]{vector}, observations
 #' 
 #' @param test \link[base]{character} scalar, criteria for selecting the optimal estimates.  
-#' See \strong{Details}.
+#' See **Details**.
 #' 
 #' @param ... additional parameters of \link{fmx_normix} and \link{fmx_cluster}
 #' 
@@ -227,9 +226,9 @@ fmx_normix <- function(x, K, distname = c('GH', 'norm', 'sn'), alpha = .05, R = 
 #' and the normal mixture estimate by \link{fmx_normix}, 
 #' and select the one either with maximum likelihood (\code{test = 'logLik'}, default), 
 #' with minimum Cramer-von Mises distance (\code{test = 'CvM'}) or 
-#' with minimum Kolmogorov distance (\code{test = 'Kolmogorov'}).
+#' with minimum Kolmogorov distance ([Kolmogorov_fmx()]).
 #' 
-#' @return 
+#' @returns 
 #' 
 #' \link{fmx_hybrid} returns an \linkS4class{fmx} object.
 #' 
@@ -258,8 +257,8 @@ fmx_hybrid <- function(x, test = c('logLik', 'CvM', 'KS'), ...) {
 
   stats <- list(
     logLik = - vapply(ys, FUN = logLik.fmx, data = x, FUN.VALUE = NA_real_),
-    CvM = vapply(ys, FUN = function(i) fmx_diagnosis(i, data = x, type = 'CramerVonMises')$statistic, FUN.VALUE = NA_real_),
-    Kolmogorov = vapply(ys, FUN = function(i) fmx_diagnosis(i, data = x, type = 'Kolmogorov'), FUN.VALUE = NA_real_)
+    CvM = vapply(ys, FUN = function(i) CramerVonMises_fmx(i, data = x), FUN.VALUE = NA_real_),
+    Kolmogorov = vapply(ys, FUN = function(i) Kolmogorov_fmx(i, data = x), FUN.VALUE = NA_real_)
   )
   if (anyNA(stats, recursive = TRUE)) stop('should not happen')
   
@@ -269,7 +268,7 @@ fmx_hybrid <- function(x, test = c('logLik', 'CvM', 'KS'), ...) {
   if (TRUE) { # for developer
     #attr(ret, 'ys') <- ys
     #attr(ret, 'x') <- x
-    #attr(ret, 'fig') <- batchplot_fmx(ys, obs = x) # slow
+    #attr(ret, 'fig') <- .Defunct('autoplot.fmxS')
     #attr(ret, 'chosen') <- chosen
   }
   return(ret)

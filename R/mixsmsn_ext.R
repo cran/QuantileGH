@@ -3,34 +3,36 @@
 
 
 
-#' @title Sort Objects from \pkg{mixsmsn} by Location Parameters
+#' @title Sort Objects from \CRANpkg{mixsmsn} by Location Parameters
 #' 
 #' @description 
-#' To sort an object returned from package \pkg{mixsmsn} by its location parameters
+#' To sort an object returned from package \CRANpkg{mixsmsn} by its location parameters
 #' 
-#' @param x \code{Normal}, \code{Skew.normal}, \code{Skew.t} object
+#' @param x `'Normal'`, `'Skew.normal'`, `'Skew.t'` object
 #' 
 #' @param decreasing \link[base]{logical} scalar. Should the sort the location parameter
-#' be increasing (\code{FALSE}, default) or decreasing (\code{TRUE})?
+#' be increasing (`FALSE`, default) or decreasing (`TRUE`)?
 #' 
 #' @param ... additional parameters, currently not in use
 #' 
 #' @details 
-#' \link[mixsmsn]{smsn.mix} does \strong{not} order the location parameter
+#' \link[mixsmsn]{smsn.mix} does *not* order the location parameter
 #' 
-#' @return 
+#' @returns 
 #' 
-#' \link{sort.Normal} returns a \code{Normal} object.
+#' Function [sort.Normal()] returns a `'Normal'` object.
 #' 
-#' \link{sort.Skew.normal} returns a \code{Skew.normal} object.
+#' Function [sort.Skew.normal()] returns a `'Skew.normal'` object.
 #' 
-#' \link{sort.Skew.t} returns a \code{Skew.t} object.
+#' Function [sort.Skew.t()] returns a `'Skew.t'` object.
 #' 
 #' 
-#' @seealso \link[base]{sort}
+#' @seealso 
+#' \link[base]{sort}
 #' 
 #' @name sort_mixsmsn
 #' @method sort Skew.normal
+#' @export sort.Skew.normal
 #' @export
 sort.Skew.normal <- function(x, decreasing = FALSE, ...) {
   # stop on multivariable object ..
@@ -49,6 +51,7 @@ sort.Skew.normal <- function(x, decreasing = FALSE, ...) {
 
 
 #' @rdname sort_mixsmsn
+#' @export sort.Normal
 #' @export
 sort.Normal <- function(x, decreasing = FALSE, ...) {
   # stop on multivariable object ..
@@ -67,6 +70,7 @@ sort.Normal <- function(x, decreasing = FALSE, ...) {
 
 #' @rdname sort_mixsmsn
 #' @method sort Skew.t
+#' @export sort.Skew.t
 #' @export
 sort.Skew.t <- function(x, decreasing = FALSE, ...) {
   # stop on multivariable object ..
@@ -86,6 +90,7 @@ sort.Skew.t <- function(x, decreasing = FALSE, ...) {
 
 
 #' @rdname sort_mixsmsn
+#' @export sort.t
 #' @export
 sort.t <- function(x, decreasing = FALSE, ...) {
   # stop on multivariable object ..

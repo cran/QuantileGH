@@ -25,7 +25,7 @@ distribution parameters of a finite mixture distribution (see \linkS4class{fmx})
 default value determined by \code{dist}}
 }
 \value{
-\link{fmx_constraint} returns the indexes of internal parameters
+\link{fmx_constraint} returns the indices of internal parameters
 (only applicable to Tukey's \eqn{g}-&-\eqn{h} mixture distribution, yet) to be constrained,
 based on the input \linkS4class{fmx} object \code{dist}.
 }

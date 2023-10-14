@@ -8,7 +8,7 @@
 #' 
 #' @param object an \linkS4class{fmx} object
 #' 
-#' @return 
+#' @returns 
 #' The \link[methods]{show} method for \linkS4class{fmx} object 
 #' does not have a returned value.
 #' 
@@ -36,10 +36,11 @@ setMethod(f = show, signature = signature(object = 'fmx'), definition = function
 #' 
 #' @param ... additional parameters, not currently in use
 #' 
-#' @return 
-#' \link{print.fmx} returns the input \linkS4class{fmx} object invisibly.
+#' @returns 
+#' [print.fmx] returns the input \linkS4class{fmx} object invisibly.
 #' 
-#' @seealso \link[base]{print}
+#' @seealso 
+#' \link[base]{print}
 #' 
 #' @export
 print.fmx <- function(x, ...) {
@@ -88,18 +89,18 @@ print.fmx <- function(x, ...) {
 #' @param x \linkS4class{fmx} object
 #' 
 #' @param i \link[base]{integer} or \link[base]{logical} \link[base]{vector}, 
-#' the row index(es) of \strong{components} to be chosen, see \link[base]{[}
+#' the row indices of *components* to be chosen, see \link[base]{[}
 #' 
 #' @details 
 #' 
 #' Note that using definitions as S3 method dispatch \code{`[.fmx`} won't work 
 #' for \linkS4class{fmx} objects.
 #' 
-#' @return 
+#' @returns 
 #' 
 #' An \linkS4class{fmx} object consisting of a subset of components.
-#' information about the observations (e.g. slots \code{@@data} and \code{@@data.name}),
-# as well as other estimation related slots (e.g., \code{@@init}) 
+#' information about the observations (e.g. slots `@@data` and `@@data.name`),
+# as well as other estimation related slots (e.g., `@@init`) 
 #' will be lost.
 #' 
 #' @examples 
@@ -136,16 +137,18 @@ setMethod(`[`, signature(x = 'fmx', i = 'ANY'), definition = function(x, i) {
 #' 
 #' @details 
 #' 
-#' \link{nobs.fmx} returns the sample size of
-#' the observations used in \link{QLMDe} estimation, or \code{integer(0)} for distribution-only
+#' [nobs.fmx] returns the sample size of
+#' the observations used in [QLMDe] estimation, or `integer(0)` for distribution-only
 #' \linkS4class{fmx} object 
 #' 
-#' @return 
+#' @returns 
 #' 
-#' \link{nobs.fmx} returns an \link[base]{integer} scalar.
+#' [nobs.fmx] returns an \link[base]{integer} scalar.
 #' 
-#' @seealso \link[stats]{nobs} 
+#' @seealso 
+#' \link[stats]{nobs} 
 #' 
+#' @export nobs.fmx
 #' @export
 nobs.fmx <- function(object, ...) {
   if (length(n <- object@data)) return(n)
@@ -171,16 +174,16 @@ nobs.fmx <- function(object, ...) {
 #' 
 #' @details 
 #' 
-#' \link{confint.fmx} returns the Wald-type confidence intervals based on the user-friendly parameters (\code{parm = 'user'}),
-#'  or the internal/unconstrained parameters (\code{parm = 'internal'}).
+#' [confint.fmx] returns the Wald-type confidence intervals based on the user-friendly parameters (`parm = 'user'`),
+#'  or the internal/unconstrained parameters (`parm = 'internal'`).
 #' When the distribution has constraints on one or more parameters, 
 #' \link{confint.fmx} does not return the confident intervals of for the constrained parameters.
 #'  
-#' @return 
-#' \link{confint.fmx} returns a \link[base]{matrix}
+#' @returns 
+#' [confint.fmx] returns a \link[base]{matrix}
 #' 
-#' @seealso \link[stats]{confint}
-#' 
+#' @importFrom stats confint
+#' @export confint.fmx
 #' @export
 confint.fmx <- function(object, ..., level = .95) {
   # essentially ?stats::confint.default
@@ -202,26 +205,26 @@ confint.fmx <- function(object, ..., level = .95) {
 #' 
 #' @param object \linkS4class{fmx} object
 #' 
-#' @param internal \link[base]{logical} scalar, either for the user-friendly parameters (\code{FALSE}, default)
-#' (e.g., \code{mean,sd} for normal mixture, and \code{A,B,g,h} for Tukey's \eqn{g}-and-\eqn{h} mixture), or
-#' for the internal/unconstrained parameters (\code{TRUE}).
+#' @param internal \link[base]{logical} scalar, either for the user-friendly parameters (`FALSE`, default)
+#' (e.g., `mean,sd` for normal mixture, and `A,B,g,h` for Tukey's \eqn{g}-and-\eqn{h} mixture), or
+#' for the internal/unconstrained parameters (`TRUE`).
 #' 
 #' @param ... place holder for S3 naming convention
 #' 
 #' @details 
 #' 
-#' \link{vcov.fmx} returns 
-#' the approximate asymptotic variance-covariance \link[base]{matrix} of the user-friendly parameters via delta-method (\code{parm = 'user'}), 
-#' or the asymptotic variance-covariance matrix of the internal/unconstrained parameters (\code{parm = 'internal'}). 
+#' [vcov.fmx] returns 
+#' the approximate asymptotic variance-covariance \link[base]{matrix} of the user-friendly parameters via delta-method (`parm = 'user'`), 
+#' or the asymptotic variance-covariance matrix of the internal/unconstrained parameters (`parm = 'internal'`). 
 #' When the distribution has constraints on one or more parameters, 
-#' \link{vcov.fmx} does not return the variance/covariance involving the constrained parameters.
+#' [vcov.fmx] does not return the variance/covariance involving the constrained parameters.
 #' 
-#' @return 
+#' @returns 
 #' 
-#' \link{vcov.fmx} returns a \link[base]{matrix}.
+#' [vcov.fmx] returns a \link[base]{matrix}.
 #' 
-#' @seealso \link[stats]{vcov}
-#' 
+#' @importFrom stats vcov
+#' @export vcov.fmx
 #' @export
 vcov.fmx <- function(object, internal = FALSE, ...) {
   
@@ -292,25 +295,25 @@ vcov.fmx <- function(object, internal = FALSE, ...) {
 #' 
 #' @param object \linkS4class{fmx} object
 #' 
-#' @param internal \link[base]{logical} scalar, either for the user-friendly parameters (\code{FALSE}, default)
-#' (e.g., \code{mean,sd} for normal mixture, and \code{A,B,g,h} for Tukey's \eqn{g}-and-\eqn{h} mixture), or
-#' for the internal/unconstrained parameters (\code{TRUE}).
-
+#' @param internal \link[base]{logical} scalar, either for the user-friendly parameters (`FALSE`, default)
+#' (e.g., `mean,sd` for normal mixture, and `A,B,g,h` for Tukey's \eqn{g}-and-\eqn{h} mixture), or
+#' for the internal/unconstrained parameters (`TRUE`).
+#' 
 #' @param ... place holder for S3 naming convention
 #' 
 #' @details 
 #' 
-#' \link{coef.fmx} returns the estimates of the user-friendly parameters (\code{parm = 'user'}), 
+#' Function [coef.fmx()] returns the estimates of the user-friendly parameters (`parm = 'user'`), 
 #' or the internal/unconstrained parameters (\code{parm = 'internal'}).
 #' When the distribution has constraints on one or more parameters, 
-#' \link{coef.fmx} does not return the estimates (which is constant \code{0}) of the constrained parameters.
+#' [coef.fmx()] does not return the estimates (which is constant \code{0}) of the constrained parameters.
 #' 
-#' @return 
+#' @returns 
 #' 
-#' \link{coef.fmx} returns a \link[base]{numeric} \link[base]{vector}.
+#' Function [coef.fmx()] returns a \link[base]{numeric} \link[base]{vector}.
 #' 
-#' @seealso \link[stats]{coef} 
-#' 
+#' @importFrom stats coef
+#' @export coef.fmx
 #' @export
 coef.fmx <- function(object, internal = FALSE, ...) {
   anm <- distArgs(object@distname)
@@ -341,17 +344,17 @@ coef.fmx <- function(object, internal = FALSE, ...) {
 #' 
 #' @details 
 #' 
-#' \link{logLik.fmx} returns a \link[stats]{logLik} object indicating the log-likelihood.
-#' An additional attribute \code{attr(, 'logl')} indicates the point-wise log-likelihood, 
+#' [logLik.fmx] returns a \link[stats]{logLik} object indicating the log-likelihood.
+#' An additional attribute `attr(,'logl')` indicates the point-wise log-likelihood, 
 #' to be use in Vuong's closeness test.
 #' 
-#' @return 
+#' @returns 
 #' 
-#' \link{logLik.fmx} returns a \link[stats]{logLik} object with 
-#' an additional attribute \code{attr(, 'logl')}.
+#' [logLik.fmx] returns a \link[stats]{logLik} object with 
+#' an additional attribute `attr(,'logl')`.
 #' 
-#' @seealso \link[stats]{logLik}
-#' 
+#' @importFrom stats logLik
+#' @export logLik.fmx
 #' @export
 logLik.fmx <- function(object, data = object@data, ...) {
   
@@ -391,42 +394,43 @@ logLik.fmx <- function(object, data = object@data, ...) {
 #' @param object \linkS4class{fmx} object
 #' 
 #' @param type \link[base]{character} scalar.  
-#' Option \code{'density'} (default) plots the probability density for \linkS4class{fmx} input
-#' (and the histogram if argument \code{data} is available).
-#' Option \code{'distribution'} plots the cumulative probability distribution for \linkS4class{fmx} input 
-#' (and the empirical cumulative distribution if argument \code{data} is available).
+#' Option `'density'` (default) plots the probability density for \linkS4class{fmx} input
+#' (and the histogram if argument `data` is available).
+#' Option `'distribution'` plots the cumulative probability distribution for \linkS4class{fmx} input 
+#' (and the empirical cumulative distribution if argument `data` is available).
 #' 
 #' @param data (optional) \link[base]{numeric} \link[base]{vector} of the observations.
-#' Default is the slot \code{object@@data}.
+#' Default is the slot `object@@data`.
 #' 
 #' @param epdf (optional) empirical probability density \link[base]{function} returned by \link[stats]{approxfun}.
-#' Default is the slot \code{object@@epdf}
+#' Default is the slot `object@@epdf`
 #' 
-#' @param hist.fill color of the body of histogram, default \code{'grey95'}
+#' @param hist.fill color of the body of histogram, default `'grey95'`
 #' 
 #' @param n \link[base]{integer}, see \link[ggplot2]{stat_function}
 #' 
 #' @param curve.col color of the density curve of the fitted finite mixture distribution.
-#' Default \code{'black'}
+#' Default `'black'`
 #' 
 #' @param xlim \link[base]{numeric} length-two \link[base]{vector}, horizontal range
 #' 
-# @param init \link[base]{logical} scalar, whether to plot the initial estimates used in \link{QLMDe}, default \code{FALSE}.
+# @param init \link[base]{logical} scalar, whether to plot the initial estimates used in \link{QLMDe}, default `FALSE`.
 #' 
 #' @param probs \link[base]{numeric} \link[base]{vector}, 
 #' the percentages (to be) used in \link{QLMDe}, can be plotted as vertical lines.
-#' Use \code{probs = NULL} to suppress the printing of these lines.
+#' Use `probs = NULL` to suppress the printing of these lines.
 #' 
 #' @param ... potential parameters of \link[ggplot2]{stat_function}
 #' 
-#' @return 
+#' @returns 
 #' 
-#' \link{autolayer_fmx_continuous} returns a \link[base]{list} of \link[ggplot2]{layer}s.
+#' Function [autolayer_fmx_continuous()] returns a \link[base]{list} of \link[ggplot2]{layer}s.
 #' 
-#' @seealso \link[ggplot2]{autolayer} \link[ggplot2]{geom_histogram} \link[ggplot2]{stat_function} 
+#' @seealso 
+#' \link[ggplot2]{autolayer} 
 #' 
+#' @importFrom ggplot2 geom_histogram stat_function stat_ecdf geom_vline geom_text
 #' @importFrom scales percent
-#' 
 #' @export
 autolayer_fmx_continuous <- function(
     object, 
@@ -487,13 +491,13 @@ autolayer_fmx_continuous <- function(
 #' @param object \linkS4class{fmx} object
 #' 
 #' @param type \link[base]{character} scalar.  
-#' Option \code{'density'} (default) plots the probability density for \linkS4class{fmx} input
-#' (and the histogram if argument \code{data} is available).
-#' Option \code{'distribution'} plots the cumulative probability distribution for \linkS4class{fmx} input 
-#' (and the cumulative histogram if argument \code{data} is available).
+#' Option `'density'` (default) plots the probability density for \linkS4class{fmx} input
+#' (and the histogram if argument `data` is available).
+#' Option `'distribution'` plots the cumulative probability distribution for \linkS4class{fmx} input 
+#' (and the cumulative histogram if argument `data` is available).
 #' 
 #' @param data (optional) \link[base]{numeric} (actually \link[base]{integer}) \link[base]{vector} of the observations.
-#' Default is the slot \code{object@@data}.
+#' Default is the slot `object@@data`.
 #' 
 #' @param bins \link[base]{integer} scalar
 #' 
@@ -501,14 +505,15 @@ autolayer_fmx_continuous <- function(
 #' 
 #' @param ... additional parameters, currently not in use
 #' 
-#' @return 
+#' @returns 
 #' 
-#' \link{autolayer_fmx_discrete} returns a \link[base]{list} of \link[ggplot2]{layer}s.
+#' [autolayer_fmx_discrete] returns a \link[base]{list} of \link[ggplot2]{layer}s.
 #' 
-#' @seealso \link[ggplot2]{autolayer} \link[ggplot2]{geom_histogram}
+#' @seealso 
+#' \link[ggplot2]{autolayer}
 #' 
+#' @importFrom ggplot2 geom_histogram stat_ecdf
 #' @importFrom scales percent
-#' 
 #' @export
 autolayer_fmx_discrete <- function(
     object, 
@@ -536,16 +541,13 @@ autolayer_fmx_discrete <- function(
   return(list(
     if (length(data)) {
       switch(type, density = {
-        geom_histogram(mapping = aes(x = data, y = after_stat(density)), bins = bins, colour = 'white', alpha = .1)
+        geom_histogram(mapping = aes(x = data, y = after_stat(density)), bins = bins, colour = 'white', alpha = .1, show.legend = FALSE)
       }, distribution = {
-        stat_ecdf(mapping = aes(x = data), geom = 'step', pad = FALSE, colour = 'grey70', linetype = 2L)
+        stat_ecdf(mapping = aes(x = data), geom = 'step', pad = FALSE, colour = 'grey70', linetype = 2L, show.legend = FALSE)
       })
     },
     geom_step(mapping = aes(x = x0, y = y), stat = 'identity'),
-    scale_y_continuous(labels = percent),
-    theme(legend.position = 'none')
-    #scale_colour_discrete(guide = 'none'),
-    #scale_fill_discrete(guide = 'none')
+    scale_y_continuous(labels = percent)
   ))
   
 }
@@ -570,15 +572,16 @@ autolayer_fmx_discrete <- function(
 #' @param xlab,ylab,title,caption \link[base]{character} scalars, the 
 #' horizontal and vertical label, title and caption
 #' 
-#' @param ... potential parameters of \link{autolayer_fmx_continuous} and \link{autolayer_fmx_discrete}
+#' @param ... potential parameters of [autolayer_fmx_continuous] and [autolayer_fmx_discrete]
 #' 
-#' @return 
+#' @returns 
 #' 
-#' \link{autoplot.fmx} returns a \link[ggplot2]{ggplot} object.
+#' [autoplot.fmx] returns a \link[ggplot2]{ggplot} object.
 #' 
-#' @seealso \link[ggplot2]{autoplot} \link[ggplot2]{labs}
+#' @seealso [autolayer_fmx_continuous] [autolayer_fmx_discrete]
+#' \link[ggplot2]{autoplot}
 #' 
-#' @importFrom latex2exp TeX
+#' 
 #' 
 #' @examples 
 #' (d2 = fmx('GH', A = c(1,6), B = 2, g = c(0,.3), h = c(.2,0), w = c(1,2)))
@@ -587,19 +590,20 @@ autolayer_fmx_discrete <- function(
 #' autoplot(d2)
 #' autoplot(d2, type = 'distribution')
 #' 
+#' @importFrom ggplot2 ggplot labs
+#' @importFrom latex2exp TeX
 #' @export
 autoplot.fmx <- function(
     object, 
     xlab = attr(object, which = 'data.name', exact = TRUE), # S4 slot, 
     ylab = NULL, # paste(object@distname, 'mixture'), 
-    title = TeX(constraint_TeX(object)),
+    title = TeX(getTeX(object)),
     caption = NULL, #if (nv <- length(v)) paste(nv, 'percentiles to match'),
     ...
 ) {
   ggplot() + 
     (if (object@distname %in% c(distType('continuous'), distType('nonNegContinuous'))) autolayer_fmx_continuous else autolayer_fmx_discrete)(object, ...) +
-    labs(x = xlab, y = ylab, title = title, caption = caption) +
-    theme_bw()
+    labs(x = xlab, y = ylab, title = title, caption = caption)
 }
 
 

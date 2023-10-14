@@ -14,7 +14,7 @@ as.fmx(x, data, ...)
 \item{...}{..}
 }
 \value{
-\link{as.fmx} returns an \linkS4class{fmx} object.
+S3 generic function \code{\link[=as.fmx]{as.fmx()}} returns an \linkS4class{fmx} object.
 }
 \description{
 Turn various objects that are created in other packages
@@ -24,5 +24,5 @@ to \linkS4class{fmx} class
 In order to take advantage of all methods for \linkS4class{fmx} objects
 }
 \seealso{
-\link{as.fmx.fitdist} \link{as.fmx.mixEM}
+\code{\link[=as.fmx.fitdist]{as.fmx.fitdist()}} \code{\link[=as.fmx.mixEM]{as.fmx.mixEM()}}
 }

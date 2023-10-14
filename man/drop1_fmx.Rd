@@ -26,8 +26,8 @@ Fit \linkS4class{fmx} models with a single parameters being added or dropped.
 ..
 }
 \note{
-Note that \link{drop1.fmx} and \link{add1.fmx} do \strong{not} return an \link[stats]{anova} table, like other
-\code{stats:::drop.*} or \code{stats:::add1.*} functions do.
+Note that \link{drop1.fmx} and \link{add1.fmx} do \emph{not} return an \link[stats]{anova} table, like other
+\verb{stats:::drop.*} or \verb{stats:::add1.*} functions do.
 }
 \examples{
 
@@ -44,16 +44,16 @@ system.time(m2 <- QLMDe(x2, distname = 'GH', K = 2L)) # ~2 secs
 d1 = drop1(m1)
 d1 # NULL
 d2 = drop1(m2)
-vapply(d2, FUN = constraint_TeX, FUN.VALUE = '')
+vapply(d2, FUN = getTeX, FUN.VALUE = '')
 
 a0 = add1(m0)
-vapply(a0, FUN = constraint_TeX, FUN.VALUE = '')
+vapply(a0, FUN = getTeX, FUN.VALUE = '')
 a1 = add1(m1)
-vapply(a1, FUN = constraint_TeX, FUN.VALUE = '')
+vapply(a1, FUN = getTeX, FUN.VALUE = '')
 
 }
 
 }
 \seealso{
-\link[stats]{step} \link[stats]{drop1} \link[stats]{add1}
+\link[stats]{step}
 }

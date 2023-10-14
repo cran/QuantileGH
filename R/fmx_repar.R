@@ -10,13 +10,13 @@
 #' 
 #' @param x \linkS4class{fmx} object
 #' 
-#' @param distname \link[base]{character} scalar, default value from \code{x@@distname}
+#' @param distname \link[base]{character} scalar, default `x@@distname`
 #' 
-#' @param pars \link[base]{numeric} \link[base]{matrix}, default value from \code{x@@pars}
+#' @param pars \link[base]{numeric} \link[base]{matrix}, default `x@@pars`
 #' 
-#' @param K \link[base]{integer} scalar, default value from \code{x}
+#' @param K \link[base]{integer} scalar, default value from `x`
 #' 
-#' @param w \link[base]{numeric} \link[base]{vector}, default value from \code{x@@w}
+#' @param w \link[base]{numeric} \link[base]{vector}, default `x@@w`
 #' 
 #' @param ... additional parameters, not currently used
 #' 
@@ -31,13 +31,13 @@
 #' 
 #' For mixing proportions to multinomial logits.
 #' 
-#' For \code{'norm'}: \code{sd -> log(sd)}
-#' for \code{'GH'}: \code{B -> log(B), h -> log(h)}
+#' For `'norm'`: `sd -> log(sd)`
+#' for `'GH'`: `B -> log(B), h -> log(h)`
 #' 
-#' @return \link{fmx2dbl} returns a \link[base]{numeric} vector
+#' @returns 
+#' Function [fmx2dbl()] returns a \link[base]{numeric} \link[base]{vector}
 #' 
-#' @seealso \link{dbl2fmx}
-#' 
+#' @seealso [dbl2fmx()]
 #' @export
 fmx2dbl <- function(x, distname = x@distname, pars = x@pars, K = dim(pars)[1L], w = x@w, ...) { 
   # no longer used in compute intensive algorithms
@@ -60,7 +60,7 @@ fmx2dbl <- function(x, distname = x@distname, pars = x@pars, K = dim(pars)[1L], 
 
 
 
-#' @title Inverse of \link{fmx2dbl}, for internal use
+#' @title Inverse of [fmx2dbl()], for internal use
 #' 
 #' @description ..
 #' 
@@ -73,9 +73,10 @@ fmx2dbl <- function(x, distname = x@distname, pars = x@pars, K = dim(pars)[1L], 
 #' @param ... additional parameters, not currently used
 #' 
 #' @details 
-#' Only used in \link{QLMDe} and unexported function \code{qfmx_gr}, not compute intensive
+#' Only used in function [QLMDe()] and unexported function `qfmx_gr()`, not compute intensive
 #' 
-#' @return \link{dbl2fmx} returns a \link[base]{list} with two elements \code{'pars'} and \code{'w'}
+#' @returns 
+#' Function [dbl2fmx()] returns a \link[base]{list} with two elements `$pars` and `$w`
 #' 
 #' @export
 dbl2fmx <- function(x, K, distname, ...) {

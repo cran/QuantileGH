@@ -24,17 +24,18 @@ vuniroot2(
 \item{maxiter}{\link[base]{integer} scalar, maximum number of iterations}
 }
 \value{
-\link{vuniroot2} returns a \link[base]{numeric} \link[base]{vector} \eqn{x} as the solution of \eqn{y = f(x)} with given vector \eqn{y}.
+Function \code{\link[=vuniroot2]{vuniroot2()}} returns a \link[base]{numeric} \link[base]{vector} \eqn{x} as the solution of \eqn{y = f(x)} with given vector \eqn{y}.
 }
 \description{
 To solve a monotone function \eqn{y = f(x)} for a given \link[base]{vector} of \eqn{y} values.
 }
 \details{
-\link{vuniroot2}, different from \link[rstpm2]{vuniroot}, does
+Function \code{\link[=vuniroot2]{vuniroot2()}}, different from \link[rstpm2]{vuniroot}, does
 \itemize{
 \item{accept \code{NA_real_} as element(s) of \eqn{y}}
-\item{handle the case when the analytical root is at \code{lower} and/or \code{upper}}
-\item{return a root of \code{Inf} (if \code{abs(f(lower)) >= abs(f(upper))}) or
+\item{handle the case when the analytic root is at \code{lower} and/or \code{upper}}
+\item{return a root of
+\code{Inf} (if \code{abs(f(lower)) >= abs(f(upper))}) or
 \code{-Inf} (if \code{abs(f(lower)) < abs(f(upper))}),
 when the function value \code{f(lower)} and \code{f(upper)} are not of opposite sign.}
 }
@@ -55,7 +56,4 @@ tryCatch(vuniroot(f, lower = lwr, upper = upr, extendInt = 'upX'), warning = ide
 
 vuniroot2(c(NA, 1:9), f = function(x) x^2, interval = c(1, 3)) # all good
 
-}
-\seealso{
-\link[rstpm2]{vuniroot}
 }

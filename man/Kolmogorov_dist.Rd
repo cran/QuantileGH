@@ -4,15 +4,10 @@
 \alias{Kolmogorov_dist}
 \title{One-Sample Kolmogorov Distance}
 \usage{
-Kolmogorov_dist(
-  obs,
-  null,
-  alternative = c("two.sided", "less", "greater"),
-  ...
-)
+Kolmogorov_dist(x, null, alternative = c("two.sided", "less", "greater"), ...)
 }
 \arguments{
-\item{obs}{\link[base]{numeric} or \link[base]{integer} \link[base]{vector}, observations}
+\item{x}{\link[base]{numeric} \link[base]{vector}, observations \eqn{x}}
 
 \item{null}{cumulative distribution \link[base]{function}}
 
@@ -22,19 +17,19 @@ alternative hypothesis, either \code{'two.sided'} (default), \code{'less'}, or \
 \item{...}{additional arguments of \code{null}}
 }
 \value{
-\link{Kolmogorov_dist} returns a \link[base]{numeric} scalar.
+Function \code{\link[=Kolmogorov_dist]{Kolmogorov_dist()}} returns a \link[base]{numeric} scalar.
 }
 \description{
 To calculate the one-sample Kolmogorov distance between observations and
 a distribution.
 }
 \details{
-\link{Kolmogorov_dist} is different from \link[stats]{ks.test} in the
+Function \code{\link[=Kolmogorov_dist]{Kolmogorov_dist()}} is different from \link[stats]{ks.test} in the
 following aspects
 \itemize{
 \item {Ties in observations are supported.
 The step function of empirical distribution is inspired by \link[stats]{ecdf}.
-This is superior than \code{(0:(n - 1))/n} of \code{stats:::ks.test.default}.}
+This is superior than \code{(0:(n - 1))/n} in \link[stats]{ks.test}.}
 \item {Discrete distribution (with discrete observation) is supported.}
 \item {Discrete distribution (with continuous observation) is not supported yet.
 This will be an easy modification in future.}
@@ -44,7 +39,7 @@ to speed up the calculation.}
 }
 \examples{
 # from ?stats::ks.test
-x1 <- rnorm(50)
+x1 = rnorm(50)
 ks.test(x1+2, y = pgamma, shape = 3, rate = 2)
 Kolmogorov_dist(x1+2, null = pgamma, shape = 3, rate = 2) # exactly the same
 

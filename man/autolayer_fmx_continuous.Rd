@@ -49,11 +49,11 @@ Default \code{'black'}}
 \item{...}{potential parameters of \link[ggplot2]{stat_function}}
 }
 \value{
-\link{autolayer_fmx_continuous} returns a \link[base]{list} of \link[ggplot2]{layer}s.
+Function \code{\link[=autolayer_fmx_continuous]{autolayer_fmx_continuous()}} returns a \link[base]{list} of \link[ggplot2]{layer}s.
 }
 \description{
 ..
 }
 \seealso{
-\link[ggplot2]{autolayer} \link[ggplot2]{geom_histogram} \link[ggplot2]{stat_function}
+\link[ggplot2]{autolayer}
 }

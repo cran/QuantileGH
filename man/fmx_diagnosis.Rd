@@ -2,51 +2,41 @@
 % Please edit documentation in R/fmx_diagnosis.R
 \name{fmx_diagnosis}
 \alias{fmx_diagnosis}
+\alias{Kolmogorov_fmx}
+\alias{KullbackLeibler_fmx}
+\alias{CramerVonMises_fmx}
 \title{Diagnoses for \linkS4class{fmx} Estimates}
 \usage{
-fmx_diagnosis(
-  x,
-  data = x@data,
-  type = c("Kolmogorov", "KullbackLeibler", "CramerVonMises"),
-  nullname = deparse1(substitute(x)),
-  ...
-)
+Kolmogorov_fmx(object, data = object@data, ...)
+
+KullbackLeibler_fmx(object, data = object@data, ...)
+
+CramerVonMises_fmx(object, data = object@data, ...)
 }
 \arguments{
-\item{x}{\linkS4class{fmx} object, or an R object convertible to an \linkS4class{fmx} object}
+\item{object}{\linkS4class{fmx} object, or an R object convertible to an \linkS4class{fmx} object}
 
-\item{data}{\link[base]{double} \link[base]{vector}, the actual observations, default value is \code{@data}}
-
-\item{type}{\link[base]{character} scalar, currently supports
-\code{'Kolmogorov'} distance (default),
-\code{'KullbackLeibler'} divergence,
-and \code{'CramerVonMises'} test of goodness-of-fit}
-
-\item{nullname}{\link[base]{character} scalar, see \link[goftest]{cvm.test}}
+\item{data}{\link[base]{double} \link[base]{vector}, observed data.
+Default is \code{object@data}, the data used for estimation.}
 
 \item{...}{additional parameters, currently not in use}
 }
 \value{
-\link{fmx_diagnosis} returns either
-
-\itemize{
-
-\item {a \link[base]{numeric} scalar of \code{'Kolmogorov'} distance;}
-
-\item {a \link[base]{list} when \code{type = 'KullbackLeibler'}, which is returned from \code{LaplacesDemon::KLD}.}
-
-\item {an \link[goftest:cvm.test]{htest} object when \code{type = 'CramerVonMises'},
-in which the element \code{$statistic} is the Cramer-Von Mises quadratic distance.}
-
-}
+Functions \code{\link[=Kolmogorov_fmx]{Kolmogorov_fmx()}}, \code{\link[=KullbackLeibler_fmx]{KullbackLeibler_fmx()}}, \code{\link[=CramerVonMises_fmx]{CramerVonMises_fmx()}}
+all return \link[base]{numeric} scalars.
 }
 \description{
 Diagnoses for \linkS4class{fmx} estimates.
 }
-\note{
-\link[dgof]{cvm.test}
+\details{
+Function \code{\link[=Kolmogorov_fmx]{Kolmogorov_fmx()}} calculates Kolmogorov distance.
+
+Function \code{\link[=KullbackLeibler_fmx]{KullbackLeibler_fmx()}} calculates Kullback-Leibler divergence.
+The R code is adapted from \code{LaplacesDemon::KLD}.
+
+Function \code{\link[=CramerVonMises_fmx]{CramerVonMises_fmx()}} calculates Cramer-von Mises quadratic distance
+(via \link[goftest]{cvm.test}).
 }
 \seealso{
-\code{LaplacesDemon::KLD} \link[goftest]{cvm.test}
-\link[stats]{ks.test}
+\code{dgof::cvmf.test}
 }

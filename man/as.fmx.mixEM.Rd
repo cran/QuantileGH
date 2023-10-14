@@ -14,7 +14,7 @@
 \item{...}{..}
 }
 \value{
-\link{as.fmx.mixEM} returns an \linkS4class{fmx} object.
+Function \code{\link[=as.fmx.mixEM]{as.fmx.mixEM()}} returns an \linkS4class{fmx} object.
 }
 \description{
 ..

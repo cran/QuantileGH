@@ -6,7 +6,7 @@
 \alias{sort.Normal}
 \alias{sort.Skew.t}
 \alias{sort.t}
-\title{Sort Objects from \pkg{mixsmsn} by Location Parameters}
+\title{Sort Objects from \CRANpkg{mixsmsn} by Location Parameters}
 \usage{
 \method{sort}{Skew.normal}(x, decreasing = FALSE, ...)
 
@@ -17,7 +17,7 @@
 \method{sort}{t}(x, decreasing = FALSE, ...)
 }
 \arguments{
-\item{x}{\code{Normal}, \code{Skew.normal}, \code{Skew.t} object}
+\item{x}{\code{'Normal'}, \code{'Skew.normal'}, \code{'Skew.t'} object}
 
 \item{decreasing}{\link[base]{logical} scalar. Should the sort the location parameter
 be increasing (\code{FALSE}, default) or decreasing (\code{TRUE})?}
@@ -25,17 +25,17 @@ be increasing (\code{FALSE}, default) or decreasing (\code{TRUE})?}
 \item{...}{additional parameters, currently not in use}
 }
 \value{
-\link{sort.Normal} returns a \code{Normal} object.
+Function \code{\link[=sort.Normal]{sort.Normal()}} returns a \code{'Normal'} object.
 
-\link{sort.Skew.normal} returns a \code{Skew.normal} object.
+Function \code{\link[=sort.Skew.normal]{sort.Skew.normal()}} returns a \code{'Skew.normal'} object.
 
-\link{sort.Skew.t} returns a \code{Skew.t} object.
+Function \code{\link[=sort.Skew.t]{sort.Skew.t()}} returns a \code{'Skew.t'} object.
 }
 \description{
-To sort an object returned from package \pkg{mixsmsn} by its location parameters
+To sort an object returned from package \CRANpkg{mixsmsn} by its location parameters
 }
 \details{
-\link[mixsmsn]{smsn.mix} does \strong{not} order the location parameter
+\link[mixsmsn]{smsn.mix} does \emph{not} order the location parameter
 }
 \seealso{
 \link[base]{sort}

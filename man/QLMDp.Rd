@@ -14,11 +14,12 @@ QLMDp(
 )
 }
 \arguments{
-\item{from}{\link[base]{numeric} scalar, minimum of the equidistant (in probability or quantile) probabilities.  Default \code{.05}.}
+\item{from, to}{\link[base]{numeric} scalar,
+minimum and maximum of the equidistant (in probability or quantile) probabilities.
+Default \code{.05} and \code{.95}, respectively}
 
-\item{to}{\link[base]{numeric} scalar, maximum of the equidistant (in probability or quantile) probabilities.  Default \code{.95}.}
-
-\item{length.out}{non-negative \link[base]{integer} scalar, the number of the equidistant (in probability or quantile) probabilities.}
+\item{length.out}{non-negative \link[base]{integer} scalar,
+the number of the equidistant (in probability or quantile) probabilities.}
 
 \item{equidistant}{\link[base]{character} scalar.
 If \code{'prob'} (default), then the probabilities are equidistant.
@@ -30,7 +31,7 @@ If \code{'quantile'}, then the quantiles (of the observations \code{x}) correspo
 }
 \value{
 A \link[base]{numeric} \link[base]{vector} of probabilities to be supplied to parameter \code{p} of
-Quantile Least Mahalanobis Distance \link{QLMDe} estimation).
+Quantile Least Mahalanobis Distance \code{\link[=QLMDe]{QLMDe()}} estimation).
 In practice, the length of this probability \link[base]{vector} \code{p}
 must be equal or larger than the number of parameters in the distribution model to be estimated.
 }
@@ -38,7 +39,7 @@ must be equal or larger than the number of parameters in the distribution model 
 A vector of probabilities to be used in Quantile Least Mahalanobis Distance estimation (\link{QLMDe}).
 }
 \details{
-The default arguments of \link{QLMDp} returns the probabilities of
+The default arguments of function \code{\link[=QLMDp]{QLMDp()}} returns the probabilities of
 \code{c(.005, .01, .02, .03, seq.int(.05, .95, length.out = 15L), .97, .98, .99, .995)}.
 }
 \examples{

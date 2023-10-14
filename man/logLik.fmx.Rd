@@ -15,16 +15,13 @@
 }
 \value{
 \link{logLik.fmx} returns a \link[stats]{logLik} object with
-an additional attribute \code{attr(, 'logl')}.
+an additional attribute \code{attr(,'logl')}.
 }
 \description{
 ..
 }
 \details{
 \link{logLik.fmx} returns a \link[stats]{logLik} object indicating the log-likelihood.
-An additional attribute \code{attr(, 'logl')} indicates the point-wise log-likelihood,
+An additional attribute \code{attr(,'logl')} indicates the point-wise log-likelihood,
 to be use in Vuong's closeness test.
-}
-\seealso{
-\link[stats]{logLik}
 }

@@ -8,7 +8,7 @@
   object,
   xlab = attr(object, which = "data.name", exact = TRUE),
   ylab = NULL,
-  title = TeX(constraint_TeX(object)),
+  title = TeX(getTeX(object)),
   caption = NULL,
   ...
 )
@@ -36,5 +36,6 @@ autoplot(d2, type = 'distribution')
 
 }
 \seealso{
-\link[ggplot2]{autoplot} \link[ggplot2]{labs}
+\link{autolayer_fmx_continuous} \link{autolayer_fmx_discrete}
+\link[ggplot2]{autoplot}
 }

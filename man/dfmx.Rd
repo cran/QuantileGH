@@ -75,30 +75,30 @@ If \code{TRUE} (default), probabilities are \eqn{Pr(X\le x)}, otherwise, \eqn{Pr
 \item{n}{\link[base]{integer} scalar, number of observations.}
 }
 \value{
-\link{dfmx} returns a \link[base]{numeric} \link[base]{vector} of probability density values of an \linkS4class{fmx} object at specified quantiles \code{x}.
+Function \code{\link[=dfmx]{dfmx()}} returns a \link[base]{numeric} \link[base]{vector} of probability density values of an \linkS4class{fmx} object at specified quantiles \code{x}.
 
-\link{pfmx} returns a \link[base]{numeric} \link[base]{vector} of cumulative probability values of an \linkS4class{fmx} object at specified quantiles \code{q}.
+Function \code{\link[=pfmx]{pfmx()}} returns a \link[base]{numeric} \link[base]{vector} of cumulative probability values of an \linkS4class{fmx} object at specified quantiles \code{q}.
 
-\link{qfmx} returns an unnamed \link[base]{numeric} \link[base]{vector} of quantiles of an \linkS4class{fmx} object, based on specified cumulative probabilities \code{p}.
+Function \code{\link[=qfmx]{qfmx()}} returns an unnamed \link[base]{numeric} \link[base]{vector} of quantiles of an \linkS4class{fmx} object, based on specified cumulative probabilities \code{p}.
 Note that \link[stats]{qnorm} returns an unnamed \link[base]{vector} of quantiles,
 although \link[stats]{quantile} returns a named \link[base]{vector} of quantiles.
 
-\link{rfmx} generates random deviates of an \linkS4class{fmx} object.
+Function \code{\link[=rfmx]{rfmx()}} generates random deviates of an \linkS4class{fmx} object.
 }
 \description{
 Density function, distribution function, quantile function and random generation for a finite mixture distribution
 with normal or Tukey's \eqn{g}-&-\eqn{h} components.
 }
 \details{
-A computational challenge in \link{dfmx} is when mixture density is very close to 0,
+A computational challenge in function \code{\link[=dfmx]{dfmx()}} is when mixture density is very close to 0,
 which happens when the per-component log densities are negative with big absolute values.
 In such case, we cannot compute the log mixture densities (i.e., \code{-Inf}),
-for the log-likelihood using \link{logLik.fmx}.
+for the log-likelihood using function \code{\link[=logLik.fmx]{logLik.fmx()}}.
 Our solution is to replace these \code{-Inf} log mixture densities by
 the weighted average (using the mixing proportions of \code{dist})
 of the per-component log densities.
 
-\link{qfmx} gives the quantile function, by numerically solving \link{pfmx}.
+Function \code{\link[=qfmx]{qfmx()}} gives the quantile function, by numerically solving \link{pfmx}.
 One major challenge when dealing with the finite mixture of Tukey's \eqn{g}-&-\eqn{h} family distribution
 is that Brent–Dekker's method needs to be performed in both \link{pGH} and \link{qfmx} functions,
 i.e. \emph{two layers} of root-finding algorithm.
