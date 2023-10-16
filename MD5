@@ -1,6 +1,6 @@
-e1235177b4b79254753f998658854e68 *DESCRIPTION
+2cb6be1e42ad4d61ff8b32e331d69671 *DESCRIPTION
 c1a88bb685269fbe2ce7ec833e8ec159 *NAMESPACE
-ddc639bad6cbb2abe9310abbd6997f3f *NEWS.md
+4ef1be4eaaa56a6cf5ee0f7a28e00d15 *NEWS.md
 c394e740ffb3f7179e9d1ca391a599b8 *R/Kolmogorov_dist_vanilla.R
 7a5cd15da315d7a5e953831e5eb9aab6 *R/QLMDe.R
 ae51e085fa39dfe37523b7296c47f183 *R/QLMDe_stepK.R
@@ -8,7 +8,7 @@ ae51e085fa39dfe37523b7296c47f183 *R/QLMDe_stepK.R
 ee34604b87bfed6c78498f8a20a89d1d *R/QuantileGH_info.R
 4638975e0c9e6c926092a94a4515b902 *R/TukeyGH.R
 1a6cbd2e6a05639a57cced8817d0ea42 *R/allequal.R
-a980ed55ad9a724f8e96b7b33395df27 *R/as.fmx.R
+213e784cacc9f92dd495320b0e5d1d22 *R/as.fmx.R
 963c115816bdaa0641c86a1f226d3ca1 *R/crossprod_inv.R
 75f50ee375741237363389e05b5804cc *R/distribution_ext.R
 071549685b2f9c0194dc0ab73021a170 *R/drop1.fmx.R
@@ -16,7 +16,7 @@ a980ed55ad9a724f8e96b7b33395df27 *R/as.fmx.R
 996a1e4daa75b80d1710d699c33514a9 *R/fmx.R
 f0186e5d73119ed899917eb0fd7135b5 *R/fmxS.R
 e5f5a84d26ae2824f8ef11264b7fad06 *R/fmx_S4.R
-7a705b7bdf8811d40d6f85ccb7156284 *R/fmx_constraint.R
+66de721ecb5bbb2a288bf135bfe66c1a *R/fmx_constraint.R
 311ce1a54695ba367bf4154198110da5 *R/fmx_diagnosis.R
 ee26a7d70e34722eccc24f428f1c2c3e *R/fmx_init.R
 bacdf6167ec2202e9ccd61f1bb9ab304 *R/fmx_repar.R
@@ -35,7 +35,7 @@ ec2f5c36002189caef6d2ed6487f14a5 *R/step_fmx.R
 bc0213d1e5fa67bd1daaf1852fdd0cab *R/vuniroot2.R
 7080893e02c49cd296d4424b9be55069 *build/partial.rdb
 bdf07c7b7c7456d7afa738d3fcc64086 *build/vignette.rds
-151fdd197b1ee2fcac417e6f322c1c70 *data/object2rda.rda
+ae211236aae98fdb93c8354f90ff91de *data/object2rda.rda
 3d1e5cb6b1a8a089bfadb2eb67100c67 *inst/doc/QuantileGH.R
 1ee66b7ccc9948d27bfd802f29660397 *inst/doc/QuantileGH.Rmd
 18b16c551f910d54d055dcaa9142de1f *inst/doc/QuantileGH.html
@@ -50,7 +50,7 @@ ab2603a2364bf4a8c248f459b4221222 *man/TukeyGH.Rd
 61140a4edc83d9d6d0b6af2d6ba93577 *man/approxdens.Rd
 74221ca13c124f2c3130fdec5d7f935a *man/as.fmx.Normal.Rd
 04800d2cf9a8280c06c7ec31c58a6fe0 *man/as.fmx.Rd
-589ab3eb7df41a7100c850df0e0a4010 *man/as.fmx.Skew.normal.Rd
+4c7edc6fd6325ea72bab228a5b53642d *man/as.fmx.Skew.normal.Rd
 89051bf984a563fc3a9adb1771e394a8 *man/as.fmx.Skew.t.Rd
 3bf084b75c0d43e766f24118d7fcb504 *man/as.fmx.fitdist.Rd
 37cad8348f64af4e51766e6c6702a7f6 *man/as.fmx.mixEM.Rd
@@ -74,7 +74,7 @@ cc715002b410d565600c5eae6be2b453 *man/fmx.Rd
 0b20b55adc25d350d3a7cd0973a534d3 *man/fmx2dbl.Rd
 b8d75142f6d40a309efa2a1ff3063ca0 *man/fmxS.Rd
 b4faf707cef3dda93a90455775e8a757 *man/fmx_cluster.Rd
-38af8c7e75b9fcccd336dd55038c3c21 *man/fmx_constraint.Rd
+f5b095fb248bc82c99bec3d00a5b8ab9 *man/fmx_constraint.Rd
 be7a418a18802ed4496435ff825d824f *man/fmx_diagnosis.Rd
 fb2af294f0d7ea9c2d8ad2cf42b30a99 *man/fmx_hybrid.Rd
 ff35460f45860db780d0cc1d023ce88d *man/fmx_normix.Rd
@@ -102,7 +102,7 @@ f55b7e0328a30e1ac8f13556c9d1f5bf *man/reAssign.Rd
 c46c260d66f51a9c473c978964780b33 *man/step_fmx.Rd
 4133cd2463677bebbed1a0c8112adc30 *man/sub-fmx-ANY-ANY-ANY-method.Rd
 25dcfe0e5095d754920ccbd4c67069e7 *man/ud_allequal.Rd
-d24fab5641131cdc3f8612126c219518 *man/user_constraint.Rd
+9fdd20191f670750cb7700b7af868289 *man/user_constraint.Rd
 cb47019ac8ee5f5374cab04af7a45d3c *man/vcov.fmx.Rd
 c43db631a1d7e0835a35ef8ea8e8e119 *man/vuniroot2.Rd
 1ee66b7ccc9948d27bfd802f29660397 *vignettes/QuantileGH.Rmd

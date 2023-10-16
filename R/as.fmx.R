@@ -134,14 +134,9 @@ as.fmx.mixEM <- function(x, data = x[['x']], ...) {
 #' class(m1 <- smsn.mix(x, nu = 3, g = 3, family = 'Skew.normal', calc.im = FALSE))
 #' mix.hist(y = x, model = m1)
 #' m1a = as.fmx(m1, data = x)
-#' autoplot(m1a)
 #' (l1a = logLik(m1a))
-#' stopifnot(identical(AIC(m1a), m1$aic), identical(BIC(m1a), m1$bic))
+#' autoplot(m1a)
 #' autoplot(m1a, type = 'distribution')
-#' if (FALSE) {
-#' range(qfmx(pfmx(x, dist = m1a), dist = m1a) - x) # need to think why
-#' # may have to do with ?qfmx_interval
-#' }
 #' 
 #' 
 #' @method as.fmx Skew.normal

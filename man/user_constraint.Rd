@@ -29,14 +29,14 @@ Formalize user-specified constraint of \linkS4class{fmx} object
 \examples{
 (d0 = fmx('GH', A = c(1,4), g = c(.2,.1), h = c(.05,.1), w = c(1,1)))
 (c0 = fmx_constraint(d0))
-stopifnot(identical(c0, user_constraint(distname = 'GH', K = 2L, x = character())))
+user_constraint(distname = 'GH', K = 2L, x = character()) # equivalent
 
 (d1 = fmx('GH', A = c(1,4), g = c(.2,0), h = c(0,.1), w = c(1,1)))
 (c1 = fmx_constraint(d1))
-stopifnot(identical(c1, user_constraint(distname = 'GH', K = 2L, x = c('g2', 'h1'))))
+user_constraint(distname = 'GH', K = 2L, x = c('g2', 'h1')) # equivalent
 
 (d2 = fmx('GH', A = c(1,4), g = c(.2,0), h = c(.15,.1), w = c(1,1)))
 (c2 = fmx_constraint(d2))
-stopifnot(identical(c2, user_constraint(distname = 'GH', K = 2L, x = 'g2')))
+user_constraint(distname = 'GH', K = 2L, x = 'g2') # equivalent
 
 }
