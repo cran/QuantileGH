@@ -1,10 +1,18 @@
 
 
-#' @title A Simpler and Faster Mahalanobis Distance
+##########################################
+# Modify tzhVanilla/mahalanobis_int.R
+##########################################
+
+
+
+
+
+#' @title Simpler and Faster Mahalanobis Distance
 #' 
 #' @description 
 #' 
-#' A simpler and faster \link[stats]{mahalanobis} distance.
+#' Simpler and faster \link[stats]{mahalanobis} distance.
 #' 
 #' @param x \link[base]{numeric} \link[base]{vector}
 #' 
@@ -14,9 +22,9 @@
 #' 
 #' @returns 
 #' 
-#' \link{mahalanobis_int} returns a \link[base]{numeric} scalar.
+#' Function [mahalanobis_int] returns a \link[base]{numeric} scalar.
 #' 
-#' @importFrom stats mahalanobis
+#' @keywords internal
 #' @export
 mahalanobis_int <- function(x, center, invcov) {
   # if (!is.vector(x, mode = 'double')) stop('x must be double vector') # speed

@@ -20,13 +20,13 @@ fmx_cluster(
 \item{distname}{\link[base]{character} scalar, name of parametric distribution of the mixture components}
 
 \item{constraint}{\link[base]{character} \link[base]{vector},
-parameters (\eqn{g} and/or \eqn{h} for Tukey's \eqn{g}-&-\eqn{h} mixture) to be set at 0.
-See function \code{\link[=fmx_constraint]{fmx_constraint()}} for details.}
+parameters (\eqn{g} and/or \eqn{h} for Tukey \eqn{g}-&-\eqn{h} mixture) to be set at 0.
+See function \link{fmx_constraint} for details.}
 
 \item{...}{additional parameters, currently not in use}
 }
 \value{
-Function \code{\link[=fmx_cluster]{fmx_cluster()}} returns an \linkS4class{fmx} object.
+Function \link{fmx_cluster} returns an \linkS4class{fmx} object.
 }
 \description{
 Naive estimates for finite mixture distribution \linkS4class{fmx} via clustering.
@@ -36,22 +36,19 @@ First of all, if the specified number of components \eqn{K\geq 2},
 trimmed \eqn{k}-means clustering with re-assignment will be performed;
 otherwise, all observations will be considered as one single cluster.
 The standard \eqn{k}-means clustering is not used since the heavy tails of
-Tukey's \eqn{g}-&-\eqn{h} distribution could be mistakenly classified as individual cluster(s).
+Tukey \eqn{g}-&-\eqn{h} distribution could be mistakenly classified as individual cluster(s).
 
 In each of the one or more clusters,
 \itemize{
-\item{The letter-value based estimates of Tukey's \eqn{g}-&-\eqn{h} distribution (Hoaglin, 2006)
+\item{\link[TukeyGH77]{letterValue}-based estimates of Tukey \eqn{g}-&-\eqn{h} distribution (Hoaglin, 2006)
 are calculated, for any \eqn{K\geq 1}, serving as the starting values for
 QLMD algorithm.
-These estimates are provided by function \code{\link[=fmx_cluster]{fmx_cluster()}}.}
+These estimates are provided by function \link{fmx_cluster}.}
 
 \item{the \link[stats]{median} and \link[stats]{mad} will serve as
 the starting values for \eqn{\mu} and \eqn{\sigma}
-(or \eqn{A} and \eqn{B} for Tukey's \eqn{g}-&-\eqn{h} distribution, with \eqn{g = h = 0}),
+(or \eqn{A} and \eqn{B} for Tukey \eqn{g}-&-\eqn{h} distribution, with \eqn{g = h = 0}),
 for QLMD algorithm
 when \eqn{K = 1}.}
 }
-}
-\seealso{
-\code{\link[=letterValue]{letterValue()}}
 }

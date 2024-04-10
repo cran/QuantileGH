@@ -16,7 +16,7 @@
 \item{...}{additional parameters, currently not in use.}
 }
 \value{
-\link{drop1.fmx} and \link{add1.fmx} return a \link[base]{list} of \linkS4class{fmx} objects,
+Functions \link{drop1.fmx} and \link{add1.fmx} return a \link[base]{list} of \linkS4class{fmx} objects,
 in the reverse order of model selection.
 }
 \description{
@@ -26,17 +26,17 @@ Fit \linkS4class{fmx} models with a single parameters being added or dropped.
 ..
 }
 \note{
-Note that \link{drop1.fmx} and \link{add1.fmx} do \emph{not} return an \link[stats]{anova} table, like other
+Functions \link{drop1.fmx} and \link{add1.fmx} do \emph{not}
+return an \link[stats]{anova} table, like other
 \verb{stats:::drop.*} or \verb{stats:::add1.*} functions do.
 }
 \examples{
 
 \donttest{ 
-
 # donttest to save time
-
+library(fmx)
 (d2 = fmx('GH', A = c(1,6), B = 1.2, g = c(0,.3), h = c(.2,0), w = c(1,2)))
-set.seed(3123); hist(x2 <- rfmx(n = 1e3L, dist = d2))
+set.seed(312); hist(x2 <- rfmx(n = 1e3L, dist = d2))
 system.time(m0 <- QLMDe(x2, distname = 'GH', K = 2L, constraint = c('g1', 'g2', 'h1', 'h2')))
 system.time(m1 <- QLMDe(x2, distname = 'GH', K = 2L, constraint = c('g1', 'h2')))
 system.time(m2 <- QLMDe(x2, distname = 'GH', K = 2L)) # ~2 secs

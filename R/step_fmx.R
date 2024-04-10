@@ -10,8 +10,8 @@
 #' @param object \linkS4class{fmx} object
 #' 
 #' @param test \link[base]{character} scalar, criterion to be used, either 
-#' Akaike's information criterion \link[stats]{AIC}, or 
-#' Bayesian information criterion \link[stats]{BIC} (default).
+#' Akaike's information criterion \link[stats]{AIC}-like, or 
+#' Bayesian information criterion \link[stats]{BIC}-like (default).
 #' 
 #' @param direction \link[base]{character} scalar, `'forward'` (default) or
 #' `'backward'`
@@ -30,11 +30,11 @@
 #' for the next iteration of the algorithm.
 #' 
 #' The algorithm iterates until only significantly-different-from-zero \eqn{g} and \eqn{h} parameters 
-#' are retained, which corresponds to \eqn{gh}-parsimonious Tukey's \eqn{g}-&-\eqn{h} mixture model.
+#' are retained, which corresponds to \eqn{gh}-parsimonious Tukey \eqn{g}-&-\eqn{h} mixture model.
 #' 
 #' @returns 
 #' 
-#' \link{step_fmx} returns an object of S3 class `'step_fmx'`, 
+#' Function [step_fmx] returns an object of S3 class `'step_fmx'`, 
 #' which is a \link[base]{list} of selected models (in reversed order) with attribute(s)
 #' `'direction'` and
 #' `'test'`.
@@ -66,6 +66,7 @@ step_fmx <- function(object, test = c('BIC', 'AIC'), direction = c('forward', 'b
 }
 
 
+#' @importFrom fmx print.fmx npar.fmx getTeX
 #' @export
 print.step_fmx <- function(x, ...) {
   print.fmx(x[[1L]])

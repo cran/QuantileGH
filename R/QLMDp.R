@@ -16,39 +16,37 @@
 #' If `'prob'` (default), then the probabilities are equidistant.  
 #' If `'quantile'`, then the quantiles (of the observations `x`) corresponding to the probabilities are equidistant.
 #' 
-#' @param extra \link[base]{numeric} \link[base]{vector} of *additional* probabilities, default `c(.005, .01, .02, .03, .97, .98, .99, .995)`.
+#' @param extra \link[base]{numeric} \link[base]{vector} of *additional* probabilities, 
+#' default `c(.005, .01, .02, .03, .97, .98, .99, .995)`.
 #' 
 #' @param x \link[base]{numeric} \link[base]{vector} of observations, only used when `equidistant = 'quantile'`.
 #' 
 #' @details
 #' 
-#' The default arguments of function [QLMDp()] returns the probabilities of 
+#' The default arguments of function [QLMDp] returns the probabilities of 
 #' `c(.005, .01, .02, .03, seq.int(.05, .95, length.out = 15L), .97, .98, .99, .995)`.
 #' 
 #' @returns 
 #' 
 #' A \link[base]{numeric} \link[base]{vector} of probabilities to be supplied to parameter `p` of 
-#' Quantile Least Mahalanobis Distance [QLMDe()] estimation).
+#' Quantile Least Mahalanobis Distance [QLMDe] estimation).
 #' In practice, the length of this probability \link[base]{vector} `p` 
 #' must be equal or larger than the number of parameters in the distribution model to be estimated.
 #' 
 #' @examples 
-#' 
+#' library(fmx)
 #' (d2 = fmx('GH', A = c(1,6), B = 2, g = c(0,.3), h = c(.2,0), w = c(1,2)))
 #' set.seed(100); hist(x2 <- rfmx(n = 1e3L, dist = d2))
-#' p_hist = geom_histogram(
-#'   mapping = aes(x = x2, y = after_stat(density)), bins = 30L, colour = 'white', alpha = .1)
 #' 
-#' (p1 = QLMDp()) # equidistant in probabilities
-#' autoplot(d2, probs = p1) + p_hist
+#' # equidistant in probabilities
+#' (p1 = QLMDp()) 
 #' 
-#' (p2 = QLMDp(equidistant = 'quantile', x = x2)) # equidistnat in quantiles
-#' autoplot(d2, probs = p2) + p_hist
-#' 
-#' 
+#' # equidistant in quantiles
+#' (p2 = QLMDp(equidistant = 'quantile', x = x2)) 
 #' @export
 QLMDp <- function(
-  from = .05, to = .95, length.out = 15L, equidistant = c('prob', 'quantile'),
+  from = .05, to = .95, length.out = 15L, 
+  equidistant = c('prob', 'quantile'),
   extra = c(.005, .01, .02, .03, .97, .98, .99, .995),
   x
 ) {

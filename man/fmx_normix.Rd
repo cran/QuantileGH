@@ -2,29 +2,30 @@
 % Please edit documentation in R/fmx_init.R
 \name{fmx_normix}
 \alias{fmx_normix}
-\title{Naive Estimates of Finite Mixture Distribution using Mixture of Normal}
+\title{Naive Parameter Estimates using Mixture of Normal}
 \usage{
-fmx_normix(x, K, distname = c("GH", "norm", "sn"), alpha = 0.05, R = 10L, ...)
+fmx_normix(x, K, distname = c("norm", "GH", "sn"), alpha = 0.05, R = 10L, ...)
 }
 \arguments{
 \item{x}{\link[base]{numeric} \link[base]{vector}, observations}
 
 \item{K}{\link[base]{integer} scalar, number of mixture components}
 
-\item{distname}{\link[base]{character} scalar, name of parametric distribution of the mixture components}
+\item{distname}{\link[base]{character} scalar,
+name of parametric distribution of the mixture components}
 
 \item{alpha}{\link[base]{numeric} scalar, proportion of observations to be trimmed in
-trimmed k-means algorithm \link[tclust]{tkmeans}}
+trimmed \eqn{k}-means algorithm \link[tclust]{tkmeans}}
 
 \item{R}{\link[base]{integer} scalar, number of \link[mixtools]{normalmixEM} replicates}
 
 \item{...}{additional parameters, currently not in use}
 }
 \value{
-\link{fmx_normix} returns an \linkS4class{fmx} object.
+Function \link{fmx_normix} returns an \linkS4class{fmx} object.
 }
 \description{
-Naive estimates for finite mixture distribution \linkS4class{fmx} using mixture of normal
+Naive parameter estimates for finite mixture distribution \linkS4class{fmx} using mixture of normal distributions.
 }
 \details{
 \link{fmx_normix} ... the cluster centers are provided as the starting values of \eqn{\mu}'s for

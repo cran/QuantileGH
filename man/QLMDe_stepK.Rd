@@ -18,36 +18,36 @@ QLMDe_stepK(
 \item{x}{\link[base]{numeric} \link[base]{vector}, observations}
 
 \item{distname, data.name}{\link[base]{character} scalars,
-see parameters of the same names in function \code{\link[=QLMDe]{QLMDe()}}}
+see parameters of the same names in function \link{QLMDe}}
 
-\item{Kmax}{\link[base]{integer} scalar \eqn{K_{max}},
+\item{Kmax}{\link[base]{integer} scalar \eqn{K_\text{max}},
 maximum number of components to be considered. Default \code{3L}}
 
 \item{test}{\link[base]{character} scalar, criterion to be used, either
 Akaike's information criterion \link[stats]{AIC}, or
 Bayesian information criterion \link[stats]{BIC} (default).}
 
-\item{direction}{\link[base]{character} scalar, direct of selection in function \code{\link[=step_fmx]{step_fmx()}},
+\item{direction}{\link[base]{character} scalar, direct of selection in function \link{step_fmx},
 either \code{'forward'} (default) or \code{'backward'}}
 
 \item{...}{additional parameters}
 }
 \value{
-Function \code{\link[=QLMDe_stepK]{QLMDe_stepK()}} returns an object of S3 class \code{'stepK'},
+Function \link{QLMDe_stepK} returns an object of S3 class \code{'stepK'},
 which is a \link[base]{list} of selected models (in reversed order) with attribute(s)
 \code{'direction'} and
 \code{'test'}.
 }
 \description{
-To compare \eqn{gh}-parsimonious models of Tukey's \eqn{g}-&-\eqn{h} mixtures with different number of components \eqn{K}
-(up to a user-specified \eqn{K_{max}})
+To compare \eqn{gh}-parsimonious models of Tukey \eqn{g}-&-\eqn{h} mixtures with different number of components \eqn{K}
+(up to a user-specified \eqn{K_\text{max}})
 and select the optimal number of components.
 }
 \details{
-Function \code{\link[=QLMDe_stepK]{QLMDe_stepK()}} compares the \eqn{gh}-parsimonious models with different number of components \eqn{K},
+Function \link{QLMDe_stepK} compares the \eqn{gh}-parsimonious models with different number of components \eqn{K},
 and selects the optimal number of components using BIC (default) or AIC.
 
-The forward selection starts with finding the \eqn{gh}-parsimonious model (via function \code{\link[=step_fmx]{step_fmx()}})
+The forward selection starts with finding the \eqn{gh}-parsimonious model (via function \link{step_fmx})
 at \eqn{K = 1}.
 Let the current number of component be \eqn{K^c}.
 We compare the \eqn{gh}-parsimonious models of \eqn{K^c+1} and \eqn{K^c} component, respectively,
@@ -59,8 +59,8 @@ the forward selection is stopped if \eqn{K^c+1=K_{max}},
 otherwise update \eqn{K^c} with \eqn{K_c+1} and repeat the previous steps.
 }
 \examples{
-
-hist(x1 <- CK5[[1L]])
-\donttest{QLMDe_stepK(x1, distname = 'GH', Kmax = 2L)}
+data(bmi, package = 'mixsmsn')
+hist(x <- bmi[[1L]])
+\donttest{QLMDe_stepK(x, distname = 'GH', Kmax = 2L)}
 
 }

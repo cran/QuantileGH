@@ -15,8 +15,8 @@ step_fmx(
 \item{object}{\linkS4class{fmx} object}
 
 \item{test}{\link[base]{character} scalar, criterion to be used, either
-Akaike's information criterion \link[stats]{AIC}, or
-Bayesian information criterion \link[stats]{BIC} (default).}
+Akaike's information criterion \link[stats]{AIC}-like, or
+Bayesian information criterion \link[stats]{BIC}-like (default).}
 
 \item{direction}{\link[base]{character} scalar, \code{'forward'} (default) or
 \code{'backward'}}
@@ -24,7 +24,7 @@ Bayesian information criterion \link[stats]{BIC} (default).}
 \item{...}{additional parameters, currently not in use}
 }
 \value{
-\link{step_fmx} returns an object of S3 class \code{'step_fmx'},
+Function \link{step_fmx} returns an object of S3 class \code{'step_fmx'},
 which is a \link[base]{list} of selected models (in reversed order) with attribute(s)
 \code{'direction'} and
 \code{'test'}.
@@ -45,7 +45,7 @@ Otherwise, the \eqn{g} or \eqn{h} parameter with the largest p-value is constrai
 for the next iteration of the algorithm.
 
 The algorithm iterates until only significantly-different-from-zero \eqn{g} and \eqn{h} parameters
-are retained, which corresponds to \eqn{gh}-parsimonious Tukey's \eqn{g}-&-\eqn{h} mixture model.
+are retained, which corresponds to \eqn{gh}-parsimonious Tukey \eqn{g}-&-\eqn{h} mixture model.
 }
 \seealso{
 \link[stats]{step}

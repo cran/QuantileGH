@@ -21,16 +21,16 @@
 #' @param K \link[base]{integer} scalar, number of components (e.g., must use `2L` instead of `2`).
 #' 
 #' @param probs \link[base]{numeric} \link[base]{vector}, percentiles at where the sample and theoretical quantiles are to be matched.
-#' See function [QLMDp()] for details.
+#' See function [QLMDp] for details.
 #' 
 #' @param init \link[base]{character} scalar for the method of initial values selection, 
 #' or an \linkS4class{fmx} object of the initial values. 
-#' See function [fmx_hybrid()] for more details.
+#' See function [fmx_hybrid] for more details.
 #' 
-#' @param constraint \link[base]{character} \link[base]{vector}, parameters (\eqn{g} and/or \eqn{h} for Tukey's \eqn{g}-&-\eqn{h} mixture) to be set at 0.  
-#' See function [fmx_constraint()] for details.
+#' @param constraint \link[base]{character} \link[base]{vector}, parameters (\eqn{g} and/or \eqn{h} for Tukey \eqn{g}-&-\eqn{h} mixture) to be set at 0.  
+#' See function [fmx_constraint] for details.
 #' 
-#' @param tol,maxiter see function [vuniroot2()]
+#' @param tol,maxiter see function \link[TukeyGH77]{vuniroot2}
 #' 
 #' @param ... additional parameters of \link[stats]{optim}
 #' 
@@ -39,21 +39,25 @@
 #' Quantile Least Mahalanobis Distance estimator fits a single-component or finite mixture distribution 
 #' by minimizing the Mahalanobis distance between
 #' the theoretical and observed quantiles,
-#' using the empirical quantile variance-covariance matrix [quantile_vcov()].
+#' using the empirical quantile variance-covariance matrix [quantile_vcov].
 #' 
 #' @returns 
 #' 
-#' Function [QLMDe()] returns an \linkS4class{fmx} object.
+#' Function [QLMDe] returns an \linkS4class{fmx} object.
 #' 
 #' 
 #' 
 #' @examples 
+#' data(bmi, package = 'mixsmsn')
+#' hist(x <- bmi[[1L]])
+#' \donttest{QLMDe(x, distname = 'GH', K = 2L)}
 #' 
-#' hist(x1 <- CK5[[1L]])
-#' \donttest{QLMDe(x1, distname = 'GH', K = 2L)}
-#' 
-#' @seealso [fmx_hybrid()]
-#' @importFrom stats optim
+#' @seealso [fmx_hybrid]
+#' @importFrom fmx distArgs
+#' @importFrom fmx Kolmogorov_fmx CramerVonMises_fmx KullbackLeibler_fmx
+#' @importFrom fmx approxdens fmx2dbl dbl2fmx pmlogis_first dfmx qfmx fmx_constraint user_constraint
+#' @importFrom stats ecdf optim pnorm qnorm quantile
+#' @importFrom TukeyGH77 vuniroot2 qGH .GH2z
 #' @export
 QLMDe <- function(
   x, distname = c('GH', 'norm', 'sn'), K, data.name = deparse1(substitute(x)),
@@ -114,7 +118,7 @@ QLMDe <- function(
          'Try increasing `probs` (see ?QLMDp for detail).')
   }
   
-  qvv <- quantile_vcov(probs = probs, d = d_obs) 
+  qvv <- quantile_vcov(p = probs, d = d_obs) 
   qvv_inv <- chol2inv(chol.default(qvv))
   
   parRun <- fmx2dbl(init)
@@ -182,7 +186,7 @@ QLMDe <- function(
         eff <- cumsum(c(.pM[1L,1L], exp(.pM[2:K,1L]))) * sdinv
         q <- vuniroot2(y = probs, f = function(q) { # essentially [pfmx]
           z <- q0 <- tcrossprod(sdinv, q) - eff
-          for (i in Kseq) z[i,] <- .qGH2z(q0 = q0[i,], g = g[i], h = h[i], tol = tol, maxiter = maxiter)
+          for (i in Kseq) z[i,] <- .GH2z(q0 = q0[i,], g = g[i], h = h[i], tol = tol, maxiter = maxiter)
           c(t_w %*% pnorm(z))
         }, interval = interval, tol = tol, maxiter = maxiter)
         if (any(is.infinite(q))) return(max_return)
@@ -221,6 +225,7 @@ QLMDe <- function(
     parRun[-id_constr] <- y$par
   } else parRun <- y$par
   tmp <- dbl2fmx(x = parRun, K = K, distname = distname)
+  colnames(tmp$pars) <- distArgs(distname = distname) # will remove after \pkg{fmx} update
 
   # variance-covariance of internal estimates
   #n <- length(x)
@@ -244,7 +249,7 @@ QLMDe <- function(
     q1 <- q
     d1 <- d
   }
-  .meat <- quantile_vcov(probs = p1, d = d1) # V_(\hat{theta})
+  .meat <- quantile_vcov(p = p1, d = d1) # V_(\hat{theta})
   # in theary, we should use V_{true theta}, but no one knows true theta in practice
   # so I am using V_{\hat_theta}
   # now I want to use V_{empirical} (`@quantile_vv` is no longer a slot of \linkS4class{fmx}), can I?
@@ -252,7 +257,8 @@ QLMDe <- function(
   if (!length(q_gr)) {
     int_vv <- array(NA_real_, dim = c(0L, 0L)) # exception handling
   } else {
-    .bread <- tryCatch(crossprod_inv(q_gr) %*% t.default(q_gr), error = as.null.default)
+    #.bread <- tryCatch(crossprod_inv(q_gr) %*% t.default(q_gr), error = as.null.default)
+    .bread <- tryCatch(solve.default(crossprod(q_gr)) %*% t.default(q_gr), error = as.null.default)
     if (!length(.bread)) {
       int_vv <- array(NA_real_, dim = c(0L, 0L)) # exception handling
     } else {
@@ -270,9 +276,8 @@ QLMDe <- function(
     data = x, data.name = data.name,
     distname = distname, pars = tmp$pars, w = tmp$w,
     #quantile_vv = qvv,
-    vcov_internal = int_vv,
-    epdf = x_epdf,
-    probs = probs#,
+    vcov_internal = int_vv
+    #probs = probs#,
     # init = init,
     # optim = y
   )
@@ -280,6 +285,8 @@ QLMDe <- function(
   ret@Kolmogorov <- Kolmogorov_fmx(object = ret)
   ret@CramerVonMises <- CramerVonMises_fmx(object = ret)
   ret@KullbackLeibler <- KullbackLeibler_fmx(object = ret)
+  
+  attr(ret, which = 'probs') <- probs # needed in [drop1.fmx] and [add1.fmx]
   
   if (!setequal(attr(fmx_constraint(ret), which = 'user', exact = TRUE), constraint)) {
     #message('not handling constrants correctly')
@@ -305,9 +312,9 @@ QLMDe_interval <- function(x, extend_interval = 10, ...) {
 
 
 
-
-
 # gradient of ?qfmx with respect to the *unconstraint* parameters.
+#' @importFrom fmx fmx2dbl fmx_constraint qfmx_interval
+#' @importFrom stats setNames numericDeriv
 qfmx_gr <- function(
   dist, # can be missing
   probs = stop('must provide `probs`'), 

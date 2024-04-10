@@ -12,23 +12,24 @@ fmx_hybrid(x, test = c("logLik", "CvM", "KS"), ...)
 \item{test}{\link[base]{character} scalar, criteria for selecting the optimal estimates.
 See \strong{Details}.}
 
-\item{...}{additional parameters of \link{fmx_normix} and \link{fmx_cluster}}
+\item{...}{additional parameters of functions \link{fmx_normix} and \link{fmx_cluster}}
 }
 \value{
-\link{fmx_hybrid} returns an \linkS4class{fmx} object.
+Function \link{fmx_hybrid} returns an \linkS4class{fmx} object.
 }
 \description{
 Best estimates for finite mixture distribution \linkS4class{fmx}.
 }
 \details{
-\link{fmx_hybrid} compares
-the Tukey's \eqn{g}-&-\eqn{h} mixture estimate provided by \link{fmx_cluster}
-and the normal mixture estimate by \link{fmx_normix},
+Function \link{fmx_hybrid} compares
+Tukey \eqn{g}-&-\eqn{h} mixture estimate provided by function \link{fmx_cluster}
+and the normal mixture estimate by function \link{fmx_normix},
 and select the one either with maximum likelihood (\code{test = 'logLik'}, default),
 with minimum Cramer-von Mises distance (\code{test = 'CvM'}) or
-with minimum Kolmogorov distance (\code{\link[=Kolmogorov_fmx]{Kolmogorov_fmx()}}).
+with minimum Kolmogorov distance (\link{Kolmogorov_fmx}).
 }
 \examples{
+library(fmx)
 d1 = fmx('norm', mean = c(1, 2), sd = .5, w = c(.4, .6))
 set.seed(100); hist(x1 <- rfmx(n = 1e3L, dist = d1))
 fmx_normix(x1, distname = 'norm', K = 2L)

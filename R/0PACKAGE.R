@@ -20,42 +20,15 @@
 #' @examples
 #' # see ?QLMDe
 #'
-#' @import ggplot2 methods
+#' @author Tingting Zhan, Inna Chervoneva
 #' 
-#' @docType package
 #' @keywords internal
-#' @name QuantileGH-package
-NULL
-
-# @aliases QuantileGH-package
-# '_PACKAGE'
-
-# graphics
+'_PACKAGE'
 
 
 
 
 
 
-
-
-#' @title CycD1
-#' 
-#' @description ..
-#' 
-#' @format a \link[base]{list} of \link[base]{double} \link[base]{vector}s
-#' 
-#' @name CycD1
-'CycD1'
-
-
-#' @title CK5
-#' 
-#' @description ..
-#' 
-#' @format a \link[base]{list} of \link[base]{double} \link[base]{vector}s
-#' 
-#' @name CK5
-'CK5'
 
 
