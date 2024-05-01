@@ -51,6 +51,7 @@
 #' }
 #' 
 #' @name drop1_fmx
+#' @keywords internal
 #' @importFrom fmx fmx_constraint
 #' @importFrom stats drop1
 #' @export drop1.fmx

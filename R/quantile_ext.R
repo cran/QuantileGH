@@ -27,6 +27,7 @@
 #' Frederick Mosteller. On Some Useful "Inefficient" Statistics (1946).
 #' \doi{10.1214/aoms/1177730881}
 #' 
+#' @keywords internal
 #' @export
 quantile_vcov <- function(p, d) {
   # do the check on d=0 in [QLMDe]

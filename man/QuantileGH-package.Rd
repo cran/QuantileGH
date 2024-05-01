@@ -21,6 +21,11 @@ A backward-forward stepwise model selection algorithm is provided to find
 
 }
 \author{
-Tingting Zhan, Inna Chervoneva
+\strong{Maintainer}: Tingting Zhan \email{Tingting.Zhan@jefferson.edu} (\href{https://orcid.org/0000-0001-9971-4844}{ORCID}) [copyright holder]
+
+Other contributors:
+\itemize{
+  \item Inna Chervoneva \email{Inna.Chervoneva@jefferson.edu} (\href{https://orcid.org/0000-0002-9104-4505}{ORCID}) [contributor, copyright holder]
 }
-\keyword{internal}
+
+}

@@ -29,3 +29,4 @@ Function \link{quantile_vcov} must not be used in a compute-intensive way.
 Frederick Mosteller. On Some Useful "Inefficient" Statistics (1946).
 \doi{10.1214/aoms/1177730881}
 }
+\keyword{internal}

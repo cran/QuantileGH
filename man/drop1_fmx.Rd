@@ -57,3 +57,4 @@ vapply(a1, FUN = getTeX, FUN.VALUE = '')
 \seealso{
 \link[stats]{step}
 }
+\keyword{internal}

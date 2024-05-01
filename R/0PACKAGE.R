@@ -20,9 +20,6 @@
 #' @examples
 #' # see ?QLMDe
 #'
-#' @author Tingting Zhan, Inna Chervoneva
-#' 
-#' @keywords internal
 '_PACKAGE'
 
 
