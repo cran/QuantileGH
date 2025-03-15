@@ -7,7 +7,7 @@
 #' i.e., with some \eqn{g} and/or \eqn{h} parameters equal to zero,
 #' conditionally on a fixed number of components \eqn{K}.
 #' 
-#' @param object \linkS4class{fmx} object
+#' @param object \link[fmx:fmx-class]{fmx} object
 #' 
 #' @param test \link[base]{character} scalar, criterion to be used, either 
 #' Akaike's information criterion \link[stats]{AIC}-like, or 
@@ -34,7 +34,7 @@
 #' 
 #' @returns 
 #' 
-#' Function [step_fmx] returns an object of S3 class `'step_fmx'`, 
+#' Function [step_fmx()] returns an object of S3 class `'step_fmx'`, 
 #' which is a \link[base]{list} of selected models (in reversed order) with attribute(s)
 #' `'direction'` and
 #' `'test'`.
@@ -42,6 +42,7 @@
 #' @seealso 
 #' \link[stats]{step}
 #' 
+#' @importClassesFrom fmx fmx
 #' @export
 step_fmx <- function(object, test = c('BIC', 'AIC'), direction = c('forward', 'backward'), ...) {
   if (!length(object@data)) return(invisible())

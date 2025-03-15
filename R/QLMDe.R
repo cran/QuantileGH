@@ -21,14 +21,14 @@
 #' @param K \link[base]{integer} scalar, number of components (e.g., must use `2L` instead of `2`).
 #' 
 #' @param probs \link[base]{numeric} \link[base]{vector}, percentiles at where the sample and theoretical quantiles are to be matched.
-#' See function [QLMDp] for details.
+#' See function [QLMDp()] for details.
 #' 
 #' @param init \link[base]{character} scalar for the method of initial values selection, 
-#' or an \linkS4class{fmx} object of the initial values. 
-#' See function [fmx_hybrid] for more details.
+#' or an \link[fmx:fmx-class]{fmx} object of the initial values. 
+#' See function [fmx_hybrid()] for more details.
 #' 
 #' @param constraint \link[base]{character} \link[base]{vector}, parameters (\eqn{g} and/or \eqn{h} for Tukey \eqn{g}-&-\eqn{h} mixture) to be set at 0.  
-#' See function [fmx_constraint] for details.
+#' See function \link[fmx]{fmx_constraint} for details.
 #' 
 #' @param tol,maxiter see function \link[TukeyGH77]{vuniroot2}
 #' 
@@ -43,7 +43,7 @@
 #' 
 #' @returns 
 #' 
-#' Function [QLMDe] returns an \linkS4class{fmx} object.
+#' Function [QLMDe()] returns an \link[fmx:fmx-class]{fmx} object.
 #' 
 #' 
 #' 
@@ -53,6 +53,7 @@
 #' \donttest{QLMDe(x, distname = 'GH', K = 2L)}
 #' 
 #' @seealso [fmx_hybrid]
+#' @importClassesFrom fmx fmx
 #' @importFrom fmx distArgs
 #' @importFrom fmx Kolmogorov_fmx CramerVonMises_fmx KullbackLeibler_fmx
 #' @importFrom fmx approxdens fmx2dbl dbl2fmx pmlogis_first dfmx qfmx fmx_constraint user_constraint
@@ -252,7 +253,7 @@ QLMDe <- function(
   .meat <- quantile_vcov(p = p1, d = d1) # V_(\hat{theta})
   # in theary, we should use V_{true theta}, but no one knows true theta in practice
   # so I am using V_{\hat_theta}
-  # now I want to use V_{empirical} (`@quantile_vv` is no longer a slot of \linkS4class{fmx}), can I?
+  # now I want to use V_{empirical} (`@quantile_vv` is no longer a slot of \link[fmx:fmx-class]{fmx}), can I?
   q_gr <- qfmx_gr(probs = p1, distname = distname, K = K, pars = tmp$pars, w = tmp$w)
   if (!length(q_gr)) {
     int_vv <- array(NA_real_, dim = c(0L, 0L)) # exception handling
